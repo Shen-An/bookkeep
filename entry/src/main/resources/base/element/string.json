@@ -1,0 +1,52 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "module description"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "label"
+    },
+    {
+      "name": "app_title",
+      "value": "OpenBill"
+    },
+    {
+      "name": "income",
+      "value": "Income"
+    },
+    {
+      "name": "balance",
+      "value": "Balance"
+    },
+    {
+      "name": "year",
+      "value": "Year"
+    },
+    {
+      "name": "month",
+      "value": "Month"
+    },
+    {
+      "name": "no_record",
+      "value": "No Billing Info"
+    },
+    {
+      "name": "cancel",
+      "value": "Cancel"
+    },
+    {
+      "name": "add_balance_remark_placeholder",
+      "value": "Tap to enter remarks"
+    },
+    {
+      "name": "add_balance_done",
+      "value": "Done"
+    }
+  ]
+}

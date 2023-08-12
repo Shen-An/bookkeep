@@ -1,0 +1,91 @@
+import fs from '@ohos.file.fs';
+import common from '@ohos.app.ability.common';
+@Component
+export struct BalanceViewer {
+  @Link selectedYear: number;
+  @Link selectedMonth: number;
+  @Link selectedDay: number;
+  @Link currentBillingInfo: string;
+  selectedDate: Date = new Date();
+  build(){
+    Column(){
+      Row(){
+        Column(){
+          Row(){
+            Text(`${this.selectedYear.toString()}`).fontSize(12).fontColor("gray")
+            Text($r("app.string.year")).fontSize(12).fontColor("gray")
+          }
+        }.width('20%')
+        Column(){
+          Text($r("app.string.income"))
+            .fontColor("gray")
+            .fontSize(12)
+            .textAlign(TextAlign.Start)
+            .width('100%')
+        }.width('40%').margin({left: 10})
+        Column(){
+          Text($r("app.string.balance"))
+            .fontColor("gray")
+            .fontSize(12)
+            .textAlign(TextAlign.Start)
+            .width('100%')
+        }.width('40%')
+      }.height(12).width('100%').backgroundColor("#255BFF")
+      Row(){
+        Column(){
+          Button(){
+            Row(){
+              Text(`${(this.selectedMonth+1).toString()}`)
+                .fontSize(22)
+                .fontColor('white')
+              Text($r("app.string.month"))
+                .fontColor('white')
+                .fontSize(12)
+                .align(Alignment.Bottom)
+                .height(22)
+                .margin(2)
+              Image($r("app.media.extractListIcon")).width(8).height(8).margin({top:6, left:8})
+            }
+          }.onClick(() => {
+            DatePickerDialog.show({
+              start: new Date(`2000-01-01`),
+              selected: this.selectedDate,
+              onAccept: (v)=>{
+                this.selectedDate.setFullYear(v.year,v.month,v.day);
+                this.selectedYear=v.year;
+                this.selectedMonth=v.month;
+                this.selectedDay=v.day;
+                let context = getContext(this) as common.UIAbilityContext;
+                let filesDir = context.filesDir;
+                fs.readText(filesDir+`/bill-${v.year}-${v.month}.json`, async (err, content) => {
+                  if(err)
+                    this.currentBillingInfo = err.message+v.month;
+                  else
+                    this.currentBillingInfo = content;
+                });
+              }
+            });
+          }).backgroundColor('transparent').stateEffect(false).width('100%')
+        }.width('20%').border({
+          style: BorderStyle.Solid,
+          color: {right: "gray"},
+          width: {right: 1}
+        })
+        Column(){
+          Text("0.00")
+            .fontColor("white")
+            .fontSize(20)
+            .textAlign(TextAlign.Start)
+            .width('100%')
+        }.width('40%').margin({left: 10})
+        Column(){
+          Text("0.00")
+            .fontColor("white")
+            .fontSize(20)
+            .textAlign(TextAlign.Start)
+            .width('100%')
+        }.width('40%')
+      }.height(52).width('100%').backgroundColor("#255BFF").padding(8)
+    }.width('100%')
+  }
+}
