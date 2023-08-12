@@ -298,9 +298,10 @@ struct AddBalance {
                 Text(`${this.activeYear} / ${(this.activeMonth+1).toString().padStart(2, '0')} / ${this.activeDay.toString().padStart(2, '0')}`).fontSize(16)
                   .margin({bottom: 12}).onClick(() => {
                   DatePickerDialog.show({
+                    start: new Date("2000-01-01"),
                     onAccept: (v) => {
                       this.activeYear = v.year;
-                      this.activeMonth = v.month+1;
+                      this.activeMonth = v.month;
                       this.activeDay = v.day;
                     },
                     selected: this.activeDate
