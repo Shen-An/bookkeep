@@ -7,6 +7,7 @@
 // See the Mulan PSL v2 for more details.
 import fs from '@ohos.file.fs';
 import common from '@ohos.app.ability.common';
+import { advancedTemplate } from '../data/defaultBalanceTemplate';
 @Component
 export struct BalanceViewer {
   @Link selectedYear: number;
@@ -64,12 +65,19 @@ export struct BalanceViewer {
                 this.selectedDay=v.day;
                 let context = getContext(this) as common.UIAbilityContext;
                 let filesDir = context.filesDir;
-                fs.readText(filesDir+`/bill-${v.year}-${v.month}.json`, async (err, content) => {
-                  if(err)
-                    this.currentBillingInfo = err.message+v.month;
-                  else
-                    this.currentBillingInfo = content;
-                });
+                const fPath = filesDir+`/bill-${v.year}-${v.month}.json`;
+                fs.access(fPath).then((exist) => {
+                  if(exist){
+                    fs.readText(filesDir+`/bill-${v.year}-${v.month}.json`, async (err, content) => {
+                      if(err)
+                        this.currentBillingInfo = JSON.stringify(advancedTemplate);
+                      else
+                        this.currentBillingInfo = content;
+                    });
+                  }
+                }).catch((reason) => {
+                  this.currentBillingInfo = JSON.stringify(advancedTemplate);
+                })
               }
             });
           }).backgroundColor('transparent').stateEffect(false).width('100%')
