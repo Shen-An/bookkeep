@@ -14,7 +14,15 @@ export struct BalanceViewer {
   @Link selectedMonth: number;
   @Link selectedDay: number;
   @Link currentBillingInfo: string;
+  @State totalIncome: number = 0.00;
+  @State totalBalance: number = 0.00;
   selectedDate: Date = new Date();
+  calculateTotalIncomeBalance = () => {
+    const billingInfo = JSON.parse(this.currentBillingInfo);
+    billingInfo.forEach(dayInfo => {
+
+    })
+  }
   build(){
     Column(){
       Row(){
@@ -41,7 +49,7 @@ export struct BalanceViewer {
       }.height(12).width('100%').backgroundColor("#255BFF")
       Row(){
         Column(){
-          Button(){
+          Button({type: ButtonType.Normal}){
             Row(){
               Text(`${(this.selectedMonth+1).toString()}`)
                 .fontSize(22)
@@ -80,21 +88,21 @@ export struct BalanceViewer {
                 })
               }
             });
-          }).backgroundColor('transparent').stateEffect(false).width('100%')
+          }).backgroundColor("#255BFF").width('100%').borderRadius(4)
         }.width('20%').border({
           style: BorderStyle.Solid,
           color: {right: "gray"},
           width: {right: 1}
         })
         Column(){
-          Text("0.00")
+          Text(`${this.totalIncome.toFixed(2)}`)
             .fontColor("white")
             .fontSize(20)
             .textAlign(TextAlign.Start)
             .width('100%')
         }.width('40%').margin({left: 10})
         Column(){
-          Text("0.00")
+          Text(`${this.totalBalance.toFixed(2)}`)
             .fontColor("white")
             .fontSize(20)
             .textAlign(TextAlign.Start)

@@ -14,7 +14,7 @@ export struct PageEntries {
   build(){
     Row(){
       Flex({justifyContent: FlexAlign.SpaceAround}){
-        Button(){
+        Button({type: ButtonType.Normal}){
           Column(){
             Row(){
               Image($r("app.media.balancePageIcon"))
@@ -28,8 +28,8 @@ export struct PageEntries {
                 .textAlign(TextAlign.Center)
             }.height(12).width(48)
           }.width(48)
-        }.stateEffect(false).backgroundColor('transparent')
-        Button(){
+        }.backgroundColor('white').borderRadius(8)
+        Button({type: ButtonType.Normal}){
           Column(){
             Row(){
               Image($r("app.media.copyrightPageIcon"))
@@ -43,14 +43,14 @@ export struct PageEntries {
                 .textAlign(TextAlign.Center)
             }.height(12).width(48)
           }.width(48).alignItems(HorizontalAlign.Center)
-        }.stateEffect(false).backgroundColor('transparent').onClick(() => {
+        }.backgroundColor('white').onClick(() => {
           router.pushUrl({
             url: 'pages/Copyright'
           }, router.RouterMode.Standard, err => {
             return;
           })
-        })
-        Button(){
+        }).borderRadius(8)
+        Button({type: ButtonType.Normal}){
           Column(){
             Row(){
               Image($r("app.media.graphicPageIcon"))
@@ -64,8 +64,8 @@ export struct PageEntries {
                 .textAlign(TextAlign.Center)
             }.height(12).width(48)
           }.width(48).alignItems(HorizontalAlign.Center)
-        }.stateEffect(false).backgroundColor('transparent')
-        Button(){
+        }.backgroundColor('white').borderRadius(8)
+        Button({type: ButtonType.Normal}){
           Column(){
             Row(){
               Image($r("app.media.addBalancePageIcon"))
@@ -79,7 +79,7 @@ export struct PageEntries {
                 .textAlign(TextAlign.Center)
             }.height(12).width(48)
           }.width(48).alignItems(HorizontalAlign.Center)
-        }.stateEffect(false).backgroundColor('transparent').onClick(() => {
+        }.stateEffect(false).backgroundColor('white').onClick(() => {
           router.pushUrl({
             url: "pages/addBalance",
             params: {
@@ -87,7 +87,7 @@ export struct PageEntries {
               month: this.selectedMonth
             }
           })
-        })
+        }).borderRadius(8)
       }.height(64).width('100%').backgroundColor("white").borderRadius(4).padding(8)
     }.linearGradient({
       angle: 180,

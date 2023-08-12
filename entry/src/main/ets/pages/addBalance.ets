@@ -13,7 +13,7 @@ import {advancedTemplate, BalanceTemplate} from '../data/defaultBalanceTemplate'
 @Component
 struct AddBalance {
   @State activeTab: number = 0;
-  @State activeType: string = "";
+  activeType: Resource = $r("app.media.salaryIcon");
   @State selectedIndex: number = -1;
   @State balanceAmount: string = "0";
   @State balanceTempAmount: string = "0";
@@ -271,10 +271,11 @@ struct AddBalance {
             ForEach(this.activeTab==0?this.defaultBalanceType:this.defaultIncomeType, (item, index) => {
               GridCol(){
                 Column(){
-                  Image(item.img).backgroundColor(this.selectedIndex==index?"#ff5fbfff":"#ffe3e3e3").borderRadius(32).width(56).height(56).padding(12)
-                    .margin(8)
+                  Image(item.img).backgroundColor(this.selectedIndex==index?"#ff5fbfff":"white").borderRadius(32).width(56).height(56).padding(12)
+                    .margin(8).shadow({radius: 24, color: "gray"})
                     .onClick(() => {
                       this.selectedIndex = index;
+                      this.activeType = item.img;
                     })
                   Text(item.title).fontSize(12)
                 }.width(56)
@@ -317,7 +318,7 @@ struct AddBalance {
                       }else{
                         Text(unit.content).fontSize(18).fontColor(unit.foreColor??"black")
                       }
-                    }.height(49).backgroundColor(unit.bgColor??"transparent").width('100%').borderRadius(0).onClick(unit.callback??(() => {return;}))
+                    }.height(49).backgroundColor(unit.bgColor??"white").width('100%').borderRadius(0).onClick(unit.callback??(() => {return;}))
                   }.border({
                     width: {
                       top: 0.5,

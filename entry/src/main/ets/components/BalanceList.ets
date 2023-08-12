@@ -26,7 +26,7 @@ export struct BalanceList {
               ListItem(){
                 Column(){
                   Row(){
-                    Text(`${((this.selectedMonth+1).toString().padStart(2,'0'))}/${((day+1).toString().padStart(2,'0'))}`)
+                    Text(`${((this.selectedMonth+1).toString().padStart(2,'0'))}月${((day+1).toString().padStart(2,'0'))}日`)
                       .fontColor('black')
                       .fontSize(12).textAlign(TextAlign.Start)
                       .width('100%')
@@ -39,12 +39,19 @@ export struct BalanceList {
                       ListItem(){
                         Row(){
                           Column(){
-                            Text(balance.remark)
-                              .textAlign(TextAlign.Start)
-                              .width('100%')
+                            Row(){
+                              Image(balance.type)
+                                .width(36).height(36)
+                                .borderRadius(24)
+                                .padding(8)
+                                .backgroundColor('#ffe2effd').margin({right: 16})
+                              Text(balance.remark)
+                                .textAlign(TextAlign.Start)
+                                .width('100%')
+                            }
                           }.width('50%')
                           Column(){
-                            Text(balance.amount)
+                            Text(`${balance.direction=="in"?"+":"-"} ${balance.amount}`)
                               .textAlign(TextAlign.End)
                               .width('100%')
                           }.width('50%')
