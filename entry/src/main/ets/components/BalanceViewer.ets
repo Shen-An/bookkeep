@@ -14,13 +14,21 @@ export struct BalanceViewer {
   @Link selectedMonth: number;
   @Link selectedDay: number;
   @Link currentBillingInfo: string;
-  @State totalIncome: number = 0.00;
-  @State totalBalance: number = 0.00;
+  @Link totalIncome: number;
+  @Link totalBalance: number;
   selectedDate: Date = new Date();
-  calculateTotalIncomeBalance = () => {
-    const billingInfo = JSON.parse(this.currentBillingInfo);
+  calculateTotalIncomeBalance = (source: string) => {
+    const billingInfo = JSON.parse(source);
+    this.totalBalance=0.00;
+    this.totalIncome=0.00;
     billingInfo.forEach(dayInfo => {
-
+      dayInfo.forEach(info => {
+        if(info.direction=="in"){
+          this.totalIncome+=parseFloat(info.amount);
+        }else{
+          this.totalBalance+=parseFloat(info.amount);
+        }
+      })
     })
   }
   build(){
@@ -46,7 +54,7 @@ export struct BalanceViewer {
             .textAlign(TextAlign.Start)
             .width('100%')
         }.width('40%')
-      }.height(12).width('100%').backgroundColor("#255BFF")
+      }.height(12).width('100%').backgroundColor("#255BFF").borderColor("#255BFF")
       Row(){
         Column(){
           Button({type: ButtonType.Normal}){
@@ -77,13 +85,24 @@ export struct BalanceViewer {
                 fs.access(fPath).then((exist) => {
                   if(exist){
                     fs.readText(filesDir+`/bill-${v.year}-${v.month}.json`, async (err, content) => {
-                      if(err)
+                      if(err){
+                        this.totalIncome=0;
+                        this.totalBalance=0;
                         this.currentBillingInfo = JSON.stringify(advancedTemplate);
-                      else
+                      }
+                      else{
                         this.currentBillingInfo = content;
+                        this.calculateTotalIncomeBalance(content);
+                      }
                     });
+                  }else{
+                    this.totalIncome=0;
+                    this.totalBalance=0;
+                    this.currentBillingInfo = JSON.stringify(advancedTemplate);
                   }
-                }).catch((reason) => {
+                }).catch(() => {
+                  this.totalIncome=0;
+                  this.totalBalance=0;
                   this.currentBillingInfo = JSON.stringify(advancedTemplate);
                 })
               }
@@ -95,14 +114,14 @@ export struct BalanceViewer {
           width: {right: 1}
         })
         Column(){
-          Text(`${this.totalIncome.toFixed(2)}`)
+          Text(this.totalIncome.toFixed(2))
             .fontColor("white")
             .fontSize(20)
             .textAlign(TextAlign.Start)
             .width('100%')
         }.width('40%').margin({left: 10})
         Column(){
-          Text(`${this.totalBalance.toFixed(2)}`)
+          Text(this.totalBalance.toFixed(2))
             .fontColor("white")
             .fontSize(20)
             .textAlign(TextAlign.Start)

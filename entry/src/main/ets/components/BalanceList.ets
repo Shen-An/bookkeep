@@ -5,11 +5,44 @@
 // http://license.coscl.org.cn/MulanPSL2
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
+import common from '@ohos.app.ability.common';
+import fs from '@ohos.file.fs';
+import {advancedTemplate} from "../data/defaultBalanceTemplate"
 @Component
 export struct BalanceList {
   @Link currentBillingInfo: string;
+  @Link selectedYear: number;
   @Link selectedMonth: number;
   @Link selectedDay: number;
+  @Link totalBalance: number;
+  @Link totalIncome: number;
+  context = getContext(this) as common.UIAbilityContext;
+  filesDir = this.context.filesDir;
+  calculateTotalIncomeBalance = (source: string) => {
+    const billingInfo = JSON.parse(source);
+    this.totalBalance=0.00;
+    this.totalIncome=0.00;
+    billingInfo.forEach(dayInfo => {
+      dayInfo.forEach(info => {
+        if(info.direction=="in"){
+          this.totalIncome+=parseFloat(info.amount);
+        }else{
+          this.totalBalance+=parseFloat(info.amount);
+        }
+      })
+    })
+  }
+  refreshBillInfo = () => {
+    fs.readText(this.filesDir+`/bill-${this.selectedYear}-${this.selectedMonth}.json`, async (err, content) => {
+      if(err){
+        this.currentBillingInfo = JSON.stringify(advancedTemplate);
+        this.calculateTotalIncomeBalance(JSON.stringify(advancedTemplate));
+      } else {
+        this.currentBillingInfo = content;
+        this.calculateTotalIncomeBalance(content);
+      }
+    });
+  }
   build(){
     Column(){
       if(JSON.parse(this.currentBillingInfo).length == 0){
@@ -42,7 +75,7 @@ export struct BalanceList {
                             Row(){
                               Image(balance.type)
                                 .width(36).height(36)
-                                .borderRadius(24)
+                                .borderRadius(8)
                                 .padding(8)
                                 .backgroundColor('#ffe2effd').margin({right: 16})
                               Text(balance.remark)
@@ -63,7 +96,7 @@ export struct BalanceList {
               }
             }
           })
-        }.listDirection(Axis.Vertical)
+        }.listDirection(Axis.Vertical).height('100%')
       }
     }.padding(8).width('100%')
   }

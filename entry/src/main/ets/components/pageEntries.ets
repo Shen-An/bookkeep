@@ -88,7 +88,7 @@ export struct PageEntries {
             }
           })
         }).borderRadius(8)
-      }.height(64).width('100%').backgroundColor("white").borderRadius(4).padding(8)
+      }.height(64).width('100%').backgroundColor("white").borderRadius(8).padding(8).shadow({radius: 24,color: 'gray'})
     }.linearGradient({
       angle: 180,
       colors: [
@@ -96,6 +96,6 @@ export struct PageEntries {
         ["#ffffff", 1]
       ],
       repeating: false
-    }).padding(8)
+    }).padding({top: 16, left:8,right:8,bottom:8})
   }
 }

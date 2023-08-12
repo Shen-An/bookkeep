@@ -210,15 +210,23 @@ struct AddBalance {
             });
           }else{
             let oFd = fs.openSync(fPath, fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE);
-            let targetTemplate = advancedTemplate;
-            targetTemplate[this.activeDay-1].push({
-              remark: this.remark,
-              amount: this.balanceAmount,
-              direction: this.activeTab==0?"out":"in",
-              type: this.activeType
-            })
-            fs.writeSync(oFd.fd, JSON.stringify(targetTemplate));
+            fs.writeSync(oFd.fd, JSON.stringify(advancedTemplate));
             fs.closeSync(oFd.fd);
+            fs.readText(fPath, async (err, content) => {
+              if(err)
+                this.balanceAmount=err.message;
+              let bObj = JSON.parse(content);
+              bObj[this.activeDay-1].push({
+                remark: this.remark,
+                amount: this.balanceAmount,
+                direction: this.activeTab==0?"out":"in",
+                type: this.activeType
+              })
+              let oFd = fs.openSync(fPath, fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE);
+              const resultString = JSON.stringify(bObj);
+              fs.writeSync(oFd.fd, resultString);
+              fs.closeSync(oFd.fd);
+            });
           }
           router.back();
         }).catch((reason) => {
@@ -230,11 +238,28 @@ struct AddBalance {
       content: ""
     },
   ];
-  defaultBalanceType: {title: string, img: Resource}[] = [{title: "餐饮", img: $r("app.media.eatIcon")}];
+  defaultBalanceType: {title: string, img: Resource}[] = [
+    {title: "餐饮", img: $r("app.media.eatIcon")},
+    {title: "购物", img: $r("app.media.shoppingIcon")},
+    {title: "蔬菜", img: $r("app.media.vegetablesExpenseIcon")},
+    {title: "日用", img: $r("app.media.dailyExpenseIcon")},
+    {title: "交通", img: $r("app.media.metroExpenseIcon")},
+    {title: "旅行", img: $r("app.media.travelExpenseIcon")},
+    {title: "宠物", img: $r("app.media.petExpenseIcon")},
+    {title: "知识", img: $r("app.media.knowledgeExpenseIcon")},
+    {title: "服装", img: $r("app.media.clothExpenseIcon")},
+    {title: "数码", img: $r("app.media.digitalProductExpenseIcon")},
+    {title: "烟酒", img: $r("app.media.wineExpenseIcon")},
+    {title: "零食", img: $r("app.media.snacksExpenseIcon")},
+    {title: "医疗", img: $r("app.media.medicalExpenseIcon")},
+    {title: "住房", img: $r("app.media.houseExpenseIcon")},
+    {title: "儿童", img: $r("app.media.childExpenseIcon")}
+  ];
   defaultIncomeType: {title: string, img: Resource}[] = [
     {title: "工资", img: $r("app.media.salaryIcon")},
     {title: "理财", img: $r("app.media.foundationIcon")},
     {title: "礼金", img: $r("app.media.giftMoneyIcon")},
+    {title: "兼职", img: $r("app.media.partTimeIncomeIcon")},
     {title: "其它", img: $r("app.media.otherIcon")}
   ]
   build(){
@@ -271,7 +296,7 @@ struct AddBalance {
             ForEach(this.activeTab==0?this.defaultBalanceType:this.defaultIncomeType, (item, index) => {
               GridCol(){
                 Column(){
-                  Image(item.img).backgroundColor(this.selectedIndex==index?"#ff5fbfff":"white").borderRadius(32).width(56).height(56).padding(12)
+                  Image(item.img).backgroundColor(this.selectedIndex==index?"#ff5fbfff":"white").borderRadius(16).width(56).height(56).padding(12)
                     .margin(8).shadow({radius: 24, color: "gray"})
                     .onClick(() => {
                       this.selectedIndex = index;

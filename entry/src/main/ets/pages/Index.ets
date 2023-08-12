@@ -17,17 +17,38 @@ struct Index {
   @State selectedYear: number = new Date().getFullYear();
   @State selectedMonth: number = new Date().getMonth();
   @State selectedDay: number = new Date().getDate();
-  @State currentBillingInfo: string = "[]";
+  @State currentBillingInfo: string = JSON.stringify(advancedTemplate);
+  @State totalIncome: number = 0.00;
+  @State totalBalance: number = 0.00;
   context = getContext(this) as common.UIAbilityContext;
   filesDir = this.context.filesDir;
-  operation = fs.readText(this.filesDir+`/bill-${this.selectedYear}-${this.selectedMonth}.json`, async (err, content) => {
-    if(err)
-      this.currentBillingInfo = JSON.stringify(advancedTemplate);
-    else
-      this.currentBillingInfo = content;
-  });
+  calculateTotalIncomeBalance = (source: string) => {
+    const billingInfo = JSON.parse(source);
+    this.totalBalance=0.00;
+    this.totalIncome=0.00;
+    billingInfo.forEach(dayInfo => {
+      dayInfo.forEach(info => {
+        if(info.direction=="in"){
+          this.totalIncome+=parseFloat(info.amount);
+        }else{
+          this.totalBalance+=parseFloat(info.amount);
+        }
+      })
+    })
+  }
+  onPageShow(){
+    fs.readText(this.filesDir+`/bill-${this.selectedYear}-${this.selectedMonth}.json`, async (err, content) => {
+      if(err){
+        this.currentBillingInfo = JSON.stringify(advancedTemplate);
+        this.calculateTotalIncomeBalance(JSON.stringify(advancedTemplate));
+      } else {
+        this.currentBillingInfo = content;
+        this.calculateTotalIncomeBalance(content);
+      }
+    });
+  }
   build() {
-    Column(){
+    Flex({direction: FlexDirection.Column}){
       Row(){
         Text($r("app.string.app_title"))
           .fontColor("white")
@@ -37,9 +58,10 @@ struct Index {
           .width('100%')
       }.height(64).width('100%').backgroundColor("#255BFF")
       BalanceViewer({selectedYear: $selectedYear, selectedMonth: $selectedMonth, selectedDay: $selectedDay,
-        currentBillingInfo: $currentBillingInfo})
+        currentBillingInfo: $currentBillingInfo, totalIncome: $totalIncome, totalBalance: $totalBalance})
       PageEntries({selectedYear: $selectedYear, selectedMonth: $selectedMonth})
-      BalanceList({currentBillingInfo: $currentBillingInfo, selectedMonth: $selectedMonth, selectedDay: $selectedDay})
-    }.width('100%')
+      BalanceList({currentBillingInfo: $currentBillingInfo, selectedMonth: $selectedMonth, selectedDay: $selectedDay, selectedYear: $selectedYear,
+        totalBalance: $totalBalance, totalIncome: $totalIncome})
+    }
   }
 }
