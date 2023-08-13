@@ -6,6 +6,8 @@
 Open-Bill 是一个运行于Harmony OS 3.1+操作系统上，使用ArkUI框架开发的一款开源账单记录软件。
 采用木兰许可证签署许可。
 
+部分图标来源： [iconFont](https://www.iconfont.cn/)
+
 ## 开发环境
 
 - Windows 11 2H2 Build.22621.2134
