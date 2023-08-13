@@ -8,7 +8,9 @@
 import router from '@ohos.router';
 import common from '@ohos.app.ability.common';
 import fs from '@ohos.file.fs';
-import {advancedTemplate, BalanceTemplate} from '../data/defaultBalanceTemplate';
+import {defaultExpenseType, defaultIncomeType} from '../data/balanceTypes'
+import { advancedTemplate } from '../data/defaultBalanceTemplate';
+import window from '@ohos.window';
 @Entry
 @Component
 struct AddBalance {
@@ -23,9 +25,6 @@ struct AddBalance {
   @State activeYear: number = router.getParams()['year'];
   @State activeMonth: number = router.getParams()['month'];
   @State activeDay: number = new Date().getDate();
-  activeDate: Date = new Date();
-  context = getContext(this) as common.UIAbilityContext;
-  filesDir = this.context.filesDir;
   balanceInputUnits: {content: string | Resource, contentType?: string, callback?: () => void, bgColor?: string, foreColor?: string}[] = [
     {
       content: "7",
@@ -39,7 +38,7 @@ struct AddBalance {
     },
     {
       content: "8",
-      callback: () => {
+      callback: () =>  {
         if(this.balanceAmount == "0"){
           this.balanceAmount="8";
         }else{
@@ -49,7 +48,7 @@ struct AddBalance {
     },
     {
       content: "9",
-      callback: () => {
+      callback: () =>  {
         if(this.balanceAmount == "0"){
           this.balanceAmount="9";
         }else{
@@ -59,7 +58,7 @@ struct AddBalance {
     },
     {
       content: "×",
-      callback: () => {
+      callback: () =>  {
         this.calculateAction = 3;
         this.balanceTempAmount=this.balanceAmount;
         this.balanceAmount="0";
@@ -67,7 +66,7 @@ struct AddBalance {
     },
     {
       content: "4",
-      callback: () => {
+      callback: () =>  {
         if(this.balanceAmount == "0"){
           this.balanceAmount="4";
         }else{
@@ -77,7 +76,7 @@ struct AddBalance {
     },
     {
       content: "5",
-      callback: () => {
+      callback: () =>  {
         if(this.balanceAmount == "0"){
           this.balanceAmount="5";
         }else{
@@ -87,7 +86,7 @@ struct AddBalance {
     },
     {
       content: "6",
-      callback: () => {
+      callback: () =>  {
         if(this.balanceAmount == "0"){
           this.balanceAmount="6";
         }else{
@@ -97,7 +96,7 @@ struct AddBalance {
     },
     {
       content: "+",
-      callback: () => {
+      callback: () =>  {
         if(this.balanceAmount.endsWith("."))
           this.balanceAmount+="0";
         this.balanceTempAmount = this.balanceAmount;
@@ -108,7 +107,7 @@ struct AddBalance {
     },
     {
       content: "1",
-      callback: () => {
+      callback: () =>  {
         if(this.balanceAmount == "0"){
           this.balanceAmount="1";
         }else{
@@ -118,7 +117,7 @@ struct AddBalance {
     },
     {
       content: "2",
-      callback: () => {
+      callback: () =>  {
         if(this.balanceAmount == "0"){
           this.balanceAmount="2";
         }else{
@@ -128,7 +127,7 @@ struct AddBalance {
     },
     {
       content: "3",
-      callback: () => {
+      callback: () =>  {
         if(this.balanceAmount == "0"){
           this.balanceAmount="3";
         }else{
@@ -138,7 +137,7 @@ struct AddBalance {
     },
     {
       content: "-",
-      callback: () => {
+      callback: () =>  {
         if(this.balanceAmount.endsWith("."))
           this.balanceAmount+="0";
         this.balanceTempAmount = this.balanceAmount;
@@ -149,13 +148,13 @@ struct AddBalance {
     },
     {
       content: ".",
-      callback: () => {
+      callback: () =>  {
         this.balanceAmount+="."
       }
     },
     {
       content: "0",
-      callback: () => {
+      callback: () =>  {
         if(this.balanceAmount=="0"){
           return;
         }
@@ -165,7 +164,7 @@ struct AddBalance {
     {
       content: $r("app.media.delete"),
       contentType: "image",
-      callback: () => {
+      callback: () =>  {
         this.balanceAmount = this.balanceAmount.substring(0, this.balanceAmount.length-1);
       }
     },
@@ -173,7 +172,7 @@ struct AddBalance {
       content: `√`,
       bgColor: "#255BFF",
       foreColor: "#ffffff",
-      callback: () => {
+      callback: () =>  {
         if(this.balanceTempAmount != "0"){
           if(this.calculateAction == 1){
             this.balanceAmount = (parseFloat(this.balanceTempAmount)+parseFloat(this.balanceAmount)).toFixed(2);
@@ -198,7 +197,7 @@ struct AddBalance {
             fs.readText(fPath, async (err, content) => {
               if(err)
                 this.balanceAmount=err.message;
-                let bObj = JSON.parse(content);
+              let bObj = JSON.parse(content);
               bObj[this.activeDay-1].push({
                 remark: this.remark,
                 amount: this.balanceAmount,
@@ -240,33 +239,9 @@ struct AddBalance {
       content: ""
     },
   ];
-  defaultBalanceType: {title: string, img: Resource}[] = [
-    {title: "餐饮", img: $r("app.media.eatIcon")},
-    {title: "购物", img: $r("app.media.shoppingIcon")},
-    {title: "蔬菜", img: $r("app.media.vegetablesExpenseIcon")},
-    {title: "日用", img: $r("app.media.dailyExpenseIcon")},
-    {title: "交通", img: $r("app.media.metroExpenseIcon")},
-    {title: "旅行", img: $r("app.media.travelExpenseIcon")},
-    {title: "宠物", img: $r("app.media.petExpenseIcon")},
-    {title: "知识", img: $r("app.media.knowledgeExpenseIcon")},
-    {title: "服装", img: $r("app.media.clothExpenseIcon")},
-    {title: "数码", img: $r("app.media.digitalProductExpenseIcon")},
-    {title: "烟酒", img: $r("app.media.wineExpenseIcon")},
-    {title: "零食", img: $r("app.media.snacksExpenseIcon")},
-    {title: "医疗", img: $r("app.media.medicalExpenseIcon")},
-    {title: "住房", img: $r("app.media.houseExpenseIcon")},
-    {title: "儿童", img: $r("app.media.childExpenseIcon")},
-    {title: "汽车", img: $r("app.media.carExpenseIcon")},
-    {title: "礼物", img: $r("app.media.giftExpenseIcon")},
-    {title: "捐赠", img: $r("app.media.supportExpenseIcon")}
-  ];
-  defaultIncomeType: {title: string, img: Resource}[] = [
-    {title: "工资", img: $r("app.media.salaryIcon")},
-    {title: "理财", img: $r("app.media.foundationIcon")},
-    {title: "礼金", img: $r("app.media.giftMoneyIcon")},
-    {title: "兼职", img: $r("app.media.partTimeIncomeIcon")},
-    {title: "其它", img: $r("app.media.otherIcon")}
-  ]
+  activeDate: Date = new Date();
+  context = getContext(this) as common.UIAbilityContext;
+  filesDir = this.context.filesDir;
   build(){
       Column(){
         Stack(){
@@ -298,7 +273,7 @@ struct AddBalance {
         }.width('100%').alignContent(Alignment.End)
         Flex({justifyContent: FlexAlign.SpaceBetween, direction: FlexDirection.Column}){
           GridRow({columns: 4, gutter: 12}){
-            ForEach(this.activeTab==0?this.defaultBalanceType:this.defaultIncomeType, (item, index) => {
+            ForEach(this.activeTab==0?defaultExpenseType:defaultIncomeType, (item, index) => {
               GridCol(){
                 Column(){
                   Image(item.img).backgroundColor(this.selectedIndex==index?"#ff5fbfff":"white").borderRadius(16).width(56).height(56).padding(12)
@@ -363,7 +338,7 @@ struct AddBalance {
             }.width('100%').shadow({
               radius: 20,
               offsetY: 16
-            })
+            }).backgroundColor(Color.White)
           }
         }.height('100%')
       }.width('100%')

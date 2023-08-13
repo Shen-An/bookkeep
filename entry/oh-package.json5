@@ -5,6 +5,10 @@
   "main": "",
   "author": "",
   "license": "",
-  "dependencies": {}
+  "dependencies": {
+    "@hw-agconnect/auth-ohos": "^1.1.2",
+    "@hw-agconnect/api-ohos": "^1.1.2",
+    "@hw-agconnect/core-ohos": "^1.1.2"
+  }
 }
 
