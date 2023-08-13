@@ -14,7 +14,7 @@
     },
     {
       "name": "app_title",
-      "value": "Open Bill"
+      "value": "Easy Bill"
     },
     {
       "name": "income",
@@ -22,11 +22,11 @@
     },
     {
       "name": "balance",
-      "value": "Balance"
+      "value": "Expense"
     },
     {
       "name": "year",
-      "value": "Year"
+      "value": "/"
     },
     {
       "name": "no_record",
@@ -34,7 +34,7 @@
     },
     {
       "name": "month",
-      "value": "Month"
+      "value": "/"
     },
     {
       "name": "cancel",
@@ -75,6 +75,10 @@
     {
       "name": "day_of_week_sunday",
       "value": "Sunday"
+    },
+    {
+      "name": "day",
+      "value": " "
     }
   ]
 }

@@ -86,15 +86,29 @@ export struct BalanceList {
               ListItem(){
                 Column(){
                   Flex({direction: FlexDirection.Row, justifyContent: FlexAlign.SpaceBetween}){
-                    Text(`${((this.selectedMonth+1).toString().padStart(2,'0'))}月${((day+1).toString().padStart(2,'0'))}日`)
-                      .fontSize(12).textAlign(TextAlign.Start)
-                      .fontColor('#ff858585')
-                    Text(this.getDayOfWeek(new Date(`${this.selectedYear}-${this.selectedMonth+1}-${day+1}`).getDay()))
-                      .fontSize(12)
-                      .fontColor('#ff858585')
-                    Text(`支出：${this.calculateSingleDayBalance(balances)}`)
-                      .fontSize(12).textAlign(TextAlign.End)
-                      .fontColor('#ff858585')
+                    Column(){
+                      Row(){
+                        Text(`${this.selectedMonth+1}`).fontSize(12)
+                          .fontColor($r("app.color.text_gray"))
+                        Text($r("app.string.month")).fontSize(12)
+                          .fontColor($r("app.color.text_gray"))
+                        Text(`${((day+1).toString().padStart(2,'0'))}`).fontSize(12)
+                          .fontColor($r("app.color.text_gray"))
+                        Text($r("app.string.day")).fontSize(12)
+                          .fontColor($r("app.color.text_gray"))
+                        Text(this.getDayOfWeek(new Date(`${this.selectedYear}-${this.selectedMonth+1}-${day+1}`).getDay()))
+                          .fontSize(12)
+                          .fontColor('#ff858585').margin({left: 4})
+                      }
+                    }
+                    Column(){
+                      Row(){
+                        Text($r("app.string.balance")).fontSize(12)
+                          .fontColor($r("app.color.text_gray"))
+                        Text(` ${this.calculateSingleDayBalance(balances)}`).fontSize(12)
+                          .fontColor($r("app.color.text_gray"))
+                      }
+                    }
                   }.border({
                     width: {bottom: 0.5},
                     color: 'gray'

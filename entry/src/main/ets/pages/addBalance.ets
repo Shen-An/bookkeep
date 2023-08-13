@@ -255,7 +255,10 @@ struct AddBalance {
     {title: "零食", img: $r("app.media.snacksExpenseIcon")},
     {title: "医疗", img: $r("app.media.medicalExpenseIcon")},
     {title: "住房", img: $r("app.media.houseExpenseIcon")},
-    {title: "儿童", img: $r("app.media.childExpenseIcon")}
+    {title: "儿童", img: $r("app.media.childExpenseIcon")},
+    {title: "汽车", img: $r("app.media.carExpenseIcon")},
+    {title: "礼物", img: $r("app.media.giftExpenseIcon")},
+    {title: "捐赠", img: $r("app.media.supportExpenseIcon")}
   ];
   defaultIncomeType: {title: string, img: Resource}[] = [
     {title: "工资", img: $r("app.media.salaryIcon")},
@@ -268,7 +271,7 @@ struct AddBalance {
       Column(){
         Stack(){
           Row(){
-            Text($r("app.string.balance")).fontSize(12).fontColor('white').onClick(() => {
+            Text($r("app.string.balance")).fontSize(16).fontColor('white').onClick(() => {
               this.activeTab = 0;
               this.selectedIndex=-1;
               this.balanceAmount="0";
@@ -278,7 +281,7 @@ struct AddBalance {
               },
               color: 'white'
             }).padding({bottom: 16}).margin({top: 16, right: 16, left: 16})
-            Text($r("app.string.income")).fontSize(12).fontColor('white').onClick(() => {
+            Text($r("app.string.income")).fontSize(16).fontColor('white').onClick(() => {
               this.activeTab = 1;
               this.selectedIndex=-1;
               this.balanceAmount="0";
@@ -289,7 +292,7 @@ struct AddBalance {
               color: 'white'
             }).padding({bottom: 16}).margin({top: 16, right: 16, left: 16})
           }.height(48).backgroundColor("#255BFF").width('100%').alignSelf(ItemAlign.Center)
-          Text($r("app.string.cancel")).fontSize(12).fontColor('white').onClick(() => {
+          Text($r("app.string.cancel")).fontSize(16).fontColor('white').onClick(() => {
             router.back()
           }).textAlign(TextAlign.End).margin({right: 24})
         }.width('100%').alignContent(Alignment.End)

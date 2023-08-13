@@ -2,6 +2,7 @@
   "src": [
     "pages/Index",
     "pages/Copyright",
-    "pages/addBalance"
+    "pages/addBalance",
+    "pages/BillInfoPage"
   ]
 }

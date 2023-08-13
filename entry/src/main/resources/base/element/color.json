@@ -3,6 +3,14 @@
     {
       "name": "start_window_background",
       "value": "#FFFFFF"
+    },
+    {
+      "name": "main_theme_blue",
+      "value": "#255BFF"
+    },
+    {
+      "name": "text_gray",
+      "value": "#ff858585"
     }
   ]
 }

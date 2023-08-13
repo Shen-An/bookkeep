@@ -28,7 +28,14 @@ export struct PageEntries {
                 .textAlign(TextAlign.Center)
             }.height(12).width(48)
           }.width(48)
-        }.backgroundColor('white').borderRadius(8)
+        }.backgroundColor('white').borderRadius(8).onClick(() => {
+          router.pushUrl({
+            url: "pages/BillInfoPage",
+            params: {
+              year: this.selectedYear
+            }
+          });
+        })
         Button({type: ButtonType.Normal}){
           Column(){
             Row(){

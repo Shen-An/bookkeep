@@ -56,7 +56,7 @@ struct Index {
           .fontWeight(FontWeight.Normal)
           .textAlign(TextAlign.Center)
           .width('100%')
-      }.height(64).width('100%').backgroundColor("#255BFF")
+      }.height(64).width('100%').backgroundColor($r("app.color.main_theme_blue"))
       BalanceViewer({selectedYear: $selectedYear, selectedMonth: $selectedMonth, selectedDay: $selectedDay,
         currentBillingInfo: $currentBillingInfo, totalIncome: $totalIncome, totalBalance: $totalBalance})
       PageEntries({selectedYear: $selectedYear, selectedMonth: $selectedMonth})

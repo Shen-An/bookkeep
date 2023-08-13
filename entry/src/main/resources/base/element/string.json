@@ -75,6 +75,10 @@
     {
       "name": "day_of_week_sunday",
       "value": "Sunday"
+    },
+    {
+      "name": "day",
+      "value": "Day"
     }
   ]
 }
