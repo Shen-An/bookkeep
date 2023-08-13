@@ -47,6 +47,34 @@
     {
       "name": "add_balance_done",
       "value": "完成"
+    },
+    {
+      "name": "day_of_week_monday",
+      "value": "星期一"
+    },
+    {
+      "name": "day_of_week_tuesday",
+      "value": "星期二"
+    },
+    {
+      "name": "day_of_week_wednesday",
+      "value": "星期三"
+    },
+    {
+      "name": "day_of_week_thursday",
+      "value": "星期四"
+    },
+    {
+      "name": "day_of_week_friday",
+      "value": "星期五"
+    },
+    {
+      "name": "day_of_week_saturday",
+      "value": "星期六"
+    },
+    {
+      "name": "day_of_week_sunday",
+      "value": "星期日"
     }
   ]
 }

@@ -32,6 +32,33 @@ export struct BalanceList {
       })
     })
   }
+  calculateSingleDayBalance = (dayInfo: any) => {
+    let sdTotalBalance = 0;
+    dayInfo.forEach(info => {
+      if(info.direction=="out"){
+        sdTotalBalance+=parseFloat(info.amount);
+      }
+    })
+    return sdTotalBalance;
+  }
+  getDayOfWeek = (day: number) => {
+    switch (day){
+      case 0:
+        return $r("app.string.day_of_week_sunday");
+      case 1:
+        return $r("app.string.day_of_week_monday");
+      case 2:
+        return $r("app.string.day_of_week_tuesday");
+      case 3:
+        return $r("app.string.day_of_week_wednesday");
+      case 4:
+        return $r("app.string.day_of_week_wednesday");
+      case 5:
+        return $r("app.string.day_of_week_friday");
+      case 6:
+        return $r("app.string.day_of_week_saturday");
+    }
+  }
   refreshBillInfo = () => {
     fs.readText(this.filesDir+`/bill-${this.selectedYear}-${this.selectedMonth}.json`, async (err, content) => {
       if(err){
@@ -58,11 +85,16 @@ export struct BalanceList {
             if(balances.length > 0){
               ListItem(){
                 Column(){
-                  Row(){
+                  Flex({direction: FlexDirection.Row, justifyContent: FlexAlign.SpaceBetween}){
                     Text(`${((this.selectedMonth+1).toString().padStart(2,'0'))}月${((day+1).toString().padStart(2,'0'))}日`)
-                      .fontColor('black')
                       .fontSize(12).textAlign(TextAlign.Start)
-                      .width('100%')
+                      .fontColor('#ff858585')
+                    Text(this.getDayOfWeek(new Date(`${this.selectedYear}-${this.selectedMonth+1}-${day+1}`).getDay()))
+                      .fontSize(12)
+                      .fontColor('#ff858585')
+                    Text(`支出：${this.calculateSingleDayBalance(balances)}`)
+                      .fontSize(12).textAlign(TextAlign.End)
+                      .fontColor('#ff858585')
                   }.border({
                     width: {bottom: 0.5},
                     color: 'gray'
@@ -89,7 +121,7 @@ export struct BalanceList {
                               .width('100%')
                           }.width('50%')
                         }
-                      }.margin({top: 8})
+                      }.margin({top: 16})
                     })
                   }.listDirection(Axis.Vertical)
                 }.width('100%').padding(16)

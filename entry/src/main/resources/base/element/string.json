@@ -47,6 +47,34 @@
     {
       "name": "add_balance_done",
       "value": "Done"
+    },
+    {
+      "name": "day_of_week_monday",
+      "value": "Monday"
+    },
+    {
+      "name": "day_of_week_tuesday",
+      "value": "TuesDay"
+    },
+    {
+      "name": "day_of_week_wednesday",
+      "value": "Wednesday"
+    },
+    {
+      "name": "day_of_week_thursday",
+      "value": "Thursday"
+    },
+    {
+      "name": "day_of_week_friday",
+      "value": "Friday"
+    },
+    {
+      "name": "day_of_week_saturday",
+      "value": "Saturday"
+    },
+    {
+      "name": "day_of_week_sunday",
+      "value": "Sunday"
     }
   ]
 }

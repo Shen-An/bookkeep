@@ -189,6 +189,8 @@ struct AddBalance {
         }
         if(this.balanceAmount == "0")
           return;
+        if(this.remark=="")
+          return;
         const fPath = this.filesDir+`/bill-${this.activeYear}-${this.activeMonth}.json`;
         // 确保文件存在
         fs.access(fPath).then((exist) => {
