@@ -6,7 +6,7 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 import router from '@ohos.router';
-import prompt from '@ohos.prompt';
+import picker from '@ohos.file.picker';
 @Component
 export struct PageEntries {
   @Link selectedYear: number;
@@ -28,7 +28,7 @@ export struct PageEntries {
                 .textAlign(TextAlign.Center)
             }.height(12).width(48)
           }.width(48)
-        }.backgroundColor('white').borderRadius(8).onClick(() => {
+        }.backgroundColor(Color.Transparent).borderRadius(8).onClick(() => {
           router.pushUrl({
             url: "pages/BillInfoPage",
             params: {
@@ -50,7 +50,7 @@ export struct PageEntries {
                 .textAlign(TextAlign.Center)
             }.height(12).width(48)
           }.width(48).alignItems(HorizontalAlign.Center)
-        }.backgroundColor('white').onClick(() => {
+        }.backgroundColor(Color.Transparent).onClick(() => {
           router.pushUrl({
             url: 'pages/Copyright'
           }, router.RouterMode.Standard, err => {
@@ -71,7 +71,19 @@ export struct PageEntries {
                 .textAlign(TextAlign.Center)
             }.height(12).width(48)
           }.width(48).alignItems(HorizontalAlign.Center)
-        }.backgroundColor('white').borderRadius(8)
+        }.backgroundColor(Color.Transparent).borderRadius(8).onClick(() => {
+          if(canIUse("SystemCapability.FileManagement.UserFileService")){
+            const documentViewPicker = new picker.DocumentViewPicker();
+            documentViewPicker.select().then(result => {
+              console.log(result[0])
+            })
+          }else{
+            router.pushUrl({url: "pages/addBalance",params: {
+              year: this.selectedYear,
+              month: this.selectedMonth
+            }})
+          }
+        })
         Button({type: ButtonType.Normal}){
           Column(){
             Row(){
@@ -86,7 +98,7 @@ export struct PageEntries {
                 .textAlign(TextAlign.Center)
             }.height(12).width(48)
           }.width(48).alignItems(HorizontalAlign.Center)
-        }.stateEffect(false).backgroundColor('white').onClick(() => {
+        }.stateEffect(false).backgroundColor(Color.Transparent).onClick(() => {
           router.pushUrl({
             url: "pages/addBalance",
             params: {
@@ -95,7 +107,7 @@ export struct PageEntries {
             }
           })
         }).borderRadius(8)
-      }.height(64).width('100%').backgroundColor("white").borderRadius(8).padding(8).shadow({radius: 24,color: 'gray'})
+      }.height(64).width('100%').backgroundColor(Color.White).borderRadius(8).padding(8).shadow({radius: 24,color: 'gray'})
     }.linearGradient({
       angle: 180,
       colors: [

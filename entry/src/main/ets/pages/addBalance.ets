@@ -234,16 +234,13 @@ struct AddBalance {
           this.balanceAmount=reason;
         })
       }
-    },
-    {
-      content: ""
-    },
+    }
   ];
   activeDate: Date = new Date();
   context = getContext(this) as common.UIAbilityContext;
   filesDir = this.context.filesDir;
   build(){
-      Column(){
+      Flex({direction: FlexDirection.Column}){
         Stack(){
           Row(){
             Text($r("app.string.balance")).fontSize(16).fontColor('white').onClick(() => {

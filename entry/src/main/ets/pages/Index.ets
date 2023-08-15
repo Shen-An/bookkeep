@@ -51,7 +51,7 @@ struct Index {
     Flex({direction: FlexDirection.Column}){
       Row(){
         Text($r("app.string.app_title"))
-          .fontColor("white")
+          .fontColor(Color.White)
           .fontSize(24)
           .fontWeight(FontWeight.Normal)
           .textAlign(TextAlign.Center)
