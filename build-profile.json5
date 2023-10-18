@@ -1,6 +1,19 @@
 {
   "app": {
-    "signingConfigs": [],
+    "signingConfigs": [
+      {
+        "name": "default",
+        "material": {
+          "certpath": "C:\\Users\\accou\\.ohos\\config\\openharmony\\auto_ohos_default_oh-bill_com.ericple.ohbill.cer",
+          "storePassword": "0000001BABC397D73E29F1237927ED857962117FB6DDDFDEBCD9E9C1A42CF5CBA30056353CEAFB8F9CF443",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001B9A0FF42F42426C98B87FD63762D195FFAB8BC3C7A95DBC2859B9F147C5C3C83CD46424D817D9B9",
+          "profile": "C:\\Users\\accou\\.ohos\\config\\openharmony\\auto_ohos_default_oh-bill_com.ericple.ohbill.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "C:\\Users\\accou\\.ohos\\config\\openharmony\\auto_ohos_default_oh-bill_com.ericple.ohbill.p12"
+        }
+      }
+    ],
     "compileSdkVersion": 9,
     "compatibleSdkVersion": 9,
     "products": [
@@ -22,6 +35,10 @@
           ]
         }
       ]
+    },
+    {
+      "name": "common",
+      "srcPath": "./common"
     }
   ]
 }
