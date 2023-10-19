@@ -3,6 +3,7 @@ import { BillingInfo } from '../DataTypes/BillingInfo';
 import { Logger } from '../Utils/Logger';
 import { CommonConfiguration } from './CommonConfiguration';
 import { BillingInfoUtils } from '../Utils/BillingInfoUtils';
+import { BillingType } from '../DataTypes/BillingType';
 
 let TAG = "DBManager";
 
@@ -53,11 +54,12 @@ export class DBManager {
   public async addBillingInfo(data: BillingInfo): Promise<number> {
     return await new Promise<number>(ret => {
       let bucket: relationalStore.ValuesBucket = {
-        'TYPE': data.type,
+        'TYPE': JSON.stringify(data.type),
         'AMOUNT': data.amount,
         'DIRECTION': data.direction,
         'TIMESTAMP': data.timestamp,
-        'IMAGE': data.image??''
+        'IMAGE': data.image??'',
+        'REMARK': data.remark??''
       };
       this.storeInstance.insert(CommonConfiguration.DB_MANAGER.TABLES.BILLING.NAME, bucket)
         .then(v => {
@@ -99,28 +101,32 @@ export class DBManager {
     })
   }
 
-  public async addBillingInfoType(name: string): Promise<number> {
+  public async addBillingInfoType(type: BillingType): Promise<number> {
     return await new Promise<number>(ret => {
       let bucket: relationalStore.ValuesBucket = {
-        "NAME": name
+        "NAME": type.name,
+        "ICON": JSON.stringify(type.icon)
       }
       this.storeInstance.insert(CommonConfiguration.DB_MANAGER.TABLES.BILLING_TYPE.NAME, bucket, (e, v) => {
         if (e) {
-          Logger.err(TAG, "error while adding billing type", name, e);
+          Logger.err(TAG, "error while adding billing type", type, e);
         }
           !e && v ? ret(v) : ret(-1);
       })
     })
   }
 
-  public async getAllBillingInfoType(): Promise<string[]> {
-    return await new Promise<string[]>(ret => {
+  public async getAllBillingInfoType(): Promise<BillingType[]> {
+    return await new Promise<BillingType[]>(ret => {
       this.storeInstance.querySql(CommonConfiguration.DB_MANAGER.SQL.GET_ALL_TYPES, [])
         .then(set => {
-          let types: string[] = [];
+          let types: BillingType[] = [];
           set.goToFirstRow();
           for (let _ = 0;_ < set.rowCount; _++) {
-            types.push(set.getString(1));
+            types.push({
+              icon: JSON.parse(set.getString(1)),
+              name: set.getString(2)
+            });
             set.goToNextRow();
           }
           ret(types);

@@ -6,11 +6,15 @@
     },
     {
       "name": "main_theme_blue",
-      "value": "#255BFF"
+      "value": "#FF1FA1FF"
     },
     {
       "name": "text_gray",
       "value": "#ff858585"
+    },
+    {
+      "name": "main_theme_shadow",
+      "value": "#FF95A4AB"
     }
   ]
 }

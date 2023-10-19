@@ -7,21 +7,24 @@
 // See the Mulan PSL v2 for more details.
 import router from '@ohos.router';
 import picker from '@ohos.file.picker';
+
 @Component
 export struct PageEntries {
   @Link selectedYear: number;
   @Link selectedMonth: number;
-  build(){
-    Row(){
-      Flex({justifyContent: FlexAlign.SpaceAround}){
-        Button({type: ButtonType.Normal}){
-          Column(){
-            Row(){
-              Image($r("app.media.balancePageIcon"))
-                .width(19)
-                .height(30)
-            }.height(34)
-            Row(){
+
+  build() {
+    Row() {
+      Flex({ justifyContent: FlexAlign.SpaceAround }) {
+        Button({ type: ButtonType.Normal }) {
+          Column() {
+            Row() {
+              Image($r("app.media.ic_public_budget"))
+                .width(32)
+                .height(32)
+            }
+
+            Row() {
               Text("账单")
                 .fontSize(10)
                 .width('100%')
@@ -36,14 +39,16 @@ export struct PageEntries {
             }
           });
         })
-        Button({type: ButtonType.Normal}){
-          Column(){
-            Row(){
-              Image($r("app.media.copyrightPageIcon"))
-                .width(22)
-                .height(12)
-            }.height(34)
-            Row(){
+
+        Button({ type: ButtonType.Normal }) {
+          Column() {
+            Row() {
+              Image($r("app.media.ic_public_opensource_info"))
+                .width(32)
+                .height(32)
+            }
+
+            Row() {
               Text("开源信息")
                 .fontSize(10)
                 .width('100%')
@@ -57,14 +62,16 @@ export struct PageEntries {
             return;
           })
         }).borderRadius(8)
-        Button({type: ButtonType.Normal}){
-          Column(){
-            Row(){
-              Image($r("app.media.graphicPageIcon"))
-                .width(27)
-                .height(24.5)
-            }.height(34)
-            Row(){
+
+        Button({ type: ButtonType.Normal }) {
+          Column() {
+            Row() {
+              Image($r("app.media.ic_public_billing_graphic"))
+                .width(32)
+                .height(32)
+            }
+
+            Row() {
               Text("经济图表")
                 .fontSize(10)
                 .width('100%')
@@ -72,26 +79,28 @@ export struct PageEntries {
             }.height(12).width(48)
           }.width(48).alignItems(HorizontalAlign.Center)
         }.backgroundColor(Color.Transparent).borderRadius(8).onClick(() => {
-          if(canIUse("SystemCapability.FileManagement.UserFileService")){
+          if (canIUse("SystemCapability.FileManagement.UserFileService")) {
             const documentViewPicker = new picker.DocumentViewPicker();
             documentViewPicker.select().then(result => {
               console.log(result[0])
             })
-          }else{
-            router.pushUrl({url: "pages/addBalance",params: {
+          } else {
+            router.pushUrl({ url: "pages/addBalance", params: {
               year: this.selectedYear,
               month: this.selectedMonth
-            }})
+            } })
           }
         })
-        Button({type: ButtonType.Normal}){
-          Column(){
-            Row(){
-              Image($r("app.media.addBalancePageIcon"))
-                .width(27)
-                .height(24.5)
-            }.height(34)
-            Row(){
+
+        Button({ type: ButtonType.Normal }) {
+          Column() {
+            Row() {
+              Image($r("app.media.ic_public_add_billing"))
+                .width(32)
+                .height(32)
+            }
+
+            Row() {
               Text("记账")
                 .fontSize(10)
                 .width('100%')
@@ -107,14 +116,20 @@ export struct PageEntries {
             }
           })
         }).borderRadius(8)
-      }.height(64).width('100%').backgroundColor(Color.White).borderRadius(8).padding(8).shadow({radius: 24,color: 'gray'})
+      }
+      .height(64)
+      .width('100%')
+      .backgroundColor(Color.White)
+      .borderRadius(8)
+      .padding(8)
+      .shadow({ radius: 24, color: $r('app.color.main_theme_shadow') })
     }.linearGradient({
       angle: 180,
       colors: [
-        ["#255BFF", 0],
+        [$r('app.color.main_theme_blue'), 0],
         ["#ffffff", 1]
       ],
       repeating: false
-    }).padding({top: 16, left:8,right:8,bottom:8})
+    }).padding({ top: 16, left: 8, right: 8, bottom: 8 })
   }
 }

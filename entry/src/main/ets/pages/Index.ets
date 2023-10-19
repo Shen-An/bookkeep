@@ -11,7 +11,7 @@ import common from '@ohos.app.ability.common';
 import { BalanceList } from '../components/BalanceList';
 import { PageEntries } from '../components/pageEntries';
 import { advancedTemplate } from '../data/defaultBalanceTemplate';
-import { DBManager, Logger, SettingManager } from '@ohos/common';
+import { BillingInfo, DBManager, Logger, SettingManager } from '@ohos/common';
 import promptAction from '@ohos.promptAction';
 
 let TAG = "INDEX";
@@ -22,44 +22,20 @@ struct Index {
   @State selectedYear: number = new Date().getFullYear();
   @State selectedMonth: number = new Date().getMonth();
   @State selectedDay: number = new Date().getDate();
-  @State currentBillingInfo: string = JSON.stringify(advancedTemplate);
+  @State currentBillingInfo: BillingInfo[] = [];
   @State totalIncome: number = 0.00;
   @State totalBalance: number = 0.00;
-  context = getContext(this) as common.UIAbilityContext;
-  filesDir = this.context.filesDir;
-  calculateTotalIncomeBalance = (source: string) => {
-    const billingInfo = JSON.parse(source);
-    this.totalBalance = 0.00;
-    this.totalIncome = 0.00;
-    billingInfo.forEach(dayInfo => {
-      dayInfo.forEach(info => {
-        if (info.direction == "in") {
-          this.totalIncome += parseFloat(info.amount);
-        } else {
-          this.totalBalance += parseFloat(info.amount);
-        }
-      })
-    })
-  }
 
   onPageShow() {
-    // fs.readText(this.filesDir + `/bill-${this.selectedYear}-${this.selectedMonth}.json`, async (err, content) => {
-    //   if (err) {
-    //     this.currentBillingInfo = JSON.stringify(advancedTemplate);
-    //     this.calculateTotalIncomeBalance(JSON.stringify(advancedTemplate));
-    //   } else {
-    //     this.currentBillingInfo = content;
-    //     this.calculateTotalIncomeBalance(content);
-    //   }
-    // });
     DBManager.getInstance().getAllBillingInfo()
       .then(r => {
+        this.currentBillingInfo = r;
         Logger.info(TAG, "get info success ", r)
       })
   }
 
   build() {
-    Flex({ direction: FlexDirection.Column }) {
+    Column() {
       Row() {
         Text($r("app.string.app_title"))
           .fontColor(Color.White)
@@ -67,7 +43,10 @@ struct Index {
           .fontWeight(FontWeight.Normal)
           .textAlign(TextAlign.Center)
           .width('100%')
-      }.height(64).width('100%').backgroundColor($r("app.color.main_theme_blue"))
+      }
+      .height(64)
+      .width('100%')
+      .backgroundColor($r("app.color.main_theme_blue"))
 
       BalanceViewer({
         selectedYear: $selectedYear,

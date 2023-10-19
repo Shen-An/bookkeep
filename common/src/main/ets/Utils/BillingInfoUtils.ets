@@ -8,7 +8,7 @@ export class BillingInfoUtils {
   public static createEmptyBillingInfo(): BillingInfo {
     let ret: BillingInfo = {
       id: -1,
-      type: '',
+      type: {icon: $r('app.string.page_show'), name: ''},
       amount: 0,
       timestamp: 0,
       direction: BillingDirection.IN
@@ -20,7 +20,7 @@ export class BillingInfoUtils {
     try {
       let ret: BillingInfo = {
         id: set.getLong(0),
-        type: set.getString(1),
+        type: JSON.parse(set.getString(1)),
         amount: set.getDouble(2),
         direction: set.getLong(3),
         timestamp: set.getLong(4),
