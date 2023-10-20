@@ -6,14 +6,12 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 import common from '@ohos.app.ability.common';
-import { BillingDirection, BillingInfo, StringUtils } from '@ohos/common';
+import { BillingDirection, BillingInfo, BillingInfoUtils, StringUtils } from '@ohos/common';
 
 @Component
 export struct BalanceList {
   @Link currentBillingInfo: BillingInfo[];
-  @Link selectedYear: number;
-  @Link selectedMonth: number;
-  @Link selectedDay: number;
+  @Link selectedDate: Date;
   @Link totalBalance: number;
   @Link totalIncome: number;
   context = getContext(this) as common.UIAbilityContext;
@@ -71,38 +69,52 @@ export struct BalanceList {
         }.height('100%')
       } else {
         List() {
-          ForEach(this.currentBillingInfo, (balance: BillingInfo) => {
+          ForEach(BillingInfoUtils.explodeMonthlyArray(this.currentBillingInfo, this.selectedDate), (balances: BillingInfo[], day: number) => {
             ListItem() {
               Column() {
-                Text(StringUtils.formatDate(balance.timestamp, 'M月D日 h:m'))
-                  .fontColor($r('app.color.text_gray'))
-                  .fontSize(14)
-                  .width('100%')
-                .margin({bottom: 4})
-
-                Row() {
-                  Row() {
-                    Image(balance.type.icon)
-                      .width(36)
-                      .height(36)
-                      .borderRadius(8)
-                      .padding(8)
-                      .backgroundColor('#ffe2effd')
-                      .margin({ right: 16 })
-                    Text(balance.remark)
-                      .textAlign(TextAlign.Start)
-                  }
-
-                  Text(`${balance.direction == BillingDirection.IN ? "+" : "-"} ${balance.amount}`)
+                if (balances.length > 0) {
+                  Text(StringUtils.formatDate(this.selectedDate, 'M月') + `${day + 1}` + "日")
+                    .fontColor($r('app.color.text_gray'))
+                    .fontSize(14)
+                    .width('100%')
+                    .margin({ bottom: 4 })
+                  Divider()
+                    .margin({ bottom: 12 })
                 }
-                .width('100%')
-                .justifyContent(FlexAlign.SpaceBetween)
+                List() {
+                  ForEach(balances, (balance: BillingInfo) => {
+                    ListItem() {
+                      Row() {
+                        Row() {
+                          Image(balance.type.icon)
+                            .width(36)
+                            .height(36)
+                            .borderRadius(8)
+                            .padding(8)
+                            .backgroundColor('#ffe2effd')
+                            .margin({ right: 16 })
+                          Text(balance.remark)
+                            .margin({ right: 16 })
+                          Text(StringUtils.formatDate(balance.timestamp, 'h:m:s'))
+                            .fontColor($r('app.color.text_gray'))
+                            .fontSize(12)
+                        }
 
+                        Text(`${balance.direction == BillingDirection.IN ? "+" : "-"} ${balance.amount}`)
+                      }
+                      .width('100%')
+                      .justifyContent(FlexAlign.SpaceBetween)
+                    }
+                    .margin({ bottom: 12 })
+                  })
+                }
               }
               .width('100%')
-            }.margin({ top: 10 })
+            }
           })
-        }.listDirection(Axis.Vertical)
+        }
+        .listDirection(Axis.Vertical)
+        .height('100%')
       }
     }.padding(8).width('100%')
   }

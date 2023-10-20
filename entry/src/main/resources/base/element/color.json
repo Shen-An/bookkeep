@@ -15,6 +15,14 @@
     {
       "name": "main_theme_shadow",
       "value": "#FF95A4AB"
+    },
+    {
+      "name": "text_white",
+      "value": "#FFCFD4D9"
+    },
+    {
+      "name": "active",
+      "value": "#2CC4E1FF"
     }
   ]
 }

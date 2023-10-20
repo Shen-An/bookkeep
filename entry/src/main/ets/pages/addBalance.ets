@@ -217,6 +217,8 @@ struct AddBalance {
         }
       }
     ];
+  @State inputMarginTop: number = 1000;
+  @State inputOpacity: number = 0;
 
   build() {
     Stack({ alignContent: Alignment.Bottom }) {
@@ -282,87 +284,167 @@ struct AddBalance {
                   .height(56)
                   .padding(12)
                   .margin(8)
-                  .shadow({ radius: 24, color: "gray" })
+                  .shadow({ radius: 24, color: $r('app.color.main_theme_shadow') })
                   .onClick(() => {
                     this.selectedTypeName = item.title;
                     this.activeType = item.img;
+                    animateTo({ duration: 800, curve: Curve.EaseOut }, () => {
+                      this.inputMarginTop = 0;
+                      this.inputOpacity = 1;
+                    })
                   })
                 Text(item.title).fontSize(12)
               }.width(56)
             }
           })
-        }.padding(12)
+        }
+        .padding(12)
+        .onClick(() => {
+          this.selectedTypeName = ''
+          animateTo({ duration: 800, curve: Curve.EaseOut }, () => {
+            this.inputMarginTop = 1000;
+            this.inputOpacity = 0;
+          })
+        })
       }
       .width('100%')
       .height('100%')
 
-      if (this.selectedTypeName !== '') {
-        Column() {
-          Row() {
-            Text(`${this.balanceAmount}`).textAlign(TextAlign.End).width('100%').padding(8)
-              .fontSize(24)
-          }.height(36)
+      Column() {
+        Row() {
+          Text(`${this.balanceAmount}`).textAlign(TextAlign.End).width('100%').padding(8)
+            .fontSize(24)
+        }.height(36)
 
-          Row() {
-            TextInput({
-              placeholder: $r("app.string.add_balance_remark_placeholder")
-            }).borderRadius(8).margin(12).onChange(value => {
-              this.remark = value;
-            })
-          }
-
-          Row() {
-            Text(`${this.activeYear} / ${(this.activeMonth + 1).toString()
-              .padStart(2, '0')} / ${this.activeDay.toString().padStart(2, '0')}`).fontSize(16)
-              .margin({ bottom: 12 }).onClick(() => {
-              DatePickerDialog.show({
-                start: new Date("2000-01-01"),
-                onAccept: (v) => {
-                  this.activeYear = v.year;
-                  this.activeMonth = v.month;
-                  this.activeDay = v.day;
-                },
-                selected: this.activeDate
-              })
-            })
-          }
-
-          GridRow({ columns: 4, gutter: 0 }) {
-            ForEach(this.balanceInputUnits, unit => {
-              GridCol() {
-                Button({ type: ButtonType.Normal }) {
-                  if (unit.contentType == "image") {
-                    Image(unit.content).width(18)
-                  } else {
-                    Text(unit.content).fontSize(18).fontColor(unit.foreColor??"black")
-                  }
-                }
-                .height(49)
-                .backgroundColor(unit.bgColor??"white")
-                .width('100%')
-                .borderRadius(0)
-                .onClick(unit.callback??(() => {
-                  return;
-                }))
-              }.border({
-                width: {
-                  top: 0.5,
-                  right: 0.5,
-                  bottom: 0,
-                  left: 0
-                },
-                color: '#ffcdcdcd'
-              })
-            })
-          }
+        Row() {
+          TextInput({
+            placeholder: $r("app.string.add_balance_remark_placeholder")
+          }).borderRadius(8).margin(12).onChange(value => {
+            this.remark = value;
+          })
         }
-        .width('100%')
-        .shadow({
-          radius: 20,
-          offsetY: 16
-        })
-        .backgroundColor(Color.White)
+
+        Row() {
+          Text(`${this.activeYear} / ${(this.activeMonth + 1).toString()
+            .padStart(2, '0')} / ${this.activeDay.toString().padStart(2, '0')}`).fontSize(16)
+            .margin({ bottom: 12 }).onClick(() => {
+            DatePickerDialog.show({
+              start: new Date("2000-01-01"),
+              onAccept: (v) => {
+                this.activeYear = v.year;
+                this.activeMonth = v.month;
+                this.activeDay = v.day;
+              },
+              selected: this.activeDate
+            })
+          })
+        }
+
+        GridRow({ columns: 4, gutter: 0 }) {
+          ForEach(this.balanceInputUnits, unit => {
+            GridCol() {
+              Button({ type: ButtonType.Normal }) {
+                if (unit.contentType == "image") {
+                  Image(unit.content).width(18)
+                } else {
+                  Text(unit.content).fontSize(18).fontColor(unit.foreColor??"black")
+                }
+              }
+              .height(49)
+              .backgroundColor(unit.bgColor??"white")
+              .width('100%')
+              .borderRadius(0)
+              .onClick(unit.callback??(() => {
+                return;
+              }))
+            }.border({
+              width: {
+                top: 0.5,
+                right: 0.5,
+                bottom: 0,
+                left: 0
+              },
+              color: '#ffcdcdcd'
+            })
+          })
+        }
       }
+      .width('100%')
+      .shadow({
+        radius: 20,
+        offsetY: 16
+      })
+      .margin({ top: this.inputMarginTop })
+      .opacity(this.inputOpacity)
+      .backgroundColor(Color.White)
+      // if (this.selectedTypeName !== '') {
+      //   Column() {
+      //     Row() {
+      //       Text(`${this.balanceAmount}`).textAlign(TextAlign.End).width('100%').padding(8)
+      //         .fontSize(24)
+      //     }.height(36)
+      //
+      //     Row() {
+      //       TextInput({
+      //         placeholder: $r("app.string.add_balance_remark_placeholder")
+      //       }).borderRadius(8).margin(12).onChange(value => {
+      //         this.remark = value;
+      //       })
+      //     }
+      //
+      //     Row() {
+      //       Text(`${this.activeYear} / ${(this.activeMonth + 1).toString()
+      //         .padStart(2, '0')} / ${this.activeDay.toString().padStart(2, '0')}`).fontSize(16)
+      //         .margin({ bottom: 12 }).onClick(() => {
+      //         DatePickerDialog.show({
+      //           start: new Date("2000-01-01"),
+      //           onAccept: (v) => {
+      //             this.activeYear = v.year;
+      //             this.activeMonth = v.month;
+      //             this.activeDay = v.day;
+      //           },
+      //           selected: this.activeDate
+      //         })
+      //       })
+      //     }
+      //
+      //     GridRow({ columns: 4, gutter: 0 }) {
+      //       ForEach(this.balanceInputUnits, unit => {
+      //         GridCol() {
+      //           Button({ type: ButtonType.Normal }) {
+      //             if (unit.contentType == "image") {
+      //               Image(unit.content).width(18)
+      //             } else {
+      //               Text(unit.content).fontSize(18).fontColor(unit.foreColor??"black")
+      //             }
+      //           }
+      //           .height(49)
+      //           .backgroundColor(unit.bgColor??"white")
+      //           .width('100%')
+      //           .borderRadius(0)
+      //           .onClick(unit.callback??(() => {
+      //             return;
+      //           }))
+      //         }.border({
+      //           width: {
+      //             top: 0.5,
+      //             right: 0.5,
+      //             bottom: 0,
+      //             left: 0
+      //           },
+      //           color: '#ffcdcdcd'
+      //         })
+      //       })
+      //     }
+      //   }
+      //   .width('100%')
+      //   .shadow({
+      //     radius: 20,
+      //     offsetY: 16
+      //   })
+      //   .margin({top: this.inputMarginTop})
+      //   .backgroundColor(Color.White)
+      // }
     }
     .width('100%')
     .height('100%')

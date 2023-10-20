@@ -10,8 +10,7 @@ import picker from '@ohos.file.picker';
 
 @Component
 export struct PageEntries {
-  @Link selectedYear: number;
-  @Link selectedMonth: number;
+  @Link selectedDate: Date;
 
   build() {
     Row() {
@@ -35,7 +34,7 @@ export struct PageEntries {
           router.pushUrl({
             url: "pages/BillInfoPage",
             params: {
-              year: this.selectedYear
+              year: this.selectedDate.getFullYear()
             }
           });
         })
@@ -86,8 +85,8 @@ export struct PageEntries {
             })
           } else {
             router.pushUrl({ url: "pages/addBalance", params: {
-              year: this.selectedYear,
-              month: this.selectedMonth
+              year: this.selectedDate.getFullYear(),
+              month: this.selectedDate.getMonth() + 1
             } })
           }
         })
@@ -111,8 +110,8 @@ export struct PageEntries {
           router.pushUrl({
             url: "pages/addBalance",
             params: {
-              year: this.selectedYear,
-              month: this.selectedMonth
+              year: this.selectedDate.getFullYear(),
+              month: this.selectedDate.getMonth() + 1
             }
           })
         }).borderRadius(8)

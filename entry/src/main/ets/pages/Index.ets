@@ -6,22 +6,16 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 import { BalanceViewer } from '../components/BalanceViewer';
-import fs from '@ohos.file.fs';
-import common from '@ohos.app.ability.common';
 import { BalanceList } from '../components/BalanceList';
 import { PageEntries } from '../components/pageEntries';
-import { advancedTemplate } from '../data/defaultBalanceTemplate';
-import { BillingInfo, DBManager, Logger, SettingManager } from '@ohos/common';
-import promptAction from '@ohos.promptAction';
+import { BillingDirection, BillingInfo, BillingInfoUtils, DBManager, Logger, SettingManager } from '@ohos/common';
 
 let TAG = "INDEX";
 
 @Entry
 @Component
 struct Index {
-  @State selectedYear: number = new Date().getFullYear();
-  @State selectedMonth: number = new Date().getMonth();
-  @State selectedDay: number = new Date().getDate();
+  @State selectedDate: Date = new Date();
   @State currentBillingInfo: BillingInfo[] = [];
   @State totalIncome: number = 0.00;
   @State totalBalance: number = 0.00;
@@ -30,7 +24,12 @@ struct Index {
     DBManager.getInstance().getAllBillingInfo()
       .then(r => {
         this.currentBillingInfo = r;
-        Logger.info(TAG, "get info success ", r)
+        this.currentBillingInfo.forEach(info => {
+            info.direction == BillingDirection.IN ? this.totalIncome += info.amount : this.totalBalance += info.amount;
+        })
+        Logger.info(TAG, "get info success ", r);
+        Logger.info(TAG, "explode length: ", BillingInfoUtils.explodeMonthlyArray(this.currentBillingInfo, new Date())[19]
+          .length)
       })
   }
 
@@ -44,24 +43,20 @@ struct Index {
           .textAlign(TextAlign.Center)
           .width('100%')
       }
-      .height(64)
+      .padding(24)
       .width('100%')
       .backgroundColor($r("app.color.main_theme_blue"))
 
       BalanceViewer({
-        selectedYear: $selectedYear,
-        selectedMonth: $selectedMonth,
-        selectedDay: $selectedDay,
+        selectedDate: $selectedDate,
         currentBillingInfo: $currentBillingInfo,
         totalIncome: $totalIncome,
         totalBalance: $totalBalance
       })
-      PageEntries({ selectedYear: $selectedYear, selectedMonth: $selectedMonth })
+      PageEntries({ selectedDate: $selectedDate })
       BalanceList({
         currentBillingInfo: $currentBillingInfo,
-        selectedMonth: $selectedMonth,
-        selectedDay: $selectedDay,
-        selectedYear: $selectedYear,
+        selectedDate: $selectedDate,
         totalBalance: $totalBalance,
         totalIncome: $totalIncome
       })

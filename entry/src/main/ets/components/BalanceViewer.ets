@@ -8,44 +8,28 @@
 import fs from '@ohos.file.fs';
 import common from '@ohos.app.ability.common';
 import { advancedTemplate } from '../data/defaultBalanceTemplate';
+import { StringUtils } from '@ohos/common';
 
 @Component
 export struct BalanceViewer {
-  @Link selectedYear: number;
-  @Link selectedMonth: number;
-  @Link selectedDay: number;
+  @Link selectedDate: Date;
   @Link currentBillingInfo: string;
   @Link totalIncome: number;
   @Link totalBalance: number;
-  selectedDate: Date = new Date();
-  calculateTotalIncomeBalance = (source: string) => {
-    const billingInfo = JSON.parse(source);
-    this.totalBalance = 0.00;
-    this.totalIncome = 0.00;
-    billingInfo.forEach(dayInfo => {
-      dayInfo.forEach(info => {
-        if (info.direction == "in") {
-          this.totalIncome += parseFloat(info.amount);
-        } else {
-          this.totalBalance += parseFloat(info.amount);
-        }
-      })
-    })
-  }
 
   build() {
     Column() {
       Row() {
         Column() {
           Row() {
-            Text(`${this.selectedYear.toString()}`).fontSize(12).fontColor("gray")
-            Text($r("app.string.year")).fontSize(12).fontColor("gray")
+            Text(StringUtils.formatDate(this.selectedDate, 'Y')).fontSize(12).fontColor($r('app.color.text_white'))
+            Text($r("app.string.year")).fontSize(12).fontColor($r('app.color.text_white'))
           }
         }.width('20%')
 
         Column() {
           Text($r("app.string.income"))
-            .fontColor("gray")
+            .fontColor($r('app.color.text_white'))
             .fontSize(12)
             .textAlign(TextAlign.Start)
             .width('100%')
@@ -53,7 +37,7 @@ export struct BalanceViewer {
 
         Column() {
           Text($r("app.string.balance"))
-            .fontColor("gray")
+            .fontColor($r('app.color.text_white'))
             .fontSize(12)
             .textAlign(TextAlign.Start)
             .width('100%')
@@ -67,11 +51,11 @@ export struct BalanceViewer {
         Column() {
           Button({ type: ButtonType.Normal }) {
             Row() {
-              Text(`${(this.selectedMonth + 1).toString()}`)
+              Text(StringUtils.formatDate(this.selectedDate, 'M'))
                 .fontSize(22)
-                .fontColor('white')
+                .fontColor(Color.White)
               Text($r("app.string.month"))
-                .fontColor('white')
+                .fontColor($r('app.color.text_white'))
                 .fontSize(12)
                 .align(Alignment.Bottom)
                 .height(22)
@@ -85,16 +69,15 @@ export struct BalanceViewer {
               selected: this.selectedDate,
               onAccept: (v) => {
                 this.selectedDate.setFullYear(v.year, v.month, v.day);
-                this.selectedYear = v.year;
-                this.selectedMonth = v.month;
-                this.selectedDay = v.day;
               }
             });
           })
           .backgroundColor($r('app.color.main_theme_blue'))
           .width('100%')
           .borderRadius(4)
-        }.width('20%').border({
+        }
+        .width('20%')
+        .border({
           style: BorderStyle.Solid,
           color: { right: "gray" },
           width: { right: 1 }
@@ -102,7 +85,7 @@ export struct BalanceViewer {
 
         Column() {
           Text(this.totalIncome.toFixed(2))
-            .fontColor("white")
+            .fontColor(Color.White)
             .fontSize(20)
             .textAlign(TextAlign.Start)
             .width('100%')
@@ -111,7 +94,7 @@ export struct BalanceViewer {
 
         Column() {
           Text(this.totalBalance.toFixed(2))
-            .fontColor("white")
+            .fontColor(Color.White)
             .fontSize(20)
             .textAlign(TextAlign.Start)
             .width('100%')

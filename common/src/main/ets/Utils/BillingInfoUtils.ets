@@ -1,6 +1,8 @@
 import relationalStore from '@ohos.data.relationalStore';
 import { BillingDirection, BillingInfo } from '../DataTypes/BillingInfo';
 import { Logger } from '../Utils/Logger';
+import { DateUtils } from './DateUtils';
+import { StringUtils } from './StringUtils';
 
 let TAG = "DataTypes";
 
@@ -8,7 +10,7 @@ export class BillingInfoUtils {
   public static createEmptyBillingInfo(): BillingInfo {
     let ret: BillingInfo = {
       id: -1,
-      type: {icon: $r('app.string.page_show'), name: ''},
+      type: { icon: $r('app.string.page_show'), name: '' },
       amount: 0,
       timestamp: 0,
       direction: BillingDirection.IN
@@ -48,5 +50,30 @@ export class BillingInfoUtils {
       Logger.err(TAG, "Failed to parse ResultSet at result line", set.rowIndex, e, set);
       return ret;
     }
+  }
+
+  public static filterByDate(src: BillingInfo[], start: Date, end?: Date): BillingInfo[] {
+    let startStamp = start.getTime();
+    let endStamp = end ? end.getTime() : startStamp * 2;
+    return src.filter((i) => (i.timestamp > startStamp && i.timestamp < endStamp));
+  }
+
+  public static filterByTypeName(src: BillingInfo[], keyword: string): BillingInfo[] {
+    return src.filter((i) => i.type.name.includes(keyword));
+  }
+
+  public static explodeMonthlyArray(src: BillingInfo[], month: Date): BillingInfo[][] {
+    let totalDay = DateUtils.getDayNumByJSMonth(month);
+    month.setHours(0, 0, 0, 0);
+    Logger.info(TAG, "exploding src length: ", src.length)
+    let ret: BillingInfo[][] = [];
+    for (let i = 1;i <= totalDay; i++) {
+      month.setDate(i);
+      let nextDay = new Date(month.getTime() + 1000 * 60 * 60 * 24);
+      let temp = this.filterByDate(src, month, nextDay);
+      Logger.info(TAG, "explode info - time: ", StringUtils.formatDate(month, 'Y-M-D h:m:s'), "next day: ", StringUtils.formatDate(nextDay, 'Y-M-D h:m:s'), "length: ", temp.length)
+      ret.push(temp);
+    }
+    return ret;
   }
 }
