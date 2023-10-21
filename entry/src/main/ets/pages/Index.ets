@@ -20,9 +20,15 @@ struct Index {
   @State totalIncome: number = 0.00;
   @State totalBalance: number = 0.00;
 
+  clearCache() {
+    this.totalIncome = 0;
+    this.totalBalance = 0;
+  }
+
   onPageShow() {
     DBManager.getInstance().getAllBillingInfo()
       .then(r => {
+        this.clearCache();
         this.currentBillingInfo = r;
         this.currentBillingInfo.forEach(info => {
             info.direction == BillingDirection.IN ? this.totalIncome += info.amount : this.totalBalance += info.amount;

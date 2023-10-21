@@ -71,8 +71,47 @@ export class BillingInfoUtils {
       month.setDate(i);
       let nextDay = new Date(month.getTime() + 1000 * 60 * 60 * 24);
       let temp = this.filterByDate(src, month, nextDay);
-      Logger.info(TAG, "explode info - time: ", StringUtils.formatDate(month, 'Y-M-D h:m:s'), "next day: ", StringUtils.formatDate(nextDay, 'Y-M-D h:m:s'), "length: ", temp.length)
+      Logger.info(TAG, "explode info - time: ", StringUtils.formatDate(month, 'Y-M-D h:m:s'), "next day: ", StringUtils.formatDate(nextDay, 'Y-M-D h:m:s'), "length: ", temp.length);
       ret.push(temp);
+    }
+    return ret;
+  }
+
+  public static explodeYearlyArray(src: BillingInfo[], year: Date): BillingInfo[][] {
+    year.setFullYear(year.getFullYear(), 1, 1);
+    year.setHours(0, 0, 0, 0);
+    Logger.info(TAG, "exploding src length: ", src.length)
+    let ret: BillingInfo[][] = [];
+    for (let i = 0;i < 12; i++) {
+      year.setMonth(i);
+      let nextMonth = new Date(year.getTime() + 1000 * 60 * 60 * 24 * DateUtils.getDayNumByJSMonth(year));
+      let temp = this.filterByDate(src, year, nextMonth);
+      Logger.info(TAG, "explode info - time: ", StringUtils.formatDate(year, 'Y-M-D h:m:s'), "next day: ", StringUtils.formatDate(nextMonth, 'Y-M-D h:m:s'), "length: ", temp.length);
+      ret.push(temp);
+    }
+    return ret;
+  }
+
+  public static calculateTotalIncome(src: BillingInfo[]): number {
+    let ret = 0;
+    for (let i = 0;i < src.length; i++) {
+      if (src[i].direction == BillingDirection.IN) ret += src[i].amount;
+    }
+    return ret;
+  }
+
+  public static calculateTotalOutBill(src: BillingInfo[]): number {
+    let ret = 0;
+    for (let i = 0;i < src.length; i++) {
+      if (src[i].direction == BillingDirection.OUT) ret += src[i].amount;
+    }
+    return ret;
+  }
+
+  public static calculateTotalLeft(src: BillingInfo[]): number {
+    let ret = 0;
+    for (let i = 0;i < src.length; i++) {
+        src[i].direction == BillingDirection.IN ? ret += src[i].amount : ret -= src[i].amount;
     }
     return ret;
   }

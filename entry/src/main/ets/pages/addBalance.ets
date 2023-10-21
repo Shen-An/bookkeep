@@ -224,7 +224,7 @@ struct AddBalance {
     Stack({ alignContent: Alignment.Bottom }) {
       Column() {
         Row() {
-          Column() {
+          Row() {
             Text($r("app.string.balance"))
               .fontSize(16)
               .fontColor('white')

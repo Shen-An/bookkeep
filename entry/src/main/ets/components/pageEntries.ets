@@ -34,7 +34,7 @@ export struct PageEntries {
           router.pushUrl({
             url: "pages/BillInfoPage",
             params: {
-              year: this.selectedDate.getFullYear()
+              date: this.selectedDate
             }
           });
         })

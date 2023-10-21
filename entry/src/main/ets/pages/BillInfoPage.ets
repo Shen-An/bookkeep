@@ -6,21 +6,49 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 import router from '@ohos.router'
-import { advancedTemplate } from '../data/defaultBalanceTemplate';
+import { BillingDirection, BillingInfo, BillingInfoUtils, DBManager, Logger, StringUtils } from '@ohos/common';
+
+let TAG = "BillInfoPage"
 
 @Entry
 @Component
 struct BillInfoPage {
-  @State activeYear: number = router.getParams()["year"];
+  @State activeDate: Date = new Date();
+  @State monthlySepBillInfo: BillingInfo[][] = [];
+  @State yearlyLeft: number = 0;
+  @State yearlyOutBill: number = 0;
+  @State yearlyIncome: number = 0;
+
+  clearCache() {
+    this.yearlyLeft = 0;
+    this.yearlyOutBill = 0;
+    this.yearlyIncome = 0;
+  }
 
   onPageShow() {
-    // 读取一月
+    DBManager.getInstance().getAllBillingInfo()
+      .then(r => {
+        this.clearCache();
+        Logger.info(TAG, "activeDate:", StringUtils.formatDate(this.activeDate, 'Y-M-D'))
+        this.monthlySepBillInfo = BillingInfoUtils.explodeYearlyArray(r, this.activeDate);
+        this.monthlySepBillInfo.forEach(monthlyInfo => {
+          monthlyInfo.forEach(info => {
+            if (info.direction == BillingDirection.IN) {
+              this.yearlyLeft += info.amount;
+              this.yearlyIncome += info.amount;
+            } else {
+              this.yearlyLeft -= info.amount;
+              this.yearlyOutBill += info.amount;
+            }
+          })
+        })
+      })
   }
 
   build() {
     Column() {
       Row() {
-        Text(`${this.activeYear}`)
+        Text(`${this.activeDate.getFullYear()}`)
           .fontSize(16)
           .margin({ left: 16 })
         Text($r("app.string.year"))
@@ -33,7 +61,7 @@ struct BillInfoPage {
         DatePickerDialog.show({
           start: new Date("2000-01-01"),
           onAccept: (v) => {
-            this.activeYear = v.year;
+            this.activeDate.setFullYear(v.year, v.month, v.day);
           }
         })
       })
@@ -44,14 +72,13 @@ struct BillInfoPage {
       Row() {
         Column() {
           Text("年结余").fontSize(14).fontColor('#ffffff').margin(4).height(22)
-          Text("-248.81").fontSize(28).fontColor('#ffffff').margin(4).height(36)
+          Text(`${this.yearlyLeft}`).fontSize(28).fontColor('#ffffff').margin(4).height(36)
           Row() {
-            Text("年收入 0.00")
-              .textAlign(TextAlign.Start)
+            Text(`年收入 ${this.yearlyIncome}`)
               .fontColor('#ffffff')
               .fontSize(14)
               .height(30)
-            Text("年支出 0.00")
+            Text(`年支出 ${this.yearlyOutBill}`)
               .fontColor('#ffffff')
               .fontSize(14)
               .height(30)
@@ -68,33 +95,55 @@ struct BillInfoPage {
 
       Row() {
         Column() {
-          Row() {
-            Text("月份").fontSize(12).fontColor($r("app.color.text_gray"))
-            Text("月收入").fontSize(12).fontColor($r("app.color.text_gray"))
-            Text("月支出").fontSize(12).fontColor($r("app.color.text_gray"))
-            Text("月结余").fontSize(12).fontColor($r("app.color.text_gray"))
+          GridRow({ columns: 4 }) {
+            GridCol() {
+              Text("月份").fontSize(12).fontColor($r("app.color.text_gray"))
+            }
+
+            GridCol() {
+              Text("月收入").fontSize(12).fontColor($r("app.color.text_gray"))
+            }
+
+            GridCol() {
+              Text("月支出").fontSize(12).fontColor($r("app.color.text_gray"))
+            }
+
+            GridCol() {
+              Text("月结余").fontSize(12).fontColor($r("app.color.text_gray"))
+            }
           }
-          .justifyContent(FlexAlign.SpaceAround)
           .width('100%')
           .margin({ bottom: 8 })
 
           Row() {
             List() {
-              ListItem() {
-                Row() {
-                  Text("8月").fontSize(16)
-                  Text("0.00").fontSize(16)
-                  Text("248.81").fontSize(16)
-                  Text("-248.81").fontSize(16)
+              ForEach(this.monthlySepBillInfo, (monthlyInfo: BillingInfo[], index: number) => {
+                ListItem() {
+                  GridRow({ columns: 4 }) {
+                    GridCol() {
+                      Text(`${index + 1}月`).fontSize(16)
+                    }
+
+                    GridCol() {
+                      Text(`${BillingInfoUtils.calculateTotalIncome(monthlyInfo)}`).fontSize(14)
+                    }
+
+                    GridCol() {
+                      Text(`${BillingInfoUtils.calculateTotalOutBill(monthlyInfo)}`).fontSize(14)
+                    }
+
+                    GridCol() {
+                      Text(`${BillingInfoUtils.calculateTotalLeft(monthlyInfo)}`).fontSize(14)
+                    }
+                  }
+                  .padding(12)
+                  .border({
+                    width: { top: 0.5 },
+                    color: $r("app.color.text_gray")
+                  })
+                  .width('100%')
                 }
-                .padding(12)
-                .border({
-                  width: { top: 0.5 },
-                  color: $r("app.color.text_gray")
-                })
-                .width('100%')
-                .justifyContent(FlexAlign.SpaceAround)
-              }
+              })
             }.listDirection(Axis.Vertical)
           }
           .width('100%')
