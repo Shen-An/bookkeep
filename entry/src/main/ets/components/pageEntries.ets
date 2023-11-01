@@ -6,7 +6,7 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 import router from '@ohos.router';
-import picker from '@ohos.file.picker';
+import promptAction from '@ohos.promptAction';
 
 @Component
 export struct PageEntries {
@@ -78,17 +78,7 @@ export struct PageEntries {
             }.height(12).width(48)
           }.width(48).alignItems(HorizontalAlign.Center)
         }.backgroundColor(Color.Transparent).borderRadius(8).onClick(() => {
-          if (canIUse("SystemCapability.FileManagement.UserFileService")) {
-            const documentViewPicker = new picker.DocumentViewPicker();
-            documentViewPicker.select().then(result => {
-              console.log(result[0])
-            })
-          } else {
-            router.pushUrl({ url: "pages/addBalance", params: {
-              year: this.selectedDate.getFullYear(),
-              month: this.selectedDate.getMonth() + 1
-            } })
-          }
+          promptAction.showToast({ message: "待开发" })
         })
 
         Button({ type: ButtonType.Normal }) {

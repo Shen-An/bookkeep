@@ -7,7 +7,7 @@
 // See the Mulan PSL v2 for more details.
 import router from '@ohos.router';
 import common from '@ohos.app.ability.common';
-import { defaultExpenseType, defaultIncomeType } from '../data/balanceTypes'
+import { defaultExpenseType, defaultIncomeType } from '../data/balanceTypes';
 import { DBManager } from '@ohos/common';
 import { BillingDirection } from '@ohos/common/src/main/ets/DataTypes/BillingInfo';
 import promptAction from '@ohos.promptAction';
@@ -220,6 +220,13 @@ struct AddBalance {
   @State inputMarginTop: number = 1000;
   @State inputOpacity: number = 0;
 
+  onBackPress() {
+    if (this.selectedTypeName != '') {
+      this.selectedTypeName = '';
+      return;
+    }
+  }
+
   build() {
     Stack({ alignContent: Alignment.Bottom }) {
       Column() {
@@ -276,36 +283,45 @@ struct AddBalance {
         GridRow({ columns: 4, gutter: 12 }) {
           ForEach(this.activeTab == 0 ? defaultExpenseType : defaultIncomeType, item => {
             GridCol() {
-              Column() {
-                Image(item.img)
-                  .backgroundColor(this.selectedTypeName == item.title ? "#ff5fbfff" : "white")
-                  .borderRadius(16)
-                  .width(56)
-                  .height(56)
-                  .padding(12)
-                  .margin(8)
-                  .shadow({ radius: 24, color: $r('app.color.main_theme_shadow') })
-                  .onClick(() => {
-                    this.selectedTypeName = item.title;
-                    this.activeType = item.img;
-                    animateTo({ duration: 800, curve: Curve.EaseOut }, () => {
-                      this.inputMarginTop = 0;
-                      this.inputOpacity = 1;
+              Column({ space: 4 }) {
+                Row() {
+                  Image(item.img)
+                    .width(24)
+                    .height(24)
+                    .onClick(() => {
+                      this.selectedTypeName = item.title;
+                      this.activeType = item.img;
+                      animateTo({ duration: 800, curve: Curve.EaseOut }, () => {
+                        this.inputMarginTop = 0;
+                        this.inputOpacity = 1;
+                      })
                     })
+                }
+                .shadow({ radius: 24, color: $r('app.color.main_theme_shadow') })
+                .borderRadius(16)
+                .backgroundColor(this.selectedTypeName == item.title ? "#ffcfe8ff" : "white")
+                .width(48)
+                .height(48)
+                .justifyContent(FlexAlign.Center)
+                .onClick(() => {
+                  this.selectedTypeName = ''
+                  animateTo({ duration: 800, curve: Curve.EaseOut }, () => {
+                    this.inputMarginTop = 1000;
+                    this.inputOpacity = 0;
                   })
-                Text(item.title).fontSize(12)
-              }.width(56)
+                })
+
+                Row() {
+                  Text(item.title).fontSize(12)
+                }
+              }
+              .width(56)
+              .height(68)
+
             }
           })
         }
         .padding(12)
-        .onClick(() => {
-          this.selectedTypeName = ''
-          animateTo({ duration: 800, curve: Curve.EaseOut }, () => {
-            this.inputMarginTop = 1000;
-            this.inputOpacity = 0;
-          })
-        })
       }
       .width('100%')
       .height('100%')
@@ -347,14 +363,14 @@ struct AddBalance {
                 if (unit.contentType == "image") {
                   Image(unit.content).width(18)
                 } else {
-                  Text(unit.content).fontSize(18).fontColor(unit.foreColor??"black")
+                  Text(unit.content).fontSize(18).fontColor(unit.foreColor ?? "black")
                 }
               }
               .height(49)
-              .backgroundColor(unit.bgColor??"white")
+              .backgroundColor(unit.bgColor ?? "white")
               .width('100%')
               .borderRadius(0)
-              .onClick(unit.callback??(() => {
+              .onClick(unit.callback ?? (() => {
                 return;
               }))
             }.border({
@@ -377,6 +393,7 @@ struct AddBalance {
       .margin({ top: this.inputMarginTop })
       .opacity(this.inputOpacity)
       .backgroundColor(Color.White)
+
       // if (this.selectedTypeName !== '') {
       //   Column() {
       //     Row() {
