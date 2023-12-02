@@ -8,7 +8,7 @@
 import { BalanceViewer } from '../components/BalanceViewer';
 import { BalanceList } from '../components/BalanceList';
 import { PageEntries } from '../components/pageEntries';
-import { BillingDirection, BillingInfo, BillingInfoUtils, DBManager, Logger, SettingManager } from '@ohos/common';
+import { BillingDirection, BillingInfo, BillingInfoUtils, DBManager, Logger } from '@ohos/common';
 
 let TAG = "INDEX";
 
@@ -31,7 +31,7 @@ struct Index {
         this.clearCache();
         this.currentBillingInfo = r;
         this.currentBillingInfo.forEach(info => {
-            info.direction == BillingDirection.IN ? this.totalIncome += info.amount : this.totalBalance += info.amount;
+          info.direction == BillingDirection.IN ? this.totalIncome += info.amount : this.totalBalance += info.amount;
         })
         Logger.info(TAG, "get info success ", r);
         Logger.info(TAG, "explode length: ", BillingInfoUtils.explodeMonthlyArray(this.currentBillingInfo, new Date())[19]
@@ -59,7 +59,7 @@ struct Index {
         totalIncome: $totalIncome,
         totalBalance: $totalBalance
       })
-      PageEntries({ selectedDate: $selectedDate })
+      PageEntries()
       BalanceList({
         currentBillingInfo: $currentBillingInfo,
         selectedDate: $selectedDate,

@@ -10,7 +10,6 @@ import common from '@ohos.app.ability.common';
 import { defaultExpenseType, defaultIncomeType } from '../data/balanceTypes';
 import { DBManager } from '@ohos/common';
 import { BillingDirection } from '@ohos/common/src/main/ets/DataTypes/BillingInfo';
-import promptAction from '@ohos.promptAction';
 
 @Entry
 @Component
@@ -212,7 +211,7 @@ struct AddBalance {
             remark: this.remark
           })
             .then(v => {
-              promptAction.showToast({ message: '添加状态' + v });
+              router.back();
             })
         }
       }
@@ -341,7 +340,7 @@ struct AddBalance {
         }
 
         Row() {
-          Text(`${this.activeYear} / ${(this.activeMonth + 1).toString()
+          Text(`${this.activeYear} / ${(this.activeMonth).toString()
             .padStart(2, '0')} / ${this.activeDay.toString().padStart(2, '0')}`).fontSize(16)
             .margin({ bottom: 12 }).onClick(() => {
             DatePickerDialog.show({

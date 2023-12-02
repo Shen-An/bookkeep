@@ -10,7 +10,7 @@ import promptAction from '@ohos.promptAction';
 
 @Component
 export struct PageEntries {
-  @Link selectedDate: Date;
+  private selectedDate: Date = new Date();
 
   build() {
     Row() {
