@@ -7,10 +7,16 @@
 // See the Mulan PSL v2 for more details.
 import router from '@ohos.router';
 import common from '@ohos.app.ability.common';
-import { defaultExpenseType, defaultIncomeType } from '../data/balanceTypes';
+import { defaultExpenseType, defaultIncomeType, IBillType } from '../data/balanceTypes';
 import { DBManager } from '@ohos/common';
 import { BillingDirection } from '@ohos/common/src/main/ets/DataTypes/BillingInfo';
-
+interface IKeyboardUnit{
+  content: string | Resource,
+  contentType?: string,
+  callback?: () => void,
+  bgColor?: ResourceColor,
+  foreColor?: ResourceColor
+}
 @Entry
 @Component
 struct AddBalance {
@@ -22,19 +28,13 @@ struct AddBalance {
   @State remark: string = "";
   @State calculateAction: number = 0;
   @State doneButtonText: string = "Ok";
-  @State activeYear: number = router.getParams()['year'];
-  @State activeMonth: number = router.getParams()['month'];
+  @State activeYear: number = (router.getParams() as ESObject)['year'];
+  @State activeMonth: number = (router.getParams() as ESObject)['month'];
   @State activeDay: number = new Date().getDate();
   activeDate: Date = new Date();
   context = getContext(this) as common.UIAbilityContext;
   filesDir = this.context.filesDir;
-  balanceInputUnits: {
-    content: string | Resource,
-    contentType?: string,
-    callback?: () => void,
-    bgColor?: ResourceColor,
-    foreColor?: ResourceColor
-  }[] =
+  balanceInputUnits: IKeyboardUnit[] =
     [
       {
         content: "7",
@@ -280,7 +280,7 @@ struct AddBalance {
         .width('100%')
 
         GridRow({ columns: 4, gutter: 12 }) {
-          ForEach(this.activeTab == 0 ? defaultExpenseType : defaultIncomeType, item => {
+          ForEach(this.activeTab == 0 ? defaultExpenseType : defaultIncomeType, (item:IBillType) => {
             GridCol() {
               Column({ space: 4 }) {
                 Row() {
@@ -356,7 +356,7 @@ struct AddBalance {
         }
 
         GridRow({ columns: 4, gutter: 0 }) {
-          ForEach(this.balanceInputUnits, unit => {
+          ForEach(this.balanceInputUnits, (unit:IKeyboardUnit) => {
             GridCol() {
               Button({ type: ButtonType.Normal }) {
                 if (unit.contentType == "image") {

@@ -5,7 +5,10 @@
 // http://license.coscl.org.cn/MulanPSL2
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
-export const defaultExpenseType: {title: string, img: Resource}[] = [
+export interface IBillType {
+  title: string; img: Resource;
+}
+export const defaultExpenseType: IBillType[] = [
   {title: "餐饮", img: $r("app.media.eatIcon")},
   {title: "购物", img: $r("app.media.shoppingIcon")},
   {title: "蔬菜", img: $r("app.media.vegetablesExpenseIcon")},
@@ -26,7 +29,7 @@ export const defaultExpenseType: {title: string, img: Resource}[] = [
   {title: "捐赠", img: $r("app.media.supportExpenseIcon")}
 ];
 
-export const defaultIncomeType: {title: string, img: Resource}[] = [
+export const defaultIncomeType: IBillType[] = [
   {title: "工资", img: $r("app.media.salaryIcon")},
   {title: "理财", img: $r("app.media.foundationIcon")},
   {title: "礼金", img: $r("app.media.giftMoneyIcon")},

@@ -4,11 +4,12 @@ import { Logger } from '../Utils/Logger';
 import { CommonConfiguration } from './CommonConfiguration';
 import { BillingInfoUtils } from '../Utils/BillingInfoUtils';
 import { BillingType } from '../DataTypes/BillingType';
+import { BusinessError } from '@ohos.base';
 
 let TAG = "DBManager";
 
 export class DBManager {
-  private storeInstance: relationalStore.RdbStore;
+  private storeInstance?: relationalStore.RdbStore;
 
   public constructor(context: Context) {
     relationalStore.getRdbStore(context, {
@@ -21,11 +22,11 @@ export class DBManager {
             Logger.info(TAG, "database initialized")
             this.storeInstance = store;
           })
-          .catch(e => {
+          .catch((e:BusinessError) => {
             Logger.err(TAG, "error while initializing db", e);
           });
       })
-      .catch(e => {
+      .catch((e:BusinessError) => {
         Logger.err(TAG, "error while creating dbManager instance:", e);
       });
   }
@@ -38,13 +39,13 @@ export class DBManager {
 
   public async getAllBillingInfo(): Promise<BillingInfo[]> {
     return await new Promise<BillingInfo[]>(ret => {
-      this.storeInstance.query(new relationalStore.RdbPredicates(CommonConfiguration.DB_MANAGER.TABLES.BILLING.NAME), [])
+      this.storeInstance!.query(new relationalStore.RdbPredicates(CommonConfiguration.DB_MANAGER.TABLES.BILLING.NAME), [])
         .then(v => {
           let info = BillingInfoUtils.createBillingInfoArrayFromResultSet(v);
           v.close();
           ret(info);
         })
-        .catch(e => {
+        .catch((e:BusinessError) => {
           Logger.err(TAG, "error while query all billing info:", e);
           ret([]);
         })
@@ -61,11 +62,11 @@ export class DBManager {
         'IMAGE': data.image??'',
         'REMARK': data.remark??''
       };
-      this.storeInstance.insert(CommonConfiguration.DB_MANAGER.TABLES.BILLING.NAME, bucket)
+      this.storeInstance!.insert(CommonConfiguration.DB_MANAGER.TABLES.BILLING.NAME, bucket)
         .then(v => {
           ret(v);
         })
-        .catch(e => {
+        .catch((e:BusinessError) => {
           Logger.err(TAG, "error while adding billing info", e, bucket);
           ret(-1);
         })
@@ -74,13 +75,13 @@ export class DBManager {
 
   public async searchBillingInfo(keyword: string): Promise<BillingInfo[]> {
     return await new Promise<BillingInfo[]>(ret => {
-      this.storeInstance.querySql(CommonConfiguration.DB_MANAGER.SQL.SEARCH_BILLINGS, [keyword, keyword])
+      this.storeInstance!.querySql(CommonConfiguration.DB_MANAGER.SQL.SEARCH_BILLINGS, [keyword, keyword])
         .then(v => {
           let info = BillingInfoUtils.createBillingInfoArrayFromResultSet(v);
           v.close();
           ret(info);
         })
-        .catch(e => {
+        .catch((e:BusinessError) => {
           Logger.err(TAG, "error while searching billing info with keyword", keyword, e);
           ret([]);
         })
@@ -89,13 +90,13 @@ export class DBManager {
 
   public async searchBillingInfoByDateRange(start: Date, end: Date): Promise<BillingInfo[]> {
     return await new Promise<BillingInfo[]>(ret => {
-      this.storeInstance.querySql(CommonConfiguration.DB_MANAGER.SQL.SEARCH_BY_DATE_RANGE, [start.getTime(), end.getTime()])
+      this.storeInstance!.querySql(CommonConfiguration.DB_MANAGER.SQL.SEARCH_BY_DATE_RANGE, [start.getTime(), end.getTime()])
         .then(v => {
           let info = BillingInfoUtils.createBillingInfoArrayFromResultSet(v);
           v.close();
           ret(info);
         })
-        .catch(e => {
+        .catch((e:BusinessError) => {
           Logger.err(TAG, "error while searching billing info by date range", start.getTime(), end.getTime(), e);
         })
     })
@@ -107,7 +108,7 @@ export class DBManager {
         "NAME": type.name,
         "ICON": JSON.stringify(type.icon)
       }
-      this.storeInstance.insert(CommonConfiguration.DB_MANAGER.TABLES.BILLING_TYPE.NAME, bucket, (e, v) => {
+      this.storeInstance!.insert(CommonConfiguration.DB_MANAGER.TABLES.BILLING_TYPE.NAME, bucket, (e, v) => {
         if (e) {
           Logger.err(TAG, "error while adding billing type", type, e);
         }
@@ -118,7 +119,7 @@ export class DBManager {
 
   public async getAllBillingInfoType(): Promise<BillingType[]> {
     return await new Promise<BillingType[]>(ret => {
-      this.storeInstance.querySql(CommonConfiguration.DB_MANAGER.SQL.GET_ALL_TYPES, [])
+      this.storeInstance!.querySql(CommonConfiguration.DB_MANAGER.SQL.GET_ALL_TYPES, [])
         .then(set => {
           let types: BillingType[] = [];
           set.goToFirstRow();

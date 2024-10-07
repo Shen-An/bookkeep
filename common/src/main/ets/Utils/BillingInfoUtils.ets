@@ -32,7 +32,7 @@ export class BillingInfoUtils {
       return ret;
     } catch (e) {
       Logger.err(TAG, "Failed to parse ResultSet at result line", set.rowIndex, e, set);
-      return this.createEmptyBillingInfo();
+      return BillingInfoUtils.createEmptyBillingInfo();
     }
   }
 
@@ -42,7 +42,7 @@ export class BillingInfoUtils {
     set.goToFirstRow();
     try {
       for (let _ = 0;_ < set.rowCount; _++) {
-        ret.push(this.createBillingInfoFromResultSet(set));
+        ret.push(BillingInfoUtils.createBillingInfoFromResultSet(set));
         set.goToNextRow();
       }
       return ret;
@@ -70,7 +70,7 @@ export class BillingInfoUtils {
     for (let i = 1;i <= totalDay; i++) {
       month.setDate(i);
       let nextDay = new Date(month.getTime() + 1000 * 60 * 60 * 24);
-      let temp = this.filterByDate(src, month, nextDay);
+      let temp = BillingInfoUtils.filterByDate(src, month, nextDay);
       Logger.info(TAG, "explode info - time: ", StringUtils.formatDate(month, 'Y-M-D h:m:s'), "next day: ", StringUtils.formatDate(nextDay, 'Y-M-D h:m:s'), "length: ", temp.length);
       ret.push(temp);
     }
@@ -85,7 +85,7 @@ export class BillingInfoUtils {
     for (let i = 0;i < 12; i++) {
       year.setMonth(i);
       let nextMonth = new Date(year.getTime() + 1000 * 60 * 60 * 24 * DateUtils.getDayNumByJSMonth(year));
-      let temp = this.filterByDate(src, year, nextMonth);
+      let temp = BillingInfoUtils.filterByDate(src, year, nextMonth);
       Logger.info(TAG, "explode info - time: ", StringUtils.formatDate(year, 'Y-M-D h:m:s'), "next day: ", StringUtils.formatDate(nextMonth, 'Y-M-D h:m:s'), "length: ", temp.length);
       ret.push(temp);
     }

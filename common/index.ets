@@ -11,3 +11,4 @@ export { BillingType } from './src/main/ets/DataTypes/BillingType';
 export { BillingInfoUtils } from './src/main/ets/Utils/BillingInfoUtils';
 
 export { StringUtils } from './src/main/ets/Utils/StringUtils';
+

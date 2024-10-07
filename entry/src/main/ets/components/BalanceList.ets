@@ -16,47 +16,47 @@ export struct BalanceList {
   @Link totalIncome: number;
   context = getContext(this) as common.UIAbilityContext;
   filesDir = this.context.filesDir;
-  calculateTotalIncomeBalance = (source: string) => {
-    const billingInfo = JSON.parse(source);
-    this.totalBalance = 0.00;
-    this.totalIncome = 0.00;
-    billingInfo.forEach(dayInfo => {
-      dayInfo.forEach(info => {
-        if (info.direction == "in") {
-          this.totalIncome += parseFloat(info.amount);
-        } else {
-          this.totalBalance += parseFloat(info.amount);
-        }
-      })
-    })
-  }
-  calculateSingleDayBalance = (dayInfo: any) => {
-    let sdTotalBalance = 0;
-    dayInfo.forEach(info => {
-      if (info.direction == "out") {
-        sdTotalBalance += parseFloat(info.amount);
-      }
-    })
-    return sdTotalBalance;
-  }
-  getDayOfWeek = (day: number) => {
-    switch (day) {
-      case 0:
-        return $r("app.string.day_of_week_sunday");
-      case 1:
-        return $r("app.string.day_of_week_monday");
-      case 2:
-        return $r("app.string.day_of_week_tuesday");
-      case 3:
-        return $r("app.string.day_of_week_wednesday");
-      case 4:
-        return $r("app.string.day_of_week_wednesday");
-      case 5:
-        return $r("app.string.day_of_week_friday");
-      case 6:
-        return $r("app.string.day_of_week_saturday");
-    }
-  }
+  // calculateTotalIncomeBalance = (source: string) => {
+  //   const billingInfo = JSON.parse(source);
+  //   this.totalBalance = 0.00;
+  //   this.totalIncome = 0.00;
+  //   billingInfo.forEach(dayInfo => {
+  //     dayInfo.forEach(info => {
+  //       if (info.direction == "in") {
+  //         this.totalIncome += parseFloat(info.amount);
+  //       } else {
+  //         this.totalBalance += parseFloat(info.amount);
+  //       }
+  //     })
+  //   })
+  // }
+  // calculateSingleDayBalance = (dayInfo: any) => {
+  //   let sdTotalBalance = 0;
+  //   dayInfo.forEach(info => {
+  //     if (info.direction == "out") {
+  //       sdTotalBalance += parseFloat(info.amount);
+  //     }
+  //   })
+  //   return sdTotalBalance;
+  // }
+  // getDayOfWeek = (day: number) => {
+  //   switch (day) {
+  //     case 0:
+  //       return $r("app.string.day_of_week_sunday");
+  //     case 1:
+  //       return $r("app.string.day_of_week_monday");
+  //     case 2:
+  //       return $r("app.string.day_of_week_tuesday");
+  //     case 3:
+  //       return $r("app.string.day_of_week_wednesday");
+  //     case 4:
+  //       return $r("app.string.day_of_week_wednesday");
+  //     case 5:
+  //       return $r("app.string.day_of_week_friday");
+  //     case 6:
+  //       return $r("app.string.day_of_week_saturday");
+  //   }
+  // }
 
   build() {
     Column() {
