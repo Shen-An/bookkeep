@@ -24,21 +24,21 @@ export interface AiBillingConfig {
  * 文字识别AI配置
  */
 export const TEXT_AI_CONFIG: AiBillingConfig = {
-  baseUrl: 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
-  apiKey: '33829b6e4fc84a6ea6e27f13468ea7fc.43DCuGO2fSDiQLGQ',
-  model: 'GLM-4.7-Flash',
+  baseUrl: ' ',
+  apiKey: ' ',
+  model: 'deepseek-v3-2-251201',
   apiKeyHeader: 'Authorization',
   apiKeyPrefix: 'Bearer ',
-  timeoutMs: 60_000
+  timeoutMs: 120_000
 };
 
 /**
  * 图像识别AI配置
  */
 export const IMAGE_AI_CONFIG: AiBillingConfig = {
-  baseUrl: 'https://integrate.api.nvidia.com/v1/chat/completions',
-  apiKey: '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',
-  model: 'meta/llama-3.2-11b-vision-instruct',
+  baseUrl: ' ',
+  apiKey: ' ',
+  model: ' ',
   apiKeyHeader: 'Authorization',
   apiKeyPrefix: 'Bearer ',
   timeoutMs: 120_000

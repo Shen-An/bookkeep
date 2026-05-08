@@ -39,9 +39,11 @@ export class ImageProcessor {
    * 识别图像中的文字并解析为账单信息
    * @param imageUri 图像URI
    * @param config AI配置
+   * @param expenseCategories 支出分类列表
+   * @param incomeCategories 收入分类列表
    * @returns 识别结果
    */
-  public static async recognizeImageText(imageUri: string, config: AiBillingConfig): Promise<string | undefined> {
+  public static async recognizeImageText(imageUri: string, config: AiBillingConfig, expenseCategories: string[], incomeCategories: string[]): Promise<string | undefined> {
     try {
       // 读取图像文件
       const file = fs.openSync(imageUri, fs.OpenMode.READ_ONLY);
@@ -58,9 +60,11 @@ export class ImageProcessor {
         {
           role: 'system',
           content: '你是一个记账助手。请仔细分析用户上传的微信截图，提取其中的文字，得到账单信息，并按照JSON格式返回。' +
-            '返回的JSON必须包含以下字段：amount(数字，金额，如果没有则为null), direction("IN"|"OUT"|null, 收支方向), ' +
-            'category(string|null, 分类，必须从给定候选列表中选择), date("YYYY-MM-DD"|null, 日期), remark(string|null, 备注)。' +
-            '如果无法确定某个字段，请设为null。'
+            '返回的JSON必须包含以下字段：amount(数字，金额), direction("IN"|"OUT", 收支方向), ' +
+            'category(string, 分类，必须从给定候选列表中选择), date("YYYY-MM-DD", 日期), remark(string, 备注)。' +
+            `支出分类列表：${JSON.stringify(expenseCategories)}` +
+            `收入分类列表：${JSON.stringify(incomeCategories)}` +
+            '请严格按照JSON格式返回，不要有任何其他文字。'
         },
         {
           role: 'user',
@@ -85,7 +89,7 @@ export class ImageProcessor {
       // 发送请求
       const resp = await postJson(config.baseUrl, headers, body, config.timeoutMs);
       if (resp.statusCode < 200 || resp.statusCode >= 300) {
-        console.error('AI识别失败:');
+        console.error('AI识别失败:', resp.statusCode);
         promptAction.showToast({ message: 'AI识别失败，请重试' });
         return undefined;
       }

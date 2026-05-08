@@ -372,7 +372,10 @@ struct AddBalance {
 
     this.imageParsing = true;
     try {
-      const result = await ImageProcessor.recognizeImageText(imageUri, IMAGE_AI_CONFIG);
+      const expenseCategories = defaultExpenseType.map(t => t.title);
+      const incomeCategories = defaultIncomeType.map(t => t.title);
+      
+      const result = await ImageProcessor.recognizeImageText(imageUri, IMAGE_AI_CONFIG, expenseCategories, incomeCategories);
       if (result) {
         const parsed = ImageProcessor.parseAiResponse(result);
 
