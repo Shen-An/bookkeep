@@ -24,8 +24,8 @@ export interface AiBillingConfig {
  * 文字识别AI配置
  */
 export const TEXT_AI_CONFIG: AiBillingConfig = {
-  baseUrl: ' ',
-  apiKey: ' ',
+  baseUrl: 'https://ark.cn-beijing.volces.com/api/v3/chat/completions',
+  apiKey: '',
   model: 'deepseek-v3-2-251201',
   apiKeyHeader: 'Authorization',
   apiKeyPrefix: 'Bearer ',
@@ -36,9 +36,9 @@ export const TEXT_AI_CONFIG: AiBillingConfig = {
  * 图像识别AI配置
  */
 export const IMAGE_AI_CONFIG: AiBillingConfig = {
-  baseUrl: ' ',
-  apiKey: ' ',
-  model: ' ',
+  baseUrl: 'https://integrate.api.nvidia.com/v1/chat/completions',
+  apiKey: '',
+  model: 'moonshotai/kimi-k2.6',
   apiKeyHeader: 'Authorization',
   apiKeyPrefix: 'Bearer ',
   timeoutMs: 120_000

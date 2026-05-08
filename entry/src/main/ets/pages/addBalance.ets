@@ -678,9 +678,12 @@ struct AddBalance {
               .backgroundColor(unit.bgColor ?? "white")
               .width('100%')
               .borderRadius(0)
-              .onClick(unit.callback ?? (() => {
-                return;
-              }))
+              .onClick(() => {
+                // Call the callback function if it exists
+                if (unit.callback) {
+                  unit.callback();
+                }
+              })
             }.border({
               width: {
                 top: 0.5,

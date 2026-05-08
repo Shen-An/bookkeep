@@ -59,16 +59,16 @@ export class ImageProcessor {
       const messages: ChatMessage[] = [
         {
           role: 'system',
-          content: '你是一个记账助手。请仔细分析用户上传的微信截图，提取其中的文字，得到账单信息，并按照JSON格式返回。' +
-            '返回的JSON必须包含以下字段：amount(数字，金额), direction("IN"|"OUT", 收支方向), ' +
-            'category(string, 分类，必须从给定候选列表中选择), date("YYYY-MM-DD", 日期), remark(string, 备注)。' +
+          content: '你是一个专业的记账助手。请仔细分析用户上传的微信支付或转账截图，只提取与账单直接相关的核心信息，忽略背景描述、商户名称等无关文字。' +
+            '必须严格按照JSON格式返回以下字段：amount(数字，金额), direction("IN"|"OUT", 收支方向), ' +
+            'category(string, 分类，必须从给定候选列表中选择最合适的), date("YYYY-MM-DD", 日期), remark(string, 备注，可以是商户名称或其他信息)。' +
             `支出分类列表：${JSON.stringify(expenseCategories)}` +
             `收入分类列表：${JSON.stringify(incomeCategories)}` +
-            '请严格按照JSON格式返回，不要有任何其他文字。'
+            '如果无法确定某个字段，请设置为null。不要输出任何解释性文字，只返回JSON对象。'
         },
         {
           role: 'user',
-          content: `请分析这张微信截图中的账单信息：![image](data:image/jpeg;base64,${base64})`
+          content: `请分析这张微信支付/转账截图，提取账单信息：![image](data:image/jpeg;base64,${base64})`
         }
       ];
 
