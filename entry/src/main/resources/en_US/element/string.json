@@ -49,6 +49,18 @@
       "value": "Done"
     },
     {
+      "name": "ai_billing_placeholder",
+      "value": "One sentence: e.g. lunch 25 / salary 5000"
+    },
+    {
+      "name": "ai_billing_parse",
+      "value": "AI Parse"
+    },
+    {
+      "name": "ai_billing_parsing",
+      "value": "Parsing..."
+    },
+    {
       "name": "day_of_week_monday",
       "value": "Monday"
     },

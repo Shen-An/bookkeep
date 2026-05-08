@@ -20,12 +20,7 @@ struct Index {
   @State totalIncome: number = 0.00;
   @State totalBalance: number = 0.00;
 
-  clearCache() {
-    this.totalIncome = 0;
-    this.totalBalance = 0;
-  }
-
-  onPageShow() {
+  private reloadBillingInfo() {
     DBManager.getInstance().getAllBillingInfo()
       .then(r => {
         this.clearCache();
@@ -34,9 +29,20 @@ struct Index {
           info.direction == BillingDirection.IN ? this.totalIncome += info.amount : this.totalBalance += info.amount;
         })
         Logger.info(TAG, "get info success ", r);
-        Logger.info(TAG, "explode length: ", BillingInfoUtils.explodeMonthlyArray(this.currentBillingInfo, new Date())[19]
-          .length)
       })
+  }
+
+  clearCache() {
+    this.totalIncome = 0;
+    this.totalBalance = 0;
+  }
+
+  onPageShow() {
+    this.reloadBillingInfo();
+  }
+
+  aboutToAppear() {
+    this.reloadBillingInfo();
   }
 
   build() {
@@ -59,7 +65,9 @@ struct Index {
         totalIncome: $totalIncome,
         totalBalance: $totalBalance
       })
-      PageEntries()
+      PageEntries({
+        selectedDate: $selectedDate
+      })
       BalanceList({
         currentBillingInfo: $currentBillingInfo,
         selectedDate: $selectedDate,

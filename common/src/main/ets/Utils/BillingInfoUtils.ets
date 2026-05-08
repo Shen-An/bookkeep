@@ -55,7 +55,7 @@ export class BillingInfoUtils {
   public static filterByDate(src: BillingInfo[], start: Date, end?: Date): BillingInfo[] {
     let startStamp = start.getTime();
     let endStamp = end ? end.getTime() : startStamp * 2;
-    return src.filter((i) => (i.timestamp > startStamp && i.timestamp < endStamp));
+    return src.filter((i) => (i.timestamp >= startStamp && i.timestamp < endStamp));
   }
 
   public static filterByTypeName(src: BillingInfo[], keyword: string): BillingInfo[] {
@@ -64,29 +64,31 @@ export class BillingInfoUtils {
 
   public static explodeMonthlyArray(src: BillingInfo[], month: Date): BillingInfo[][] {
     let totalDay = DateUtils.getDayNumByJSMonth(month);
-    month.setHours(0, 0, 0, 0);
+    const cursor = new Date(month.getTime());
+    cursor.setHours(0, 0, 0, 0);
     Logger.info(TAG, "exploding src length: ", src.length)
     let ret: BillingInfo[][] = [];
     for (let i = 1;i <= totalDay; i++) {
-      month.setDate(i);
-      let nextDay = new Date(month.getTime() + 1000 * 60 * 60 * 24);
-      let temp = BillingInfoUtils.filterByDate(src, month, nextDay);
-      Logger.info(TAG, "explode info - time: ", StringUtils.formatDate(month, 'Y-M-D h:m:s'), "next day: ", StringUtils.formatDate(nextDay, 'Y-M-D h:m:s'), "length: ", temp.length);
+      cursor.setDate(i);
+      let nextDay = new Date(cursor.getTime() + 1000 * 60 * 60 * 24);
+      let temp = BillingInfoUtils.filterByDate(src, cursor, nextDay);
+      Logger.info(TAG, "explode info - time: ", StringUtils.formatDate(cursor, 'Y-M-D h:m:s'), "next day: ", StringUtils.formatDate(nextDay, 'Y-M-D h:m:s'), "length: ", temp.length);
       ret.push(temp);
     }
     return ret;
   }
 
   public static explodeYearlyArray(src: BillingInfo[], year: Date): BillingInfo[][] {
-    year.setFullYear(year.getFullYear(), 1, 1);
-    year.setHours(0, 0, 0, 0);
+    const cursor = new Date(year.getTime());
+    cursor.setFullYear(cursor.getFullYear(), 1, 1);
+    cursor.setHours(0, 0, 0, 0);
     Logger.info(TAG, "exploding src length: ", src.length)
     let ret: BillingInfo[][] = [];
     for (let i = 0;i < 12; i++) {
-      year.setMonth(i);
-      let nextMonth = new Date(year.getTime() + 1000 * 60 * 60 * 24 * DateUtils.getDayNumByJSMonth(year));
-      let temp = BillingInfoUtils.filterByDate(src, year, nextMonth);
-      Logger.info(TAG, "explode info - time: ", StringUtils.formatDate(year, 'Y-M-D h:m:s'), "next day: ", StringUtils.formatDate(nextMonth, 'Y-M-D h:m:s'), "length: ", temp.length);
+      cursor.setMonth(i);
+      let nextMonth = new Date(cursor.getTime() + 1000 * 60 * 60 * 24 * DateUtils.getDayNumByJSMonth(cursor));
+      let temp = BillingInfoUtils.filterByDate(src, cursor, nextMonth);
+      Logger.info(TAG, "explode info - time: ", StringUtils.formatDate(cursor, 'Y-M-D h:m:s'), "next day: ", StringUtils.formatDate(nextMonth, 'Y-M-D h:m:s'), "length: ", temp.length);
       ret.push(temp);
     }
     return ret;

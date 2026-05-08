@@ -8,8 +8,16 @@
 import router from '@ohos.router';
 import common from '@ohos.app.ability.common';
 import { defaultExpenseType, defaultIncomeType, IBillType } from '../data/balanceTypes';
-import { DBManager } from '@ohos/common';
-import { BillingDirection } from '@ohos/common/src/main/ets/DataTypes/BillingInfo';
+import { BillingDirection, DBManager } from '@ohos/common';
+import promptAction from '@ohos.promptAction';
+import { AiBillingParser } from '../ai/AiBillingParser';
+import { AI_BILLING_CONFIG } from '../ai/AiBillingConfig';
+interface AddBalanceParams {
+  year?: number;
+  month?: number; // 1-12
+  day?: number;
+  editId?: number;
+}
 interface IKeyboardUnit{
   content: string | Resource,
   contentType?: string,
@@ -17,23 +25,77 @@ interface IKeyboardUnit{
   bgColor?: ResourceColor,
   foreColor?: ResourceColor
 }
+
+interface GeneratedTypeLiteralInterface_1 {
+  ok: false;
+  tip: string;
+}
+
 @Entry
 @Component
 struct AddBalance {
   @State activeTab: number = 0;
-  activeType: Resource = $r("app.media.salaryIcon");
+  @State activeType: Resource = $r("app.media.salaryIcon");
   @State selectedTypeName: string = '';
+  @State aiInputText: string = '';
+  @State aiParsing: boolean = false;
   @State balanceAmount: string = "0";
   @State balanceTempAmount: string = "0";
   @State remark: string = "";
   @State calculateAction: number = 0;
   @State doneButtonText: string = "Ok";
-  @State activeYear: number = (router.getParams() as ESObject)['year'];
-  @State activeMonth: number = (router.getParams() as ESObject)['month'];
+  @State editingId: number = -1;
+  @State isEditing: boolean = false;
+  @State activeYear: number = new Date().getFullYear();
+  @State activeMonth: number = new Date().getMonth() + 1;
   @State activeDay: number = new Date().getDate();
   activeDate: Date = new Date();
   context = getContext(this) as common.UIAbilityContext;
   filesDir = this.context.filesDir;
+
+  aboutToAppear() {
+    const params = router.getParams() as AddBalanceParams;
+    const now = new Date();
+    const editId = (params && typeof params.editId === 'number') ? params.editId : -1;
+
+    if (editId >= 0) {
+      this.isEditing = true;
+      this.editingId = editId;
+      this.doneButtonText = '保存';
+      // 先异步回填，日期/类型等以数据库数据为准
+      DBManager.getInstance().getBillingInfoById(editId)
+        .then((info) => {
+          if (!info) {
+            promptAction.showToast({ message: '未找到该账单' });
+            return;
+          }
+          this.activeTab = (info.direction === BillingDirection.OUT) ? 0 : 1;
+          this.activeType = info.type.icon;
+          this.selectedTypeName = info.type.name;
+          this.balanceAmount = info.amount.toFixed(2);
+          this.balanceTempAmount = info.amount.toFixed(2);
+          this.remark = info.remark ?? '';
+
+          const d = new Date(info.timestamp);
+          this.activeYear = d.getFullYear();
+          this.activeMonth = d.getMonth() + 1;
+          this.activeDay = d.getDate();
+          this.activeDate.setTime(d.getTime());
+        })
+        .catch((_e: Error) => {
+          promptAction.showToast({ message: '加载账单失败' });
+        })
+      return;
+    }
+
+    const year = (params && typeof params.year === 'number') ? params.year : now.getFullYear();
+    const month = (params && typeof params.month === 'number') ? params.month : (now.getMonth() + 1);
+    const day = (params && typeof params.day === 'number') ? params.day : now.getDate();
+    this.activeYear = year;
+    this.activeMonth = month;
+    this.activeDay = day;
+    this.activeDate.setFullYear(year, month - 1, day);
+  }
   balanceInputUnits: IKeyboardUnit[] =
     [
       {
@@ -200,19 +262,72 @@ struct AddBalance {
             return;
           if (this.remark == "")
             return;
-          DBManager.getInstance().addBillingInfo({
-            type: {
-              icon: this.activeType,
-              name: this.selectedTypeName
-            },
-            amount: parseFloat(this.balanceAmount),
-            direction: this.activeTab == 0 ? BillingDirection.OUT : BillingDirection.IN,
-            timestamp: this.activeDate.getTime(),
-            remark: this.remark
-          })
-            .then(v => {
-              router.back();
+          if (this.balanceAmount.endsWith('.')) {
+            this.balanceAmount += '0';
+          }
+          const amount = parseFloat(this.balanceAmount);
+          if (Number.isNaN(amount)) {
+            promptAction.showToast({ message: '金额格式不正确' });
+            return;
+          }
+
+          // Persist with a time component so it always falls into the chosen day bucket.
+          const now = new Date();
+          const ts = new Date(this.activeDate.getTime());
+          ts.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
+
+          if (this.isEditing) {
+            DBManager.getInstance().updateBillingInfo({
+              id: this.editingId,
+              type: {
+                icon: this.activeType,
+                name: this.selectedTypeName
+              },
+              amount,
+              direction: this.activeTab == 0 ? BillingDirection.OUT : BillingDirection.IN,
+              timestamp: ts.getTime(),
+              remark: this.remark
             })
+              .then((affected: number) => {
+                if (affected === -2) {
+                  promptAction.showToast({ message: '保存失败（数据库未就绪）' });
+                  return;
+                }
+                if (affected > 0) {
+                  router.back();
+                } else {
+                  promptAction.showToast({ message: '保存失败（未更新任何记录）' });
+                }
+              })
+              .catch((_e: Error) => {
+                promptAction.showToast({ message: '保存失败（数据库未就绪）' });
+              })
+          } else {
+            DBManager.getInstance().addBillingInfo({
+              type: {
+                icon: this.activeType,
+                name: this.selectedTypeName
+              },
+              amount,
+              direction: this.activeTab == 0 ? BillingDirection.OUT : BillingDirection.IN,
+              timestamp: ts.getTime(),
+              remark: this.remark
+            })
+              .then((v: number) => {
+                if (v === -2) {
+                  promptAction.showToast({ message: '保存失败（数据库未就绪）' });
+                  return;
+                }
+                if (v !== -1) {
+                  router.back();
+                } else {
+                  promptAction.showToast({ message: '保存失败（数据库写入异常）' });
+                }
+              })
+              .catch((_e: Error) => {
+                promptAction.showToast({ message: '保存失败（数据库未就绪）' });
+              })
+          }
         }
       }
     ];
@@ -279,6 +394,81 @@ struct AddBalance {
         .backgroundColor($r('app.color.main_theme_blue'))
         .width('100%')
 
+        // AI one-sentence billing
+        Row({ space: 8 }) {
+          TextInput({
+            text: this.aiInputText,
+            placeholder: $r('app.string.ai_billing_placeholder')
+          })
+            .layoutWeight(1)
+            .borderRadius(8)
+            .backgroundColor(Color.White)
+            .onChange((v: string) => {
+              this.aiInputText = v;
+            })
+
+          Button({ type: ButtonType.Normal }) {
+            Text(this.aiParsing ? $r('app.string.ai_billing_parsing') : $r('app.string.ai_billing_parse'))
+              .fontSize(14)
+              .fontColor(Color.White)
+          }
+          .backgroundColor($r('app.color.main_theme_blue'))
+          .borderRadius(8)
+          .enabled(!this.aiParsing)
+          .onClick(async () => {
+            if (this.aiParsing) {
+              return;
+            }
+            const input = (this.aiInputText ?? '').trim();
+            if (!input) {
+              promptAction.showToast({ message: '请输入一句话，例如：今天午饭25 / 发工资5000 / 昨晚打车32' });
+              return;
+            }
+            this.aiParsing = true;
+            try {
+              if (!AI_BILLING_CONFIG.baseUrl || !AI_BILLING_CONFIG.apiKey) {
+                promptAction.showToast({ message: '未配置 AI 服务，将先使用本地规则解析（可在 ai/AiBillingConfig.ts 填写 baseUrl/apiKey）。' });
+              }
+              const ret = await AiBillingParser.parseToBill(input, {
+                expenseTypes: defaultExpenseType,
+                incomeTypes: defaultIncomeType,
+                preferLLM: true
+              });
+              if (!ret.ok) {
+                // 当 ok 为 false 时，结果中包含 tip 字段
+                const tip = (ret as GeneratedTypeLiteralInterface_1).tip;
+                promptAction.showToast({ message: tip });
+                return;
+              }
+
+              const bill = ret.bill;
+              this.activeTab = bill.direction === BillingDirection.OUT ? 0 : 1;
+              this.activeType = bill.type.icon;
+              this.selectedTypeName = bill.type.name;
+              this.balanceAmount = bill.amount.toFixed(2);
+              this.balanceTempAmount = bill.amount.toFixed(2);
+              this.remark = bill.remark ?? '';
+
+              const d = new Date(bill.timestamp);
+              this.activeYear = d.getFullYear();
+              this.activeMonth = d.getMonth() + 1;
+              this.activeDay = d.getDate();
+              this.activeDate.setTime(d.getTime());
+
+              animateTo({ duration: 300, curve: Curve.EaseOut }, () => {
+                this.inputMarginTop = 0;
+                this.inputOpacity = 1;
+              })
+
+              promptAction.showToast({ message: `已识别：${ret.summary}` });
+            } finally {
+              this.aiParsing = false;
+            }
+          })
+        }
+        .padding({ left: 12, right: 12, top: 8, bottom: 8 })
+        .backgroundColor($r('app.color.main_theme_blue'))
+
         GridRow({ columns: 4, gutter: 12 }) {
           ForEach(this.activeTab == 0 ? defaultExpenseType : defaultIncomeType, (item:IBillType) => {
             GridCol() {
@@ -333,6 +523,7 @@ struct AddBalance {
 
         Row() {
           TextInput({
+            text: this.remark,
             placeholder: $r("app.string.add_balance_remark_placeholder")
           }).borderRadius(8).margin(12).onChange(value => {
             this.remark = value;
@@ -346,9 +537,17 @@ struct AddBalance {
             DatePickerDialog.show({
               start: new Date("2000-01-01"),
               onAccept: (v) => {
-                this.activeYear = v.year;
-                this.activeMonth = v.month;
-                this.activeDay = v.day;
+                const pickedYear = (typeof v.year === 'number') ? v.year : this.activeYear;
+                const pickedMonth0 = (typeof v.month === 'number') ? v.month : (this.activeMonth - 1);
+                const pickedDay = (typeof v.day === 'number') ? v.day : this.activeDay;
+
+                this.activeYear = pickedYear;
+                // DatePicker returns month as 0-11; store/display as 1-12.
+                this.activeMonth = pickedMonth0 + 1;
+                this.activeDay = pickedDay;
+
+                // Keep activeDate in sync with the selected Y/M/D.
+                this.activeDate.setFullYear(pickedYear, pickedMonth0, pickedDay);
               },
               selected: this.activeDate
             })

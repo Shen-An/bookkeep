@@ -8,12 +8,12 @@
 import fs from '@ohos.file.fs';
 import common from '@ohos.app.ability.common';
 import { advancedTemplate } from '../data/defaultBalanceTemplate';
-import { StringUtils } from '@ohos/common';
+import { BillingInfo, StringUtils } from '@ohos/common';
 
 @Component
 export struct BalanceViewer {
   @Link selectedDate: Date;
-  @Link currentBillingInfo: string;
+  @Link currentBillingInfo: BillingInfo[];
   @Link totalIncome: number;
   @Link totalBalance: number;
 

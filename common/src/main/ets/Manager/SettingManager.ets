@@ -21,12 +21,20 @@ export class SettingManager {
   }
 
   public set(k: string, v: SettingType) {
-    this.settingStore!.put(k, v, () => {
-      this.settingStore!.flush()
+    if (!this.settingStore) {
+      Logger.err(TAG, 'settingStore not ready while setting', k);
+      return;
+    }
+    this.settingStore.put(k, v, () => {
+      this.settingStore!.flush();
     })
   }
 
   public async get<T extends SettingType>(k: string, def: T) {
+    if (!this.settingStore) {
+      Logger.err(TAG, 'settingStore not ready while getting', k);
+      return def;
+    }
     return await new Promise<T>((ret) => {
       this.settingStore!.has(k, (e, r) => {
           !e && r ?

@@ -49,6 +49,18 @@
       "value": "完成"
     },
     {
+      "name": "ai_billing_placeholder",
+      "value": "一句话记账：如 今天午饭25 / 发工资5000"
+    },
+    {
+      "name": "ai_billing_parse",
+      "value": "AI解析"
+    },
+    {
+      "name": "ai_billing_parsing",
+      "value": "解析中..."
+    },
+    {
       "name": "day_of_week_monday",
       "value": "星期一"
     },

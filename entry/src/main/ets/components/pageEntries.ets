@@ -6,11 +6,10 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 import router from '@ohos.router';
-import promptAction from '@ohos.promptAction';
 
 @Component
 export struct PageEntries {
-  private selectedDate: Date = new Date();
+  @Link selectedDate: Date;
 
   build() {
     Row() {
@@ -78,7 +77,12 @@ export struct PageEntries {
             }.height(12).width(48)
           }.width(48).alignItems(HorizontalAlign.Center)
         }.backgroundColor(Color.Transparent).borderRadius(8).onClick(() => {
-          promptAction.showToast({ message: "待开发" })
+          router.pushUrl({
+            url: 'pages/EconomicCharts',
+            params: {
+              date: this.selectedDate
+            }
+          })
         })
 
         Button({ type: ButtonType.Normal }) {
@@ -101,7 +105,8 @@ export struct PageEntries {
             url: "pages/addBalance",
             params: {
               year: this.selectedDate.getFullYear(),
-              month: this.selectedDate.getMonth() + 1
+              month: this.selectedDate.getMonth() + 1,
+              day: this.selectedDate.getDate()
             }
           })
         }).borderRadius(8)

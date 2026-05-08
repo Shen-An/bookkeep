@@ -3,6 +3,7 @@
     "pages/Index",
     "pages/Copyright",
     "pages/addBalance",
-    "pages/BillInfoPage"
+    "pages/BillInfoPage",
+    "pages/EconomicCharts"
   ]
 }

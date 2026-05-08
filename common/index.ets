@@ -12,3 +12,5 @@ export { BillingInfoUtils } from './src/main/ets/Utils/BillingInfoUtils';
 
 export { StringUtils } from './src/main/ets/Utils/StringUtils';
 
+export { EconomicStatsUtils, MonthlyEconomyReport, MonthlyEconomyStats, CategoryRatio, MonthlyTrend } from './src/main/ets/Utils/EconomicStatsUtils';
+

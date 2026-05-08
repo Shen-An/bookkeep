@@ -7,6 +7,7 @@
 // See the Mulan PSL v2 for more details.
 import common from '@ohos.app.ability.common';
 import { BillingDirection, BillingInfo, BillingInfoUtils, StringUtils } from '@ohos/common';
+import router from '@ohos.router';
 
 @Component
 export struct BalanceList {
@@ -106,6 +107,17 @@ export struct BalanceList {
                       .justifyContent(FlexAlign.SpaceBetween)
                     }
                     .margin({ bottom: 12 })
+                    .onClick(() => {
+                      if (typeof balance.id !== 'number') {
+                        return;
+                      }
+                      router.pushUrl({
+                        url: 'pages/addBalance',
+                        params: {
+                          editId: balance.id
+                        }
+                      })
+                    })
                   })
                 }
               }
