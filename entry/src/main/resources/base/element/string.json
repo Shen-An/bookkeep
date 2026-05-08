@@ -91,6 +91,22 @@
     {
       "name": "day",
       "value": "Day"
+    },
+    {
+      "name": "ai_image_upload",
+      "value": "Upload Image"
+    },
+    {
+      "name": "ai_image_upload_hint",
+      "value": "Select WeChat screenshot to recognize"
+    },
+    {
+      "name": "ai_image_parsing",
+      "value": "Recognizing..."
+    },
+    {
+      "name": "ai_image_recognize",
+      "value": "Recognize"
     }
   ]
 }

@@ -11,14 +11,19 @@ import { defaultExpenseType, defaultIncomeType, IBillType } from '../data/balanc
 import { BillingDirection, DBManager } from '@ohos/common';
 import promptAction from '@ohos.promptAction';
 import { AiBillingParser } from '../ai/AiBillingParser';
-import { AI_BILLING_CONFIG } from '../ai/AiBillingConfig';
+import { TEXT_AI_CONFIG, IMAGE_AI_CONFIG } from '../ai/AiBillingConfig';
+import { ImageProcessor } from '../ai/ImageProcessor';
+import photoAccessHelper from '@ohos.file.photoAccessHelper';
+import fs from '@ohos.file.fs';
+import picker from '@ohos.file.picker';
+
 interface AddBalanceParams {
   year?: number;
   month?: number; // 1-12
   day?: number;
   editId?: number;
 }
-interface IKeyboardUnit{
+interface IKeyboardUnit {
   content: string | Resource,
   contentType?: string,
   callback?: () => void,
@@ -39,6 +44,7 @@ struct AddBalance {
   @State selectedTypeName: string = '';
   @State aiInputText: string = '';
   @State aiParsing: boolean = false;
+  @State imageParsing: boolean = false;
   @State balanceAmount: string = "0";
   @State balanceTempAmount: string = "0";
   @State remark: string = "";
@@ -341,6 +347,84 @@ struct AddBalance {
     }
   }
 
+
+  async selectImageFromGallery() {
+    try {
+      const photoPicker = new picker.PhotoViewPicker();
+      const result = await photoPicker.select({
+        maxSelectNumber: 1,
+        MIMEType: picker.PhotoViewMIMETypes.IMAGE_TYPE
+      });
+      if (result && result.photoUris && result.photoUris.length > 0) {
+        const imageUri = result.photoUris[0];
+        await this.recognizeImage(imageUri);
+      }
+    } catch (error) {
+      console.error('选择图片失败:', error);
+      promptAction.showToast({ message: '选择图片失败' });
+    }
+  }
+
+  async recognizeImage(imageUri: string) {
+    if (this.imageParsing) {
+      return;
+    }
+
+    this.imageParsing = true;
+    try {
+      const result = await ImageProcessor.recognizeImageText(imageUri, IMAGE_AI_CONFIG);
+      if (result) {
+        const parsed = ImageProcessor.parseAiResponse(result);
+
+        if (parsed.amount) {
+          this.balanceAmount = parsed.amount.toFixed(2);
+          this.balanceTempAmount = parsed.amount.toFixed(2);
+        }
+
+        if (parsed.direction) {
+          this.activeTab = parsed.direction === 'IN' ? 1 : 0;
+        }
+
+        if (parsed.category) {
+          const types = this.activeTab === 0 ? defaultExpenseType : defaultIncomeType;
+          const foundType = types.find(t => t.title === parsed.category);
+          if (foundType) {
+            this.activeType = foundType.img;
+            this.selectedTypeName = foundType.title;
+          }
+        }
+
+        if (parsed.date) {
+          const date = new Date(parsed.date);
+          if (!isNaN(date.getTime())) {
+            this.activeYear = date.getFullYear();
+            this.activeMonth = date.getMonth() + 1;
+            this.activeDay = date.getDate();
+            this.activeDate.setTime(date.getTime());
+          }
+        }
+
+        if (parsed.remark) {
+          this.remark = parsed.remark;
+        }
+
+        animateTo({ duration: 300, curve: Curve.EaseOut }, () => {
+          this.inputMarginTop = 0;
+          this.inputOpacity = 1;
+        });
+
+        promptAction.showToast({ message: '图片识别成功' });
+      } else {
+        promptAction.showToast({ message: '图片识别失败，请重试' });
+      }
+    } catch (error) {
+      console.error('图片识别失败:', error);
+      promptAction.showToast({ message: '图片识别失败，请重试' });
+    } finally {
+      this.imageParsing = false;
+    }
+  }
+
   build() {
     Stack({ alignContent: Alignment.Bottom }) {
       Column() {
@@ -395,82 +479,105 @@ struct AddBalance {
         .width('100%')
 
         // AI one-sentence billing
-        Row({ space: 8 }) {
-          TextInput({
-            text: this.aiInputText,
-            placeholder: $r('app.string.ai_billing_placeholder')
-          })
-            .layoutWeight(1)
-            .borderRadius(8)
-            .backgroundColor(Color.White)
-            .onChange((v: string) => {
-              this.aiInputText = v;
+        Column({ space: 8 }) {
+          Row({ space: 8 }) {
+            TextInput({
+              text: this.aiInputText,
+              placeholder: $r('app.string.ai_billing_placeholder')
             })
-
-          Button({ type: ButtonType.Normal }) {
-            Text(this.aiParsing ? $r('app.string.ai_billing_parsing') : $r('app.string.ai_billing_parse'))
-              .fontSize(14)
-              .fontColor(Color.White)
-          }
-          .backgroundColor($r('app.color.main_theme_blue'))
-          .borderRadius(8)
-          .enabled(!this.aiParsing)
-          .onClick(async () => {
-            if (this.aiParsing) {
-              return;
-            }
-            const input = (this.aiInputText ?? '').trim();
-            if (!input) {
-              promptAction.showToast({ message: '请输入一句话，例如：今天午饭25 / 发工资5000 / 昨晚打车32' });
-              return;
-            }
-            this.aiParsing = true;
-            try {
-              if (!AI_BILLING_CONFIG.baseUrl || !AI_BILLING_CONFIG.apiKey) {
-                promptAction.showToast({ message: '未配置 AI 服务，将先使用本地规则解析（可在 ai/AiBillingConfig.ts 填写 baseUrl/apiKey）。' });
-              }
-              const ret = await AiBillingParser.parseToBill(input, {
-                expenseTypes: defaultExpenseType,
-                incomeTypes: defaultIncomeType,
-                preferLLM: true
-              });
-              if (!ret.ok) {
-                // 当 ok 为 false 时，结果中包含 tip 字段
-                const tip = (ret as GeneratedTypeLiteralInterface_1).tip;
-                promptAction.showToast({ message: tip });
-                return;
-              }
-
-              const bill = ret.bill;
-              this.activeTab = bill.direction === BillingDirection.OUT ? 0 : 1;
-              this.activeType = bill.type.icon;
-              this.selectedTypeName = bill.type.name;
-              this.balanceAmount = bill.amount.toFixed(2);
-              this.balanceTempAmount = bill.amount.toFixed(2);
-              this.remark = bill.remark ?? '';
-
-              const d = new Date(bill.timestamp);
-              this.activeYear = d.getFullYear();
-              this.activeMonth = d.getMonth() + 1;
-              this.activeDay = d.getDate();
-              this.activeDate.setTime(d.getTime());
-
-              animateTo({ duration: 300, curve: Curve.EaseOut }, () => {
-                this.inputMarginTop = 0;
-                this.inputOpacity = 1;
+              .layoutWeight(1)
+              .borderRadius(8)
+              .backgroundColor(Color.White)
+              .onChange((v: string) => {
+                this.aiInputText = v;
               })
 
-              promptAction.showToast({ message: `已识别：${ret.summary}` });
-            } finally {
-              this.aiParsing = false;
+            Button({ type: ButtonType.Normal }) {
+              Text(this.aiParsing ? $r('app.string.ai_billing_parsing') : $r('app.string.ai_billing_parse'))
+                .fontSize(14)
+                .fontColor(Color.White)
             }
-          })
+            .backgroundColor($r('app.color.main_theme_blue'))
+            .borderRadius(8)
+            .enabled(!this.aiParsing)
+            .onClick(async () => {
+              if (this.aiParsing) {
+                return;
+              }
+              const input = (this.aiInputText ?? '').trim();
+              if (!input) {
+                promptAction.showToast({ message: '请输入一句话，例如：今天午饭25 / 发工资5000 / 昨晚打车32' });
+                return;
+              }
+              this.aiParsing = true;
+              try {
+                if (!TEXT_AI_CONFIG.baseUrl || !TEXT_AI_CONFIG.apiKey) {
+                  promptAction.showToast({ message: '未配置 AI 服务，将先使用本地规则解析（可在 ai/AiBillingConfig.ts 填写 baseUrl/apiKey）。' });
+                }
+                const ret = await AiBillingParser.parseToBill(input, {
+                  expenseTypes: defaultExpenseType,
+                  incomeTypes: defaultIncomeType,
+                  preferLLM: true
+                });
+                if (!ret.ok) {
+                  // 当 ok 为 false 时，结果中包含 tip 字段
+                  const tip = (ret as GeneratedTypeLiteralInterface_1).tip;
+                  promptAction.showToast({ message: tip });
+                  return;
+                }
+
+                const bill = ret.bill;
+                this.activeTab = bill.direction === BillingDirection.OUT ? 0 : 1;
+                this.activeType = bill.type.icon;
+                this.selectedTypeName = bill.type.name;
+                this.balanceAmount = bill.amount.toFixed(2);
+                this.balanceTempAmount = bill.amount.toFixed(2);
+                this.remark = bill.remark ?? '';
+
+                const d = new Date(bill.timestamp);
+                this.activeYear = d.getFullYear();
+                this.activeMonth = d.getMonth() + 1;
+                this.activeDay = d.getDate();
+                this.activeDate.setTime(d.getTime());
+
+                animateTo({ duration: 300, curve: Curve.EaseOut }, () => {
+                  this.inputMarginTop = 0;
+                  this.inputOpacity = 1;
+                })
+
+                promptAction.showToast({ message: `已识别：${ret.summary}` });
+              } finally {
+                this.aiParsing = false;
+              }
+            })
+          }
+
+          Row({ space: 8 }) {
+            TextInput({
+              placeholder: $r('app.string.ai_image_upload_hint')
+            })
+              .layoutWeight(1)
+              .borderRadius(8)
+              .backgroundColor(Color.White)
+
+            Button({ type: ButtonType.Normal }) {
+              Text(this.imageParsing ? $r('app.string.ai_image_parsing') : $r('app.string.ai_image_recognize'))
+                .fontSize(14)
+                .fontColor(Color.White)
+            }
+            .backgroundColor($r('app.color.main_theme_blue'))
+            .borderRadius(8)
+            .enabled(!this.imageParsing)
+            .onClick(() => {
+              this.selectImageFromGallery();
+            })
+          }
         }
         .padding({ left: 12, right: 12, top: 8, bottom: 8 })
         .backgroundColor($r('app.color.main_theme_blue'))
 
         GridRow({ columns: 4, gutter: 12 }) {
-          ForEach(this.activeTab == 0 ? defaultExpenseType : defaultIncomeType, (item:IBillType) => {
+          ForEach(this.activeTab == 0 ? defaultExpenseType : defaultIncomeType, (item: IBillType) => {
             GridCol() {
               Column({ space: 4 }) {
                 Row() {
@@ -555,7 +662,7 @@ struct AddBalance {
         }
 
         GridRow({ columns: 4, gutter: 0 }) {
-          ForEach(this.balanceInputUnits, (unit:IKeyboardUnit) => {
+          ForEach(this.balanceInputUnits, (unit: IKeyboardUnit) => {
             GridCol() {
               Button({ type: ButtonType.Normal }) {
                 if (unit.contentType == "image") {
@@ -591,75 +698,6 @@ struct AddBalance {
       .margin({ top: this.inputMarginTop })
       .opacity(this.inputOpacity)
       .backgroundColor(Color.White)
-
-      // if (this.selectedTypeName !== '') {
-      //   Column() {
-      //     Row() {
-      //       Text(`${this.balanceAmount}`).textAlign(TextAlign.End).width('100%').padding(8)
-      //         .fontSize(24)
-      //     }.height(36)
-      //
-      //     Row() {
-      //       TextInput({
-      //         placeholder: $r("app.string.add_balance_remark_placeholder")
-      //       }).borderRadius(8).margin(12).onChange(value => {
-      //         this.remark = value;
-      //       })
-      //     }
-      //
-      //     Row() {
-      //       Text(`${this.activeYear} / ${(this.activeMonth + 1).toString()
-      //         .padStart(2, '0')} / ${this.activeDay.toString().padStart(2, '0')}`).fontSize(16)
-      //         .margin({ bottom: 12 }).onClick(() => {
-      //         DatePickerDialog.show({
-      //           start: new Date("2000-01-01"),
-      //           onAccept: (v) => {
-      //             this.activeYear = v.year;
-      //             this.activeMonth = v.month;
-      //             this.activeDay = v.day;
-      //           },
-      //           selected: this.activeDate
-      //         })
-      //       })
-      //     }
-      //
-      //     GridRow({ columns: 4, gutter: 0 }) {
-      //       ForEach(this.balanceInputUnits, unit => {
-      //         GridCol() {
-      //           Button({ type: ButtonType.Normal }) {
-      //             if (unit.contentType == "image") {
-      //               Image(unit.content).width(18)
-      //             } else {
-      //               Text(unit.content).fontSize(18).fontColor(unit.foreColor??"black")
-      //             }
-      //           }
-      //           .height(49)
-      //           .backgroundColor(unit.bgColor??"white")
-      //           .width('100%')
-      //           .borderRadius(0)
-      //           .onClick(unit.callback??(() => {
-      //             return;
-      //           }))
-      //         }.border({
-      //           width: {
-      //             top: 0.5,
-      //             right: 0.5,
-      //             bottom: 0,
-      //             left: 0
-      //           },
-      //           color: '#ffcdcdcd'
-      //         })
-      //       })
-      //     }
-      //   }
-      //   .width('100%')
-      //   .shadow({
-      //     radius: 20,
-      //     offsetY: 16
-      //   })
-      //   .margin({top: this.inputMarginTop})
-      //   .backgroundColor(Color.White)
-      // }
     }
     .width('100%')
     .height('100%')

@@ -1,5 +1,5 @@
 import { BillingDirection, BillingInfo, BillingType } from '@ohos/common';
-import { AI_BILLING_CONFIG, AiBillingConfig } from './AiBillingConfig';
+import { TEXT_AI_CONFIG, AiBillingConfig } from './AiBillingConfig';
 import { postJson } from './AiHttpClient';
 
 export interface BillTypeOption {
@@ -491,12 +491,12 @@ export class AiBillingParser {
     const rule = ruleParse(normalized, now);
 
     const config: AiBillingConfig = {
-      baseUrl: options.config?.baseUrl ?? AI_BILLING_CONFIG.baseUrl,
-      apiKey: options.config?.apiKey ?? AI_BILLING_CONFIG.apiKey,
-      model: options.config?.model ?? AI_BILLING_CONFIG.model,
-      apiKeyHeader: options.config?.apiKeyHeader ?? AI_BILLING_CONFIG.apiKeyHeader,
-      apiKeyPrefix: options.config?.apiKeyPrefix ?? AI_BILLING_CONFIG.apiKeyPrefix,
-      timeoutMs: options.config?.timeoutMs ?? AI_BILLING_CONFIG.timeoutMs
+      baseUrl: options.config?.baseUrl ?? TEXT_AI_CONFIG.baseUrl,
+      apiKey: options.config?.apiKey ?? TEXT_AI_CONFIG.apiKey,
+      model: options.config?.model ?? TEXT_AI_CONFIG.model,
+      apiKeyHeader: options.config?.apiKeyHeader ?? TEXT_AI_CONFIG.apiKeyHeader,
+      apiKeyPrefix: options.config?.apiKeyPrefix ?? TEXT_AI_CONFIG.apiKeyPrefix,
+      timeoutMs: options.config?.timeoutMs ?? TEXT_AI_CONFIG.timeoutMs
     };
 
     let llm: LlmParsed | undefined;
@@ -550,7 +550,7 @@ export class AiBillingParser {
     if (!resolvedType) {
       return {
         ok: false,
-        tip: `分类“${categoryName}”不在当前分类列表中，请手动选择一个分类。`,
+        tip: `分类"${categoryName}"不在当前分类列表中，请手动选择一个分类。`,
         missing: ['category'],
         used: merged.used
       };
