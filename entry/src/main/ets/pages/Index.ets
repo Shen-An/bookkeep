@@ -15,18 +15,31 @@ let TAG = "INDEX";
 @Entry
 @Component
 struct Index {
-  @State selectedDate: Date = new Date();
+  @State @Watch('onDateChange') selectedDate: Date = new Date();
   @State currentBillingInfo: BillingInfo[] = [];
   @State totalIncome: number = 0.00;
   @State totalBalance: number = 0.00;
+
+  // 日期变化时的回调
+  private onDateChange() {
+    this.reloadBillingInfo();
+  }
 
   private reloadBillingInfo() {
     DBManager.getInstance().getAllBillingInfo()
       .then(r => {
         this.clearCache();
         this.currentBillingInfo = r;
+        // 获取选中日期的年月
+        const selectedYear = this.selectedDate.getFullYear();
+        const selectedMonth = this.selectedDate.getMonth();
+
+        // 只计算选中月份的收支
         this.currentBillingInfo.forEach(info => {
-          info.direction == BillingDirection.IN ? this.totalIncome += info.amount : this.totalBalance += info.amount;
+          const infoDate = new Date(info.timestamp);
+          if (infoDate.getFullYear() === selectedYear && infoDate.getMonth() === selectedMonth) {
+            info.direction == BillingDirection.IN ? this.totalIncome += info.amount : this.totalBalance += info.amount;
+          }
         })
         Logger.info(TAG, "get info success ", r);
       })
