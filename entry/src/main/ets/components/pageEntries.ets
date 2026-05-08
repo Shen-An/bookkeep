@@ -94,7 +94,33 @@ export struct PageEntries {
             }
 
             Row() {
-              Text("记账")
+              Text("AI记账")
+                .fontSize(10)
+                .width('100%')
+                .textAlign(TextAlign.Center)
+            }.height(12).width(48)
+          }.width(48).alignItems(HorizontalAlign.Center)
+        }.stateEffect(false).backgroundColor(Color.Transparent).onClick(() => {
+          router.pushUrl({
+            url: "pages/addBalance",
+            params: {
+              year: this.selectedDate.getFullYear(),
+              month: this.selectedDate.getMonth() + 1,
+              day: this.selectedDate.getDate()
+            }
+          })
+        }).borderRadius(8)
+
+        Button({ type: ButtonType.Normal }) {
+          Column() {
+            Row() {
+              Image($r("app.media.icon"))
+                .width(32)
+                .height(32)
+            }
+
+            Row() {
+              Text("手动记账")
                 .fontSize(10)
                 .width('100%')
                 .textAlign(TextAlign.Center)

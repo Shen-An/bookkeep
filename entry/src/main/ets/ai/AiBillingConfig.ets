@@ -26,9 +26,9 @@ export interface AiBillingConfig {
  * - Fill these locally for your environment.
  */
 export const AI_BILLING_CONFIG: AiBillingConfig = {
-  baseUrl: '',
-  apiKey: '',
-  model: 'gpt-4.1-mini',
+  baseUrl: 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
+  apiKey: '33829b6e4fc84a6ea6e27f13468ea7fc.43DCuGO2fSDiQLGQ',
+  model: 'GLM-4.7-Flash',
   apiKeyHeader: 'Authorization',
   apiKeyPrefix: 'Bearer ',
   timeoutMs: 60_000
