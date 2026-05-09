@@ -166,23 +166,27 @@ export class ImageProcessor {
       [new TextContentPart('text',
         '你是一个专业的微信/支付宝账单信息解析工具。你的任务是从图片中提取账单信息。\n\n' +
         '规则（严格遵守）：\n' +
-        '1. 金额(amount)：必须是一个数字，例如 12.50、168.00、520.00。如果看到"¥"或"￥"符号后面的数字，那就是金额。\n' +
-        '2. 方向(direction)：如果是支付/付款/转账给别人，就是"OUT"；如果是收款/到账/退款，就是"IN"。\n' +
-        '3. 分类(category)：从给定的分类列表中选择最匹配的一个。如果不确定，设为null。\n' +
+        '1. 金额(amount)：必须是一个数字（正数），例如 12.50、168.00。如果看到"¥"或"￥"符号后面的数字就是金额。\n' +
+        '2. 方向(direction)：支付/付款/转账给别人→"OUT"；收款/到账/退款→"IN"。\n' +
+        '3. 分类(category)：**必须**从下方分类列表中选择最匹配的一项，**不要设为null**！根据商户名称推断：\n' +
+        '   - 拼多多、淘宝、京东、超市→"购物"\n' +
+        '   - 奶茶、咖啡、餐厅、外卖→"餐饮"\n' +
+        '   - 打车、地铁、公交、加油→"交通"\n' +
+        '   - 药店、医院→"医疗"\n' +
         '4. 日期(date)：从图片中提取交易日期，格式"YYYY-MM-DD"。如果看不到日期，设为null。\n' +
-        '5. 备注(remark)：可以写商户名称或交易说明，但不要写无关的描述性文字。\n\n' +
-        '⚠️ 重要：不要编造信息！如果看不清金额，amount设为null。\n' +
+        '5. 备注(remark)：写商户名称即可，如"拼多多"、"星巴克"。\n\n' +
+        '⚠️ 金额不要加负号，始终返回正数。\n' +
         '⚠️ 只输出JSON，不要输出任何解释、描述或markdown。\n\n' +
         `支出分类列表：${JSON.stringify(expenseCategories)}\n` +
         `收入分类列表：${JSON.stringify(incomeCategories)}\n\n` +
-        '输出格式：{"amount": number|null, "direction": "IN"|"OUT"|null, "category": string|null, "date": "YYYY-MM-DD"|null, "remark": string|null}'
+        '输出格式：{"amount": number, "direction": "IN"|"OUT", "category": string, "date": "YYYY-MM-DD"|null, "remark": string}'
       )]
     );
 
     const userMessage: VisionChatMessage = new VisionChatMessage(
       'user',
       [
-        new TextContentPart('text', '请识别这张微信/支付宝账单截图中的交易信息，输出JSON：'),
+        new TextContentPart('text', '请识别这张微信/支付宝账单截图中的交易信息，严格按照分类列表选择分类，输出JSON：'),
         new ImageContentPart('image_url', new ImageUrl(dataUrl))
       ]
     );
