@@ -41,7 +41,7 @@ AI 解析支持"本地规则解析 + 可选 LLM 增强"。如果你有自己的 
 
 示例：
 
-- `baseUrl`: `https://api.openai.com/v1/chat/completions`
+- `baseUrl`: ``
 - `apiKey`: 你的 key
 - `model`: 你的模型名
 
