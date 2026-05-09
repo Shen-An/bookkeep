@@ -106,7 +106,8 @@ export struct PageEntries {
             params: {
               year: this.selectedDate.getFullYear(),
               month: this.selectedDate.getMonth() + 1,
-              day: this.selectedDate.getDate()
+              day: this.selectedDate.getDate(),
+              mode: 'ai'
             }
           })
         }).borderRadius(8)
@@ -132,7 +133,8 @@ export struct PageEntries {
             params: {
               year: this.selectedDate.getFullYear(),
               month: this.selectedDate.getMonth() + 1,
-              day: this.selectedDate.getDate()
+              day: this.selectedDate.getDate(),
+              mode: 'manual'
             }
           })
         }).borderRadius(8)

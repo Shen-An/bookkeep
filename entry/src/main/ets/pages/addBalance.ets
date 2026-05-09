@@ -22,6 +22,7 @@ interface AddBalanceParams {
   month?: number; // 1-12
   day?: number;
   editId?: number;
+  mode?: string; // 'ai' | 'manual'
 }
 interface IKeyboardUnit {
   content: string | Resource,
@@ -55,6 +56,7 @@ struct AddBalance {
   @State activeYear: number = new Date().getFullYear();
   @State activeMonth: number = new Date().getMonth() + 1;
   @State activeDay: number = new Date().getDate();
+  @State entryMode: string = 'ai'; // 'ai' or 'manual'
   activeDate: Date = new Date();
   context = getContext(this) as common.UIAbilityContext;
   filesDir = this.context.filesDir;
@@ -63,6 +65,14 @@ struct AddBalance {
     const params = router.getParams() as AddBalanceParams;
     const now = new Date();
     const editId = (params && typeof params.editId === 'number') ? params.editId : -1;
+
+    if (editId >= 0) {
+      this.entryMode = 'manual';
+    } else if (params && params.mode === 'manual') {
+      this.entryMode = 'manual';
+    } else {
+      this.entryMode = 'ai';
+    }
 
     if (editId >= 0) {
       this.isEditing = true;
@@ -481,103 +491,105 @@ struct AddBalance {
         .backgroundColor($r('app.color.main_theme_blue'))
         .width('100%')
 
-        // AI one-sentence billing
-        Column({ space: 8 }) {
-          Row({ space: 8 }) {
-            TextInput({
-              text: this.aiInputText,
-              placeholder: $r('app.string.ai_billing_placeholder')
-            })
-              .layoutWeight(1)
-              .borderRadius(8)
-              .backgroundColor(Color.White)
-              .onChange((v: string) => {
-                this.aiInputText = v;
+        // AI one-sentence billing - only show in AI mode
+        if (this.entryMode === 'ai') {
+          Column({ space: 8 }) {
+            Row({ space: 8 }) {
+              TextInput({
+                text: this.aiInputText,
+                placeholder: $r('app.string.ai_billing_placeholder')
               })
-
-            Button({ type: ButtonType.Normal }) {
-              Text(this.aiParsing ? $r('app.string.ai_billing_parsing') : $r('app.string.ai_billing_parse'))
-                .fontSize(14)
-                .fontColor(Color.White)
-            }
-            .backgroundColor($r('app.color.main_theme_blue'))
-            .borderRadius(8)
-            .enabled(!this.aiParsing)
-            .onClick(async () => {
-              if (this.aiParsing) {
-                return;
-              }
-              const input = (this.aiInputText ?? '').trim();
-              if (!input) {
-                promptAction.showToast({ message: '请输入一句话，例如：今天午饭25 / 发工资5000 / 昨晚打车32' });
-                return;
-              }
-              this.aiParsing = true;
-              try {
-                if (!TEXT_AI_CONFIG.baseUrl || !TEXT_AI_CONFIG.apiKey) {
-                  promptAction.showToast({ message: '未配置 AI 服务，将先使用本地规则解析（可在 ai/AiBillingConfig.ts 填写 baseUrl/apiKey）。' });
-                }
-                const ret = await AiBillingParser.parseToBill(input, {
-                  expenseTypes: defaultExpenseType,
-                  incomeTypes: defaultIncomeType,
-                  preferLLM: true
-                });
-                if (!ret.ok) {
-                  // 当 ok 为 false 时，结果中包含 tip 字段
-                  const tip = (ret as GeneratedTypeLiteralInterface_1).tip;
-                  promptAction.showToast({ message: tip });
-                  return;
-                }
-
-                const bill = ret.bill;
-                this.activeTab = bill.direction === BillingDirection.OUT ? 0 : 1;
-                this.activeType = bill.type.icon;
-                this.selectedTypeName = bill.type.name;
-                this.balanceAmount = bill.amount.toFixed(2);
-                this.balanceTempAmount = bill.amount.toFixed(2);
-                this.remark = bill.remark ?? '';
-
-                const d = new Date(bill.timestamp);
-                this.activeYear = d.getFullYear();
-                this.activeMonth = d.getMonth() + 1;
-                this.activeDay = d.getDate();
-                this.activeDate.setTime(d.getTime());
-
-                animateTo({ duration: 300, curve: Curve.EaseOut }, () => {
-                  this.inputMarginTop = 0;
-                  this.inputOpacity = 1;
+                .layoutWeight(1)
+                .borderRadius(8)
+                .backgroundColor(Color.White)
+                .onChange((v: string) => {
+                  this.aiInputText = v;
                 })
 
-                promptAction.showToast({ message: `已识别：${ret.summary}` });
-              } finally {
-                this.aiParsing = false;
+              Button({ type: ButtonType.Normal }) {
+                Text(this.aiParsing ? $r('app.string.ai_billing_parsing') : $r('app.string.ai_billing_parse'))
+                  .fontSize(14)
+                  .fontColor(Color.White)
               }
-            })
-          }
-
-          Row({ space: 8 }) {
-            TextInput({
-              placeholder: $r('app.string.ai_image_upload_hint')
-            })
-              .layoutWeight(1)
+              .backgroundColor($r('app.color.main_theme_blue'))
               .borderRadius(8)
-              .backgroundColor(Color.White)
+              .enabled(!this.aiParsing)
+              .onClick(async () => {
+                if (this.aiParsing) {
+                  return;
+                }
+                const input = (this.aiInputText ?? '').trim();
+                if (!input) {
+                  promptAction.showToast({ message: '请输入一句话，例如：今天午饭25 / 发工资5000 / 昨晚打车32' });
+                  return;
+                }
+                this.aiParsing = true;
+                try {
+                  if (!TEXT_AI_CONFIG.baseUrl || !TEXT_AI_CONFIG.apiKey) {
+                    promptAction.showToast({ message: '未配置 AI 服务，将先使用本地规则解析（可在 ai/AiBillingConfig.ts 填写 baseUrl/apiKey）。' });
+                  }
+                  const ret = await AiBillingParser.parseToBill(input, {
+                    expenseTypes: defaultExpenseType,
+                    incomeTypes: defaultIncomeType,
+                    preferLLM: true
+                  });
+                  if (!ret.ok) {
+                    // 当 ok 为 false 时，结果中包含 tip 字段
+                    const tip = (ret as GeneratedTypeLiteralInterface_1).tip;
+                    promptAction.showToast({ message: tip });
+                    return;
+                  }
 
-            Button({ type: ButtonType.Normal }) {
-              Text(this.imageParsing ? $r('app.string.ai_image_parsing') : $r('app.string.ai_image_recognize'))
-                .fontSize(14)
-                .fontColor(Color.White)
+                  const bill = ret.bill;
+                  this.activeTab = bill.direction === BillingDirection.OUT ? 0 : 1;
+                  this.activeType = bill.type.icon;
+                  this.selectedTypeName = bill.type.name;
+                  this.balanceAmount = bill.amount.toFixed(2);
+                  this.balanceTempAmount = bill.amount.toFixed(2);
+                  this.remark = bill.remark ?? '';
+
+                  const d = new Date(bill.timestamp);
+                  this.activeYear = d.getFullYear();
+                  this.activeMonth = d.getMonth() + 1;
+                  this.activeDay = d.getDate();
+                  this.activeDate.setTime(d.getTime());
+
+                  animateTo({ duration: 300, curve: Curve.EaseOut }, () => {
+                    this.inputMarginTop = 0;
+                    this.inputOpacity = 1;
+                  })
+
+                  promptAction.showToast({ message: `已识别：${ret.summary}` });
+                } finally {
+                  this.aiParsing = false;
+                }
+              })
             }
-            .backgroundColor($r('app.color.main_theme_blue'))
-            .borderRadius(8)
-            .enabled(!this.imageParsing)
-            .onClick(() => {
-              this.selectImageFromGallery();
-            })
+
+            Row({ space: 8 }) {
+              TextInput({
+                placeholder: $r('app.string.ai_image_upload_hint')
+              })
+                .layoutWeight(1)
+                .borderRadius(8)
+                .backgroundColor(Color.White)
+
+              Button({ type: ButtonType.Normal }) {
+                Text(this.imageParsing ? $r('app.string.ai_image_parsing') : $r('app.string.ai_image_recognize'))
+                  .fontSize(14)
+                  .fontColor(Color.White)
+              }
+              .backgroundColor($r('app.color.main_theme_blue'))
+              .borderRadius(8)
+              .enabled(!this.imageParsing)
+              .onClick(() => {
+                this.selectImageFromGallery();
+              })
+            }
           }
+          .padding({ left: 12, right: 12, top: 8, bottom: 8 })
+          .backgroundColor($r('app.color.main_theme_blue'))
         }
-        .padding({ left: 12, right: 12, top: 8, bottom: 8 })
-        .backgroundColor($r('app.color.main_theme_blue'))
 
         GridRow({ columns: 4, gutter: 12 }) {
           ForEach(this.activeTab == 0 ? defaultExpenseType : defaultIncomeType, (item: IBillType) => {
