@@ -190,7 +190,7 @@ struct Copyright {
           .fontColor($r('app.color.text_gray'))
           .margin({ top: 8 })
 
-        Text('Copyright © 2025 兑泽含光 (2025124051@chd.edu.cn)')
+        Text('Copyright © 2025 兑泽含光')
           .fontSize(12)
           .fontColor($r('app.color.text_gray'))
           .margin({ top: 4 })

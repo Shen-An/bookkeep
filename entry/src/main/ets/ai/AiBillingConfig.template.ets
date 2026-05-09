@@ -22,11 +22,13 @@ export interface AiBillingConfig {
 
 /**
  * 文字识别AI配置
+ * ⚠️ 请复制此文件为 AiBillingConfig.ets 并填入你的真实 API Key
+ * AiBillingConfig.ets 已在 .gitignore 中，不会被提交到仓库
  */
 export const TEXT_AI_CONFIG: AiBillingConfig = {
-  baseUrl: 'https://token.sensenova.cn/v1/chat/completions',
-  apiKey: '',
-  model: 'deepseek-v4-flash',
+  baseUrl: 'https://api.openai.com/v1/chat/completions',
+  apiKey: 'YOUR_TEXT_API_KEY_HERE',
+  model: 'gpt-4o-mini',
   apiKeyHeader: 'Authorization',
   apiKeyPrefix: 'Bearer ',
   timeoutMs: 120_000
@@ -34,13 +36,13 @@ export const TEXT_AI_CONFIG: AiBillingConfig = {
 
 /**
  * 图像识别AI配置
- * 使用智谱 GLM-4V-Flash（支持视觉识别，免费）
- * 将图片转为base64发送给视觉模型识别
+ * ⚠️ 请复制此文件为 AiBillingConfig.ets 并填入你的真实 API Key
+ * AiBillingConfig.ets 已在 .gitignore 中，不会被提交到仓库
  */
 export const IMAGE_AI_CONFIG: AiBillingConfig = {
-  baseUrl: 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
-  apiKey: '',
-  model: 'glm-4v-flash',
+  baseUrl: 'https://api.openai.com/v1/chat/completions',
+  apiKey: 'YOUR_IMAGE_API_KEY_HERE',
+  model: 'gpt-4o-mini',
   apiKeyHeader: 'Authorization',
   apiKeyPrefix: 'Bearer ',
   timeoutMs: 120_000
