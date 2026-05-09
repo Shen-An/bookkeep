@@ -4,3 +4,6 @@
 /build
 /.cxx
 /.test
+
+
+/src/main/ets/ai/AiBillingConfig.ets
