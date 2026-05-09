@@ -72,7 +72,7 @@ struct BillInfoPage {
         }
         .margin({ right: 16 })
         .padding({ left: 12, right: 12, top: 4, bottom: 4 })
-        .backgroundColor('#ffffff33')
+        .backgroundColor(Color.Blue)
         .borderRadius(16)
         .onClick(() => {
           DatePickerDialog.show({

@@ -145,7 +145,7 @@ export struct PageEntries {
             }
             .width(44)
             .height(44)
-            .backgroundColor('#fff8e8')
+            .backgroundColor('#fff0e8')
             .borderRadius(22)
             .justifyContent(FlexAlign.Center)
 

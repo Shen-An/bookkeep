@@ -510,7 +510,7 @@ struct AddBalance {
               })
                 .layoutWeight(1)
                 .borderRadius(12)
-              .backgroundColor('#fffffff2')
+              .backgroundColor(Color.White)
                 .padding({ left: 12 })
                 .fontColor('#333333')
                 .placeholderColor($r('app.color.text_gray'))
@@ -521,9 +521,10 @@ struct AddBalance {
               Button({ type: ButtonType.Normal }) {
                 Text(this.aiParsing ? $r('app.string.ai_billing_parsing') : $r('app.string.ai_billing_parse'))
                   .fontSize(14)
-                  .fontColor(Color.White)
+                  .fontColor($r('app.color.main_theme_blue'))
+                  .fontWeight(FontWeight.Medium)
               }
-              .backgroundColor('#ffffff33')
+              .backgroundColor(Color.White)
               .borderRadius(12)
               .enabled(!this.aiParsing)
               .onClick(async () => {
@@ -583,16 +584,17 @@ struct AddBalance {
               })
                 .layoutWeight(1)
                 .borderRadius(12)
-                .backgroundColor('#fffffff2')
+                .backgroundColor(Color.White)
                 .padding({ left: 12 })
                 .placeholderColor($r('app.color.text_gray'))
 
               Button({ type: ButtonType.Normal }) {
                 Text(this.imageParsing ? $r('app.string.ai_image_parsing') : $r('app.string.ai_image_recognize'))
                   .fontSize(14)
-                  .fontColor(Color.White)
+                  .fontColor($r('app.color.main_theme_blue'))
+                  .fontWeight(FontWeight.Medium)
               }
-              .backgroundColor('#ffffff33')
+              .backgroundColor(Color.White)
               .borderRadius(12)
               .enabled(!this.imageParsing)
               .onClick(() => {
@@ -601,7 +603,7 @@ struct AddBalance {
             }
           }
           .padding({ left: 16, right: 16, top: 12, bottom: 12 })
-          .backgroundColor('#1a1fa1ff')
+          .backgroundColor($r('app.color.main_theme_gradient_start'))
         }
 
         // 分类选择网格

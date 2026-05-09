@@ -130,7 +130,7 @@ struct EconomicCharts {
         }
         .margin({ right: 16 })
         .padding({ left: 10, right: 10, top: 4, bottom: 4 })
-        .backgroundColor('#ffffff33')
+        .backgroundColor(Color.Blue)
         .borderRadius(16)
         .onClick(() => {
           DatePickerDialog.show({

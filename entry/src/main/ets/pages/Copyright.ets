@@ -1,4 +1,5 @@
 // Copyright (c) 2023 Ericple
+// Copyright (c) 2025 兑泽含光 (2025124051@chd.edu.cn)
 // OpenBill is licensed under Mulan PSL v2.
 // You can use this software according to the terms and conditions of the Mulan PSL v2.
 // You may obtain a copy of Mulan PSL v2 at:
@@ -42,77 +43,141 @@ struct Copyright {
 
       // 内容区
       Column() {
-        // 头像
-        Image($r("app.media.authorAvatar"))
-          .width(120)
-          .height(120)
-          .border({
-            width: 3,
-            color: '#FF1FA1FF',
-            radius: 60
-          })
-          .margin({ top: 40, bottom: 16 })
+        // 头像并排
+        Row() {
+          // Ericple
+          Column() {
+            Image($r("app.media.authorAvatar"))
+              .width(100)
+              .height(100)
+              .border({
+                width: 3,
+                color: '#FF1FA1FF',
+                radius: 50
+              })
+              .margin({ bottom: 8 })
 
-        // 姓名
-        Text("Ericple")
-          .fontSize(28)
-          .fontWeight(FontWeight.Bold)
-          .fontColor('#1a1a1a')
-          .margin({ bottom: 8 })
-
-        // 简介
-        Text('OpenBill 开源记账应用')
-          .fontSize(14)
-          .fontColor($r('app.color.text_gray'))
-          .margin({ bottom: 24 })
-
-        // 联系方式卡片
-        Column() {
-          Row() {
-            Image($r("app.media.ic_public_opensource_info"))
-              .width(20)
-              .height(20)
-              .margin({ right: 12 })
-            Text("联系方式")
-              .fontSize(16)
+            Text("Ericple")
+              .fontSize(22)
+              .fontWeight(FontWeight.Bold)
               .fontColor('#1a1a1a')
-              .fontWeight(FontWeight.Medium)
+
+            Text('OpenBill(易记账)开源记账应用')
+              .fontSize(12)
+              .fontColor($r('app.color.text_gray'))
+              .margin({ top: 4 })
           }
-          .margin({ bottom: 12 })
+          .layoutWeight(1)
+          .alignItems(HorizontalAlign.Center)
+
+          // 兑泽含光
+          Column() {
+            Image($r("app.media.my_authorAvatar"))
+              .width(100)
+              .height(100)
+              .border({
+                width: 3,
+                color: '#FF1FA1FF',
+                radius: 50
+              })
+              .margin({ bottom: 8 })
+
+            Text("兑泽含光")
+              .fontSize(22)
+              .fontWeight(FontWeight.Bold)
+              .fontColor('#1a1a1a')
+
+            Text('风风记账')
+              .fontSize(12)
+              .fontColor($r('app.color.text_gray'))
+              .margin({ top: 4 })
+          }
+          .layoutWeight(1)
+          .alignItems(HorizontalAlign.Center)
+        }
+        .width('100%')
+        .margin({ top: 40, bottom: 24 })
+
+        // 联系方式卡片（上下排布）
+        // Ericple 联系方式
+        Column() {
+          Text("Ericple")
+            .fontSize(15)
+            .fontColor('#1a1a1a')
+            .fontWeight(FontWeight.Bold)
+            .margin({ bottom: 8 })
 
           Divider()
             .color($r('app.color.divider_color'))
-            .margin({ bottom: 12 })
+            .margin({ bottom: 8 })
 
           Row() {
             Text('📧')
-              .fontSize(16)
-              .margin({ right: 8 })
+              .fontSize(13)
+              .margin({ right: 4 })
             Text("dev@peercat.cn")
-              .fontSize(15)
+              .fontSize(12)
               .fontColor('#333333')
-          }
-          .margin({ bottom: 8 })
-
-          Row() {
+            Blank()
             Text('📱')
-              .fontSize(16)
-              .margin({ right: 8 })
-            Text("开源项目：oh-bill")
-              .fontSize(15)
+              .fontSize(13)
+              .margin({ right: 4 })
+            Text("易记账")
+              .fontSize(12)
               .fontColor('#333333')
           }
         }
-        .padding(20)
+        .padding(14)
         .width('100%')
+        .alignItems(HorizontalAlign.Start)
         .backgroundColor(Color.White)
-        .borderRadius(16)
+        .borderRadius(12)
         .shadow({
-          radius: 8,
+          radius: 6,
           color: '#1a000000',
           offsetY: 2
         })
         .margin({ top: 16 })
+
+        // 兑泽含光 联系方式
+        Column() {
+          Text("兑泽含光")
+            .fontSize(15)
+            .fontColor('#1a1a1a')
+            .fontWeight(FontWeight.Bold)
+            .margin({ bottom: 8 })
+
+          Divider()
+            .color($r('app.color.divider_color'))
+            .margin({ bottom: 8 })
+
+          Row() {
+            Text('📧')
+              .fontSize(13)
+              .margin({ right: 4 })
+            Text("2025124051@chd.edu.cn")
+              .fontSize(12)
+              .fontColor('#333333')
+            Blank()
+            Text('📱')
+              .fontSize(13)
+              .margin({ right: 4 })
+            Text("风风记账")
+              .fontSize(12)
+              .fontColor('#333333')
+          }
+        }
+        .padding(14)
+        .width('100%')
+        .alignItems(HorizontalAlign.Start)
+        .backgroundColor(Color.White)
+        .borderRadius(12)
+        .shadow({
+          radius: 6,
+          color: '#1a000000',
+          offsetY: 2
+        })
+        .margin({ top: 12 })
 
         // 版权信息
         Text('基于 Mulan PSL v2 开源协议')
@@ -124,6 +189,11 @@ struct Copyright {
           .fontSize(12)
           .fontColor($r('app.color.text_gray'))
           .margin({ top: 8 })
+
+        Text('Copyright © 2025 兑泽含光 (2025124051@chd.edu.cn)')
+          .fontSize(12)
+          .fontColor($r('app.color.text_gray'))
+          .margin({ top: 4 })
       }
       .width('100%')
       .alignItems(HorizontalAlign.Center)

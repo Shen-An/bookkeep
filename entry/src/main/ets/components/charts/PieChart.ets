@@ -11,7 +11,7 @@ export struct PieChart {
   private lastWidth: number = 0;
   private lastHeight: number = 0;
 
-  private palette: string[] = ['#1FA1FF', '#2CC4E1', '#CFD4D9', '#858585'];
+  private palette: string[] = ['#1FA1FF', '#2CC4E1', '#FF6B6B', '#51CF66', '#845EF7', '#FF922B', '#F06595', '#20C997'];
 
   private draw(width: number, height: number): void {
     if (width <= 0 || height <= 0) {

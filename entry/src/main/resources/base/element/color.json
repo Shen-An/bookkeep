@@ -22,7 +22,7 @@
     },
     {
       "name": "text_gray",
-      "value": "#ff858585"
+      "value": "#4A4A4A"
     },
     {
       "name": "main_theme_shadow",
@@ -30,7 +30,7 @@
     },
     {
       "name": "text_white",
-      "value": "#FFCFD4D9"
+      "value": "#FF2ED573"
     },
     {
       "name": "active",
@@ -42,7 +42,7 @@
     },
     {
       "name": "page_background",
-      "value": "#FFF5F7FA"
+      "value": "#F5F7FA"
     },
     {
       "name": "expense_red",

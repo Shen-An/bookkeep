@@ -106,7 +106,7 @@
     },
     {
       "name": "ai_image_recognize",
-      "value": "Recognize"
+      "value": "截图识别"
     }
   ]
 }
