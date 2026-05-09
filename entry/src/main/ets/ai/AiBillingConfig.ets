@@ -25,7 +25,7 @@ export interface AiBillingConfig {
  */
 export const TEXT_AI_CONFIG: AiBillingConfig = {
   baseUrl: 'https://token.sensenova.cn/v1/chat/completions',
-  apiKey: 'sk-sTeEIGUmIF3MKsaG6PJi26UZvIfQYkn4',
+  apiKey: '',
   model: 'deepseek-v4-flash',
   apiKeyHeader: 'Authorization',
   apiKeyPrefix: 'Bearer ',
@@ -39,7 +39,7 @@ export const TEXT_AI_CONFIG: AiBillingConfig = {
  */
 export const IMAGE_AI_CONFIG: AiBillingConfig = {
   baseUrl: 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
-  apiKey: '33829b6e4fc84a6ea6e27f13468ea7fc.43DCuGO2fSDiQLGQ',
+  apiKey: '',
   model: 'glm-4v-flash',
   apiKeyHeader: 'Authorization',
   apiKeyPrefix: 'Bearer ',
