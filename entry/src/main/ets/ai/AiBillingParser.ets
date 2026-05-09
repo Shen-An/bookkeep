@@ -359,15 +359,16 @@ async function llmParse(text: string, now: Date, expenseCats: string[], incomeCa
   if (!config.baseUrl || !config.apiKey) return undefined;
 
   const today = ymd(now);
-  const system = '你是一个记账助手。把用户输入的一句话解析为严格 JSON。' +
+  const system = '你是一个专业的记账助手。把用户输入的一句话解析为严格 JSON。' +
     '只输出 JSON，不要输出解释、不要 markdown。' +
     '字段要求：amount(number|null), direction("IN"|"OUT"|null), category(string|null), date("YYYY-MM-DD"|null), remark(string|null), needMoreInfo(boolean), missingFields(string[]), friendlyTip(string|null)。' +
-    'category 必须从给定候选列表中选择最贴近的一项：支出=' +
+    'category 必须从给定候选列表中选择最贴近的一项，不要自己编造分类名称：支出=' +
     JSON.stringify(expenseCats) +
     '；收入=' +
     JSON.stringify(incomeCats) +
     '。' +
     `今天日期是 ${today}。如果用户未提及日期则 date 设为 ${today}。` +
+    '⚠️ 重要规则：不要编造信息！如果用户输入中没有明确提到金额，amount必须设为null。不要猜测金额。' +
     '如果无法确定 amount 或 direction 或 category，请设置 needMoreInfo=true，并在 missingFields 给出缺失字段，同时 friendlyTip 用中文给出补充示例。';
 
   const messages: ChatMessage[] = [

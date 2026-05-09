@@ -2,6 +2,7 @@ import promptAction from '@ohos.promptAction';
 import { postJson } from './AiHttpClient';
 import { AiBillingConfig } from './AiBillingConfig';
 import fs from '@ohos.file.fs';
+import util from '@ohos.util';
 
 interface ImageRecognitionResult {
   amount?: number;
@@ -9,17 +10,6 @@ interface ImageRecognitionResult {
   category?: string;
   date?: string;
   remark?: string;
-}
-
-interface ChatMessage {
-  role: string;
-  content: string;
-}
-
-interface RequestBody {
-  model: string;
-  temperature: number;
-  messages: ChatMessage[];
 }
 
 interface OpenAiChoiceMessage {
@@ -34,101 +24,228 @@ interface OpenAiResponse {
   choices?: OpenAiChoice[];
 }
 
+class ChatMessage {
+  public role: string = '';
+  public content: string = '';
+
+  constructor(role: string, content: string) {
+    this.role = role;
+    this.content = content;
+  }
+}
+
+class ImageContentPart {
+  public type: string = 'image_url';
+  public image_url: ImageUrl = new ImageUrl('');
+
+  constructor(type: string, imageUrl: ImageUrl) {
+    this.type = type;
+    this.image_url = imageUrl;
+  }
+}
+
+class TextContentPart {
+  public type: string = 'text';
+  public text: string = '';
+
+  constructor(type: string, text: string) {
+    this.type = type;
+    this.text = text;
+  }
+}
+
+class ImageUrl {
+  public url: string = '';
+
+  constructor(url: string) {
+    this.url = url;
+  }
+}
+
+class VisionChatMessage {
+  public role: string = '';
+  public content: Object[] = [];
+
+  constructor(role: string, content: Object[]) {
+    this.role = role;
+    this.content = content;
+  }
+}
+
+class RequestBody {
+  public model: string = '';
+  public temperature: number = 0;
+  public messages: Object[] = [];
+
+  constructor(model: string, temperature: number, messages: Object[]) {
+    this.model = model;
+    this.temperature = temperature;
+    this.messages = messages;
+  }
+}
+
 export class ImageProcessor {
   /**
    * 识别图像中的文字并解析为账单信息
+   * 流程：将图片转为base64 → 发送给支持视觉的AI模型识别
    * @param imageUri 图像URI
-   * @param config AI配置
+   * @param config AI配置（需使用支持视觉识别的模型，如GLM-4V）
    * @param expenseCategories 支出分类列表
    * @param incomeCategories 收入分类列表
    * @returns 识别结果
    */
   public static async recognizeImageText(imageUri: string, config: AiBillingConfig, expenseCategories: string[], incomeCategories: string[]): Promise<string | undefined> {
     try {
-      // 读取图像文件
-      const file = fs.openSync(imageUri, fs.OpenMode.READ_ONLY);
-      const stat = fs.statSync(file.fd);
-      const buffer = new ArrayBuffer(stat.size);
-      fs.readSync(file.fd, buffer);
-      fs.closeSync(file.fd);
+      // 第一步：读取图片并转为base64
+      promptAction.showToast({ message: '正在处理图片...' });
+      const base64Image: string = await ImageProcessor.imageToBase64(imageUri);
+      const mimeType: string = ImageProcessor.getMimeType(imageUri);
+      const dataUrl: string = `data:${mimeType};base64,${base64Image}`;
 
-      // 将图像转换为base64
-      const base64 = bufferToBase64(buffer);
-
-      // 构建请求体
-      const messages: ChatMessage[] = [
-        {
-          role: 'system',
-          content: '你是一个专业的记账助手。请仔细分析用户上传的微信支付或转账截图，只提取与账单直接相关的核心信息，忽略背景描述、商户名称等无关文字。' +
-            '必须严格按照JSON格式返回以下字段：amount(数字，金额), direction("IN"|"OUT", 收支方向), ' +
-            'category(string, 分类，必须从给定候选列表中选择最合适的), date("YYYY-MM-DD", 日期), remark(string, 备注，可以是商户名称或其他信息)。' +
-            `支出分类列表：${JSON.stringify(expenseCategories)}` +
-            `收入分类列表：${JSON.stringify(incomeCategories)}` +
-            '如果无法确定某个字段，请设置为null。不要输出任何解释性文字，只返回JSON对象。'
-        },
-        {
-          role: 'user',
-          content: `请分析这张微信支付/转账截图，提取账单信息：![image](data:image/jpeg;base64,${base64})`
-        }
-      ];
-
-      const body: RequestBody = {
-        model: config.model,
-        temperature: 0.2,
-        messages: messages
-      };
-
-      // 构建请求头
-      const headers: Record<string, string> = {};
-      if (config.apiKeyHeader.toLowerCase() === 'authorization') {
-        headers[config.apiKeyHeader] = `${config.apiKeyPrefix}${config.apiKey}`;
-      } else {
-        headers[config.apiKeyHeader] = config.apiKey;
-      }
-
-      // 发送请求
-      const resp = await postJson(config.baseUrl, headers, body, config.timeoutMs);
-      if (resp.statusCode < 200 || resp.statusCode >= 300) {
-        console.error('AI识别失败:', resp.statusCode);
-        promptAction.showToast({ message: 'AI识别失败，请重试' });
-        return undefined;
-      }
-
-      // 解析响应
-      const json = JSON.parse(resp.bodyText) as OpenAiResponse;
-      const content = json?.choices?.[0]?.message?.content ?? '';
-      
-      // 提取JSON部分
-      const jsonStart = content.indexOf('{');
-      const jsonEnd = content.lastIndexOf('}');
-      if (jsonStart === -1 || jsonEnd === -1) {
-        console.error('AI返回格式错误:', content);
-        promptAction.showToast({ message: 'AI返回格式错误，请重试' });
-        return undefined;
-      }
-
-      const jsonStr = content.substring(jsonStart, jsonEnd + 1);
-      return jsonStr;
+      // 第二步：将图片发送给支持视觉的AI模型识别
+      promptAction.showToast({ message: '正在识别图片内容...' });
+      const result = await ImageProcessor.recognizeWithVisionAI(dataUrl, config, expenseCategories, incomeCategories);
+      return result;
     } catch (error) {
-      console.error('图像识别失败:', error);
+      const err: Error = error as Error;
+      console.error('图像识别失败:', err.message);
       promptAction.showToast({ message: '图像识别失败，请重试' });
       return undefined;
     }
   }
 
   /**
-   * 解析AI返回的响应
+   * 获取图片文件的MIME类型
+   */
+  private static getMimeType(uri: string): string {
+    const lower: string = uri.toLowerCase();
+    if (lower.endsWith('.png')) {
+      return 'image/png';
+    }
+    if (lower.endsWith('.webp')) {
+      return 'image/webp';
+    }
+    if (lower.endsWith('.bmp')) {
+      return 'image/bmp';
+    }
+    return 'image/jpeg';
+  }
+
+  /**
+   * 将图片文件转为base64字符串
+   * @param imageUri 图片文件路径
+   * @returns base64编码的图片数据
+   */
+  private static async imageToBase64(imageUri: string): Promise<string> {
+    // 读取文件
+    const file = fs.openSync(imageUri, fs.OpenMode.READ_ONLY);
+    const stat = fs.statSync(file.fd);
+    const buffer = new ArrayBuffer(stat.size);
+    fs.readSync(file.fd, buffer);
+    fs.closeSync(file.fd);
+
+    // 使用util.Base64Helper编码
+    const base64Helper = new util.Base64Helper();
+    const uint8Array: Uint8Array = new Uint8Array(buffer);
+    const base64Str: string = base64Helper.encodeToStringSync(uint8Array);
+
+    return base64Str;
+  }
+
+  /**
+   * 使用支持视觉识别的AI模型识别图片
+   * @param dataUrl 图片的data URL（data:image/xxx;base64,xxx）
+   * @param config AI配置
+   * @param expenseCategories 支出分类列表
+   * @param incomeCategories 收入分类列表
+   * @returns AI返回的JSON字符串
+   */
+  private static async recognizeWithVisionAI(dataUrl: string, config: AiBillingConfig, expenseCategories: string[], incomeCategories: string[]): Promise<string | undefined> {
+    const systemMessage: VisionChatMessage = new VisionChatMessage(
+      'system',
+      [new TextContentPart('text',
+        '你是一个专业的微信/支付宝账单信息解析工具。你的任务是从图片中提取账单信息。\n\n' +
+        '规则（严格遵守）：\n' +
+        '1. 金额(amount)：必须是一个数字，例如 12.50、168.00、520.00。如果看到"¥"或"￥"符号后面的数字，那就是金额。\n' +
+        '2. 方向(direction)：如果是支付/付款/转账给别人，就是"OUT"；如果是收款/到账/退款，就是"IN"。\n' +
+        '3. 分类(category)：从给定的分类列表中选择最匹配的一个。如果不确定，设为null。\n' +
+        '4. 日期(date)：从图片中提取交易日期，格式"YYYY-MM-DD"。如果看不到日期，设为null。\n' +
+        '5. 备注(remark)：可以写商户名称或交易说明，但不要写无关的描述性文字。\n\n' +
+        '⚠️ 重要：不要编造信息！如果看不清金额，amount设为null。\n' +
+        '⚠️ 只输出JSON，不要输出任何解释、描述或markdown。\n\n' +
+        `支出分类列表：${JSON.stringify(expenseCategories)}\n` +
+        `收入分类列表：${JSON.stringify(incomeCategories)}\n\n` +
+        '输出格式：{"amount": number|null, "direction": "IN"|"OUT"|null, "category": string|null, "date": "YYYY-MM-DD"|null, "remark": string|null}'
+      )]
+    );
+
+    const userMessage: VisionChatMessage = new VisionChatMessage(
+      'user',
+      [
+        new TextContentPart('text', '请识别这张微信/支付宝账单截图中的交易信息，输出JSON：'),
+        new ImageContentPart('image_url', new ImageUrl(dataUrl))
+      ]
+    );
+
+    const messages: Object[] = [
+      systemMessage,
+      userMessage
+    ];
+
+    const body: RequestBody = new RequestBody(config.model, 0, messages);
+
+    // 构建请求头
+    const headers: Record<string, string> = {};
+    if (config.apiKeyHeader.toLowerCase() === 'authorization') {
+      headers[config.apiKeyHeader] = `${config.apiKeyPrefix}${config.apiKey}`;
+    } else {
+      headers[config.apiKeyHeader] = config.apiKey;
+    }
+
+    // 发送请求
+    const resp = await postJson(config.baseUrl, headers, body, config.timeoutMs);
+    if (resp.statusCode < 200 || resp.statusCode >= 300) {
+      console.error('AI识别失败:', resp.statusCode, resp.bodyText);
+      promptAction.showToast({ message: 'AI识别失败，请重试' });
+      return undefined;
+    }
+
+    // 解析响应
+    const json: OpenAiResponse = JSON.parse(resp.bodyText) as OpenAiResponse;
+    const content: string = json?.choices?.[0]?.message?.content ?? '';
+
+    // 提取JSON部分
+    const jsonStart: number = content.indexOf('{');
+    const jsonEnd: number = content.lastIndexOf('}');
+    if (jsonStart === -1 || jsonEnd === -1) {
+      console.error('AI返回格式错误:', content);
+      promptAction.showToast({ message: 'AI返回格式错误，请重试' });
+      return undefined;
+    }
+
+    const jsonStr: string = content.substring(jsonStart, jsonEnd + 1);
+    return jsonStr;
+  }
+
+  /**
+   * 解析AI返回的响应，并进行合理性校验
    * @param response AI返回的JSON字符串
    * @returns 解析后的账单信息
    */
   public static parseAiResponse(response: string): ImageRecognitionResult {
     try {
       const data: ImageRecognitionResult = JSON.parse(response);
-      
-      // 处理金额
+
+      // 处理金额 - 增加合理性校验
       let amount: number | undefined;
       if (typeof data.amount === 'number' && data.amount > 0) {
-        amount = data.amount;
+        // 金额合理性校验：通常微信支付金额在 0.01 ~ 999999 之间
+        if (data.amount >= 0.01 && data.amount <= 999999) {
+          amount = data.amount;
+        } else {
+          console.warn('AI返回的金额不合理:', data.amount);
+          amount = undefined;
+        }
       }
 
       // 处理方向
@@ -137,10 +254,15 @@ export class ImageProcessor {
         direction = data.direction;
       }
 
-      // 处理分类
+      // 处理分类 - 如果AI返回了不合理的分类名称，设为undefined
       let category: string | undefined;
       if (typeof data.category === 'string' && data.category.trim()) {
-        category = data.category.trim();
+        const cat: string = data.category.trim();
+        // 过滤掉明显不是分类的文本（如商户名称、描述性文字）
+        const invalidCategories: string[] = ['美团外卖', '公司食堂', '商户', '商家', '微信', '支付宝', '转账', '付款', '收款'];
+        if (!invalidCategories.includes(cat)) {
+          category = cat;
+        }
       }
 
       // 处理日期
@@ -155,54 +277,20 @@ export class ImageProcessor {
         remark = data.remark.trim();
       }
 
-      return {
-        amount,
-        direction,
-        category,
-        date,
-        remark
+      const result: ImageRecognitionResult = {
+        amount: amount,
+        direction: direction,
+        category: category,
+        date: date,
+        remark: remark
       };
+      return result;
     } catch (error) {
-      console.error('解析AI响应失败:', error);
+      const err: Error = error as Error;
+      console.error('解析AI响应失败:', err.message);
       promptAction.showToast({ message: '解析AI响应失败，请重试' });
-      return {};
+      const emptyResult: ImageRecognitionResult = {};
+      return emptyResult;
     }
   }
-}
-
-/**
- * 将ArrayBuffer转换为base64字符串
- * @param buffer ArrayBuffer
- * @returns base64字符串
- */
-function bufferToBase64(buffer: ArrayBuffer): string {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-  let result = '';
-  const bytes = new Uint8Array(buffer);
-  const len = bytes.length;
-  
-  for (let i = 0; i < len; i += 3) {
-    const byte1 = bytes[i];
-    const byte2 = i + 1 < len ? bytes[i + 1] : 0;
-    const byte3 = i + 2 < len ? bytes[i + 2] : 0;
-    
-    const enc1 = byte1 >> 2;
-    const enc2 = ((byte1 & 3) << 4) | (byte2 >> 4);
-    const enc3 = ((byte2 & 15) << 2) | (byte3 >> 6);
-    const enc4 = byte3 & 63;
-
-    result += chars.charAt(enc1) + chars.charAt(enc2) + chars.charAt(enc3) + chars.charAt(enc4);
-  }
-  
-  // 处理填充字符
-  const padding = len % 3;
-  if (padding > 0) {
-    const padLength = 3 - padding;
-    result = result.substring(0, result.length - padLength);
-    for (let i = 0; i < padLength; i++) {
-      result += '=';
-    }
-  }
-  
-  return result;
 }

@@ -24,9 +24,9 @@ export interface AiBillingConfig {
  * 文字识别AI配置
  */
 export const TEXT_AI_CONFIG: AiBillingConfig = {
-  baseUrl: 'https://ark.cn-beijing.volces.com/api/v3/chat/completions',
-  apiKey: '',
-  model: 'deepseek-v3-2-251201',
+  baseUrl: 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
+  apiKey: '33829b6e4fc84a6ea6e27f13468ea7fc.43DCuGO2fSDiQLGQ',
+  model: 'glm-4.5-air',
   apiKeyHeader: 'Authorization',
   apiKeyPrefix: 'Bearer ',
   timeoutMs: 120_000
@@ -34,11 +34,13 @@ export const TEXT_AI_CONFIG: AiBillingConfig = {
 
 /**
  * 图像识别AI配置
+ * 使用智谱 GLM-4V-Flash（支持视觉识别，免费）
+ * 将图片转为base64发送给视觉模型识别
  */
 export const IMAGE_AI_CONFIG: AiBillingConfig = {
-  baseUrl: 'https://integrate.api.nvidia.com/v1/chat/completions',
-  apiKey: '',
-  model: 'moonshotai/kimi-k2.6',
+  baseUrl: 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
+  apiKey: '33829b6e4fc84a6ea6e27f13468ea7fc.43DCuGO2fSDiQLGQ',
+  model: 'glm-4v-flash',
   apiKeyHeader: 'Authorization',
   apiKeyPrefix: 'Bearer ',
   timeoutMs: 120_000
