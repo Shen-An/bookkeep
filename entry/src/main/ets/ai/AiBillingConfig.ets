@@ -25,7 +25,7 @@ export interface AiBillingConfig {
  */
 export const TEXT_AI_CONFIG: AiBillingConfig = {
   baseUrl: 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
-  apiKey: '33829b6e4fc84a6ea6e27f13468ea7fc.43DCuGO2fSDiQLGQ',
+  apiKey: '',
   model: 'glm-4.5-air',
   apiKeyHeader: 'Authorization',
   apiKeyPrefix: 'Bearer ',
@@ -39,7 +39,7 @@ export const TEXT_AI_CONFIG: AiBillingConfig = {
  */
 export const IMAGE_AI_CONFIG: AiBillingConfig = {
   baseUrl: 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
-  apiKey: '33829b6e4fc84a6ea6e27f13468ea7fc.43DCuGO2fSDiQLGQ',
+  apiKey: '',
   model: 'glm-4v-flash',
   apiKeyHeader: 'Authorization',
   apiKeyPrefix: 'Bearer ',
