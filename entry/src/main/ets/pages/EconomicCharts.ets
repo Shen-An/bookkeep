@@ -104,31 +104,34 @@ struct EconomicCharts {
 
   build() {
     Column() {
-      // 顶部栏
+      // 顶部栏 - 渐变背景
       Row() {
         Text('返回')
-          .fontSize(14)
+          .fontSize(15)
           .fontColor(Color.White)
           .margin({ left: 16, right: 12 })
           .onClick(() => router.back());
 
         Text('经济图表')
-          .fontSize(18)
+          .fontSize(19)
           .fontColor(Color.White)
-          .fontWeight(FontWeight.Medium);
+          .fontWeight(FontWeight.Bold);
 
         Blank();
 
         Row() {
           Text(this.monthTitle())
-            .fontSize(14)
+            .fontSize(15)
             .fontColor(Color.White);
           Image($r('app.media.ic_public_extract_list_dark'))
-            .width(8)
-            .height(8)
+            .width(10)
+            .height(10)
             .margin({ left: 6 });
         }
         .margin({ right: 16 })
+        .padding({ left: 10, right: 10, top: 4, bottom: 4 })
+        .backgroundColor('#ffffff33')
+        .borderRadius(16)
         .onClick(() => {
           DatePickerDialog.show({
             start: new Date('2000-01-01'),
@@ -140,28 +143,47 @@ struct EconomicCharts {
           })
         })
       }
-      .padding({ top: 18, bottom: 18 })
+      .padding({ top: 20, bottom: 20 })
       .width('100%')
-      .backgroundColor($r('app.color.main_theme_blue'));
+      .linearGradient({
+        angle: 180,
+        colors: [
+          [$r('app.color.main_theme_gradient_start'), 0],
+          [$r('app.color.main_theme_gradient_end'), 1]
+        ]
+      })
 
       if (this.loading) {
         Column() {
           Text('加载中...')
             .fontSize(14)
             .fontColor($r('app.color.text_gray'))
-            .margin({ top: 24 });
+            .margin({ top: 32 });
+          LoadingProgress()
+            .width(32)
+            .height(32)
+            .color($r('app.color.main_theme_blue'))
+            .margin({ top: 12 })
         }
         .width('100%')
         .alignItems(HorizontalAlign.Center)
+        .margin({ top: 80 })
       } else {
         Scroll() {
           Column() {
             // 1) 月度收支趋势折线图
             Column() {
-              Text('月度收支趋势')
-                .fontSize(16)
-                .fontWeight(FontWeight.Medium)
-                .margin({ bottom: 8 });
+              Row() {
+                Image($r('app.media.ic_public_billing_graphic'))
+                  .width(20)
+                  .height(20)
+                  .margin({ right: 6 })
+                Text('月度收支趋势')
+                  .fontSize(16)
+                  .fontWeight(FontWeight.Bold)
+                  .fontColor('#1a1a1a')
+              }
+              .margin({ bottom: 12 })
 
               ForEach([this.chartRefreshToken], (_t: number) => {
                 LineChart({
@@ -205,15 +227,22 @@ struct EconomicCharts {
             .padding(16)
             .margin({ left: 16, right: 16, top: 16 })
             .backgroundColor(Color.White)
-            .borderRadius(12)
-            .shadow({ radius: 12, color: $r('app.color.main_theme_shadow') });
+            .borderRadius(16)
+            .shadow({ radius: 8, color: '#1a000000', offsetY: 2 })
 
             // 2) 支出分类占比饼图
             Column() {
-              Text('当月支出分类占比')
-                .fontSize(16)
-                .fontWeight(FontWeight.Medium)
-                .margin({ bottom: 8 });
+              Row() {
+                Image($r('app.media.ic_public_budget'))
+                  .width(20)
+                  .height(20)
+                  .margin({ right: 6 })
+                Text('当月支出分类占比')
+                  .fontSize(16)
+                  .fontWeight(FontWeight.Bold)
+                  .fontColor('#1a1a1a')
+              }
+              .margin({ bottom: 12 })
 
               ForEach([this.chartRefreshToken], (_t: number) => {
                 PieChart({
@@ -226,20 +255,27 @@ struct EconomicCharts {
                 ForEach(this.report.current.expenseCategories, (i: CategoryRatio) => {
                   Row() {
                     Text(i.name)
-                      .fontSize(12)
-                      .fontColor($r('app.color.text_gray'))
-                      .width('40%');
+                      .fontSize(13)
+                      .fontColor('#333333')
+                      .width('35%');
                     Text(`¥${i.amount.toFixed(2)}`)
-                      .fontSize(12)
+                      .fontSize(13)
+                      .fontColor('#1a1a1a')
+                      .fontWeight(FontWeight.Medium)
                       .width('35%')
                       .textAlign(TextAlign.End);
                     Text(`${i.percent.toFixed(1)}%`)
-                      .fontSize(12)
-                      .width('25%')
+                      .fontSize(13)
+                      .width('20%')
                       .textAlign(TextAlign.End)
-                      .fontColor($r('app.color.text_gray'));
+                      .fontColor($r('app.color.main_theme_blue'))
+                      .fontWeight(FontWeight.Medium);
                   }
-                  .padding({ top: 6, bottom: 6 })
+                  .padding({ top: 8, bottom: 8 })
+                  .border({
+                    width: { bottom: 0.5 },
+                    color: $r('app.color.divider_color')
+                  })
                 })
               }
               .margin({ top: 8 })
@@ -247,15 +283,22 @@ struct EconomicCharts {
             .padding(16)
             .margin({ left: 16, right: 16, top: 12 })
             .backgroundColor(Color.White)
-            .borderRadius(12)
-            .shadow({ radius: 12, color: $r('app.color.main_theme_shadow') });
+            .borderRadius(16)
+            .shadow({ radius: 8, color: '#1a000000', offsetY: 2 })
 
             // 3) 收入分类占比饼图
             Column() {
-              Text('收入分类占比')
-                .fontSize(16)
-                .fontWeight(FontWeight.Medium)
-                .margin({ bottom: 8 });
+              Row() {
+                Image($r('app.media.ic_public_add_billing'))
+                  .width(20)
+                  .height(20)
+                  .margin({ right: 6 })
+                Text('收入分类占比')
+                  .fontSize(16)
+                  .fontWeight(FontWeight.Bold)
+                  .fontColor('#1a1a1a')
+              }
+              .margin({ bottom: 12 })
 
               ForEach([this.chartRefreshToken], (_t: number) => {
                 PieChart({
@@ -268,20 +311,27 @@ struct EconomicCharts {
                 ForEach(this.report.current.incomeCategories, (i: CategoryRatio) => {
                   Row() {
                     Text(i.name)
-                      .fontSize(12)
-                      .fontColor($r('app.color.text_gray'))
-                      .width('40%');
+                      .fontSize(13)
+                      .fontColor('#333333')
+                      .width('35%');
                     Text(`¥${i.amount.toFixed(2)}`)
-                      .fontSize(12)
+                      .fontSize(13)
+                      .fontColor('#1a1a1a')
+                      .fontWeight(FontWeight.Medium)
                       .width('35%')
                       .textAlign(TextAlign.End);
                     Text(`${i.percent.toFixed(1)}%`)
-                      .fontSize(12)
-                      .width('25%')
+                      .fontSize(13)
+                      .width('20%')
                       .textAlign(TextAlign.End)
-                      .fontColor($r('app.color.text_gray'));
+                      .fontColor($r('app.color.income_green'))
+                      .fontWeight(FontWeight.Medium);
                   }
-                  .padding({ top: 6, bottom: 6 })
+                  .padding({ top: 8, bottom: 8 })
+                  .border({
+                    width: { bottom: 0.5 },
+                    color: $r('app.color.divider_color')
+                  })
                 })
               }
               .margin({ top: 8 })
@@ -289,32 +339,40 @@ struct EconomicCharts {
             .padding(16)
             .margin({ left: 16, right: 16, top: 12 })
             .backgroundColor(Color.White)
-            .borderRadius(12)
-            .shadow({ radius: 12, color: $r('app.color.main_theme_shadow') });
+            .borderRadius(16)
+            .shadow({ radius: 8, color: '#1a000000', offsetY: 2 })
 
             // 4) 经济分析文案
             Column() {
-              Text('经济分析')
-                .fontSize(16)
-                .fontWeight(FontWeight.Medium)
-                .margin({ bottom: 8 });
+              Row() {
+                Image($r('app.media.icon'))
+                  .width(20)
+                  .height(20)
+                  .margin({ right: 6 })
+                Text('经济分析')
+                  .fontSize(16)
+                  .fontWeight(FontWeight.Bold)
+                  .fontColor('#1a1a1a')
+              }
+              .margin({ bottom: 12 })
 
               Text(this.report.analysisText)
-                .fontSize(13)
-                .lineHeight(20)
-                .fontColor('#333333');
+                .fontSize(14)
+                .lineHeight(22)
+                .fontColor('#555555');
             }
             .padding(16)
             .margin({ left: 16, right: 16, top: 12, bottom: 24 })
             .backgroundColor(Color.White)
-            .borderRadius(12)
-            .shadow({ radius: 12, color: $r('app.color.main_theme_shadow') });
+            .borderRadius(16)
+            .shadow({ radius: 8, color: '#1a000000', offsetY: 2 })
           }
           .width('100%')
+          .padding({ bottom: 16 })
         }
       }
     }
     .width('100%')
-    .backgroundColor('#ffffff')
+    .backgroundColor($r('app.color.page_background'))
   }
 }

@@ -9,6 +9,18 @@
       "value": "#FF1FA1FF"
     },
     {
+      "name": "main_theme_dark",
+      "value": "#FF0D6EFD"
+    },
+    {
+      "name": "main_theme_gradient_start",
+      "value": "#FF1FA1FF"
+    },
+    {
+      "name": "main_theme_gradient_end",
+      "value": "#FF0D6EFD"
+    },
+    {
       "name": "text_gray",
       "value": "#ff858585"
     },
@@ -23,6 +35,26 @@
     {
       "name": "active",
       "value": "#2CC4E1FF"
+    },
+    {
+      "name": "card_background",
+      "value": "#FFFFFF"
+    },
+    {
+      "name": "page_background",
+      "value": "#FFF5F7FA"
+    },
+    {
+      "name": "expense_red",
+      "value": "#FFFF4757"
+    },
+    {
+      "name": "income_green",
+      "value": "#FF2ED573"
+    },
+    {
+      "name": "divider_color",
+      "value": "#FFF0F0F0"
     }
   ]
 }

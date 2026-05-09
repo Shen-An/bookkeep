@@ -60,17 +60,25 @@ struct Index {
 
   build() {
     Column() {
+      // 顶部标题栏 - 渐变背景
       Row() {
         Text($r("app.string.app_title"))
           .fontColor(Color.White)
-          .fontSize(24)
-          .fontWeight(FontWeight.Normal)
+          .fontSize(26)
+          .fontWeight(FontWeight.Bold)
           .textAlign(TextAlign.Center)
           .width('100%')
+          .letterSpacing(2)
       }
-      .padding(24)
+      .padding({ top: 28, bottom: 20 })
       .width('100%')
-      .backgroundColor($r("app.color.main_theme_blue"))
+      .linearGradient({
+        angle: 180,
+        colors: [
+          [$r('app.color.main_theme_gradient_start'), 0],
+          [$r('app.color.main_theme_gradient_end'), 1]
+        ]
+      })
 
       BalanceViewer({
         selectedDate: $selectedDate,
@@ -78,18 +86,22 @@ struct Index {
         totalIncome: $totalIncome,
         totalBalance: $totalBalance
       })
+        .margin({ top: 0 })
+
       PageEntries({
         selectedDate: $selectedDate
       })
+
       BalanceList({
         currentBillingInfo: $currentBillingInfo,
         selectedDate: $selectedDate,
         totalBalance: $totalBalance,
         totalIncome: $totalIncome
       })
-      .layoutWeight(1)
+        .layoutWeight(1)
     }
     .height('100%')
     .width('100%')
+    .backgroundColor($r('app.color.page_background'))
   }
 }

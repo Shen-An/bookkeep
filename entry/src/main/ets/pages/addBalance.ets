@@ -441,11 +441,13 @@ struct AddBalance {
   build() {
     Stack({ alignContent: Alignment.Bottom }) {
       Column() {
+        // 顶部导航栏 - 渐变背景
         Row() {
           Row() {
             Text($r("app.string.balance"))
-              .fontSize(16)
-              .fontColor('white')
+              .fontSize(17)
+              .fontColor(Color.White)
+              .fontWeight(this.activeTab == 0 ? FontWeight.Bold : FontWeight.Normal)
               .onClick(() => {
                 this.activeTab = 0;
                 this.selectedTypeName = '';
@@ -455,13 +457,14 @@ struct AddBalance {
                 width: {
                   bottom: this.activeTab == 0 ? 2 : 0
                 },
-                color: 'white'
+                color: Color.White
               })
-              .padding({ bottom: 16 })
-              .margin({ top: 16, right: 16, left: 16 })
+              .padding({ bottom: 12 })
+              .margin({ top: 12, right: 20, left: 20 })
             Text($r("app.string.income"))
-              .fontSize(16)
-              .fontColor('white')
+              .fontSize(17)
+              .fontColor(Color.White)
+              .fontWeight(this.activeTab == 1 ? FontWeight.Bold : FontWeight.Normal)
               .onClick(() => {
                 this.activeTab = 1;
                 this.selectedTypeName = '';
@@ -471,15 +474,15 @@ struct AddBalance {
                 width: {
                   bottom: this.activeTab == 1 ? 2 : 0
                 },
-                color: 'white'
+                color: Color.White
               })
-              .padding({ bottom: 16 })
-              .margin({ top: 16, right: 16, left: 16 })
+              .padding({ bottom: 12 })
+              .margin({ top: 12, right: 20, left: 20 })
           }
 
           Text($r("app.string.cancel"))
             .fontSize(16)
-            .fontColor('white')
+          .fontColor('#ffffffe6')
             .onClick(() => {
               router.back()
             })
@@ -487,21 +490,30 @@ struct AddBalance {
             .margin({ right: 24 })
         }
         .justifyContent(FlexAlign.SpaceBetween)
-        .height(48)
-        .backgroundColor($r('app.color.main_theme_blue'))
+        .height(52)
         .width('100%')
+        .linearGradient({
+          angle: 180,
+          colors: [
+            [$r('app.color.main_theme_gradient_start'), 0],
+            [$r('app.color.main_theme_gradient_end'), 1]
+          ]
+        })
 
         // AI one-sentence billing - only show in AI mode
         if (this.entryMode === 'ai') {
-          Column({ space: 8 }) {
+          Column({ space: 10 }) {
             Row({ space: 8 }) {
               TextInput({
                 text: this.aiInputText,
                 placeholder: $r('app.string.ai_billing_placeholder')
               })
                 .layoutWeight(1)
-                .borderRadius(8)
-                .backgroundColor(Color.White)
+                .borderRadius(12)
+              .backgroundColor('#fffffff2')
+                .padding({ left: 12 })
+                .fontColor('#333333')
+                .placeholderColor($r('app.color.text_gray'))
                 .onChange((v: string) => {
                   this.aiInputText = v;
                 })
@@ -511,8 +523,8 @@ struct AddBalance {
                   .fontSize(14)
                   .fontColor(Color.White)
               }
-              .backgroundColor($r('app.color.main_theme_blue'))
-              .borderRadius(8)
+              .backgroundColor('#ffffff33')
+              .borderRadius(12)
               .enabled(!this.aiParsing)
               .onClick(async () => {
                 if (this.aiParsing) {
@@ -534,7 +546,6 @@ struct AddBalance {
                     preferLLM: true
                   });
                   if (!ret.ok) {
-                    // 当 ok 为 false 时，结果中包含 tip 字段
                     const tip = (ret as GeneratedTypeLiteralInterface_1).tip;
                     promptAction.showToast({ message: tip });
                     return;
@@ -571,91 +582,125 @@ struct AddBalance {
                 placeholder: $r('app.string.ai_image_upload_hint')
               })
                 .layoutWeight(1)
-                .borderRadius(8)
-                .backgroundColor(Color.White)
+                .borderRadius(12)
+                .backgroundColor('#fffffff2')
+                .padding({ left: 12 })
+                .placeholderColor($r('app.color.text_gray'))
 
               Button({ type: ButtonType.Normal }) {
                 Text(this.imageParsing ? $r('app.string.ai_image_parsing') : $r('app.string.ai_image_recognize'))
                   .fontSize(14)
                   .fontColor(Color.White)
               }
-              .backgroundColor($r('app.color.main_theme_blue'))
-              .borderRadius(8)
+              .backgroundColor('#ffffff33')
+              .borderRadius(12)
               .enabled(!this.imageParsing)
               .onClick(() => {
                 this.selectImageFromGallery();
               })
             }
           }
-          .padding({ left: 12, right: 12, top: 8, bottom: 8 })
-          .backgroundColor($r('app.color.main_theme_blue'))
+          .padding({ left: 16, right: 16, top: 12, bottom: 12 })
+          .backgroundColor('#1a1fa1ff')
         }
 
-        GridRow({ columns: 4, gutter: 12 }) {
-          ForEach(this.activeTab == 0 ? defaultExpenseType : defaultIncomeType, (item: IBillType) => {
-            GridCol() {
-              Column({ space: 4 }) {
-                Row() {
-                  Image(item.img)
-                    .width(24)
-                    .height(24)
-                    .onClick(() => {
-                      this.selectedTypeName = item.title;
-                      this.activeType = item.img;
-                      animateTo({ duration: 800, curve: Curve.EaseOut }, () => {
-                        this.inputMarginTop = 0;
-                        this.inputOpacity = 1;
-                      })
-                    })
-                }
-                .shadow({ radius: 24, color: $r('app.color.main_theme_shadow') })
-                .borderRadius(16)
-                .backgroundColor(this.selectedTypeName == item.title ? "#ffcfe8ff" : "white")
-                .width(48)
-                .height(48)
-                .justifyContent(FlexAlign.Center)
-                .onClick(() => {
-                  this.selectedTypeName = ''
-                  animateTo({ duration: 800, curve: Curve.EaseOut }, () => {
-                    this.inputMarginTop = 1000;
-                    this.inputOpacity = 0;
+        // 分类选择网格
+        Scroll() {
+          GridRow({ columns: 4, gutter: 16 }) {
+            ForEach(this.activeTab == 0 ? defaultExpenseType : defaultIncomeType, (item: IBillType) => {
+              GridCol() {
+                Column({ space: 6 }) {
+                  Row() {
+                    Image(item.img)
+                      .width(28)
+                      .height(28)
+                  }
+                  .shadow({
+                    radius: this.selectedTypeName == item.title ? 8 : 4,
+                    color: '#1a000000',
+                    offsetY: 2
                   })
-                })
+                  .borderRadius(16)
+                  .backgroundColor(this.selectedTypeName == item.title ? "#ffd0ebff" : Color.White)
+                  .width(52)
+                  .height(52)
+                  .justifyContent(FlexAlign.Center)
+                  .onClick(() => {
+                    this.selectedTypeName = item.title;
+                    this.activeType = item.img;
+                    animateTo({ duration: 800, curve: Curve.EaseOut }, () => {
+                      this.inputMarginTop = 0;
+                      this.inputOpacity = 1;
+                    })
+                  })
 
-                Row() {
-                  Text(item.title).fontSize(12)
+                  Row() {
+                    Text(item.title)
+                      .fontSize(12)
+                      .fontColor(this.selectedTypeName == item.title ? $r('app.color.main_theme_blue') : '#666666')
+                      .fontWeight(this.selectedTypeName == item.title ? FontWeight.Medium : FontWeight.Normal)
+                  }
                 }
+                .width(60)
+                .height(80)
               }
-              .width(56)
-              .height(68)
-
-            }
-          })
+            })
+          }
+          .padding({ left: 16, right: 16, top: 16, bottom: 16 })
         }
-        .padding(12)
+        .layoutWeight(1)
+        .width('100%')
       }
       .width('100%')
       .height('100%')
+      .backgroundColor($r('app.color.page_background'))
 
+      // 底部输入面板
       Column() {
+        // 金额显示
         Row() {
-          Text(`${this.balanceAmount}`).textAlign(TextAlign.End).width('100%').padding(8)
-            .fontSize(24)
-        }.height(36)
+          Text(`¥ ${this.balanceAmount}`)
+            .textAlign(TextAlign.End)
+            .width('100%')
+            .padding({ left: 16, right: 16 })
+            .fontSize(32)
+            .fontColor('#1a1a1a')
+            .fontWeight(FontWeight.Bold)
+        }
+        .height(48)
+        .backgroundColor('#f8f9fa')
 
+        // 备注输入
         Row() {
           TextInput({
             text: this.remark,
             placeholder: $r("app.string.add_balance_remark_placeholder")
-          }).borderRadius(8).margin(12).onChange(value => {
+          })
+          .borderRadius(10)
+          .margin({ left: 12, right: 12, top: 8, bottom: 4 })
+          .backgroundColor('#f0f0f0')
+          .padding({ left: 12 })
+          .placeholderColor($r('app.color.text_gray'))
+          .fontColor('#333333')
+          .height(40)
+          .onChange(value => {
             this.remark = value;
           })
         }
+        .backgroundColor(Color.White)
 
+        // 日期选择
         Row() {
+          Image($r("app.media.ic_public_extract_list_dark"))
+            .width(14)
+            .height(14)
+            .margin({ right: 6 })
           Text(`${this.activeYear} / ${(this.activeMonth).toString()
-            .padStart(2, '0')} / ${this.activeDay.toString().padStart(2, '0')}`).fontSize(16)
-            .margin({ bottom: 12 }).onClick(() => {
+            .padStart(2, '0')} / ${this.activeDay.toString().padStart(2, '0')}`)
+            .fontSize(15)
+            .fontColor('#666666')
+            .margin({ bottom: 8 })
+            .onClick(() => {
             DatePickerDialog.show({
               start: new Date("2000-01-01"),
               onAccept: (v) => {
@@ -664,54 +709,60 @@ struct AddBalance {
                 const pickedDay = (typeof v.day === 'number') ? v.day : this.activeDay;
 
                 this.activeYear = pickedYear;
-                // DatePicker returns month as 0-11; store/display as 1-12.
                 this.activeMonth = pickedMonth0 + 1;
                 this.activeDay = pickedDay;
 
-                // Keep activeDate in sync with the selected Y/M/D.
                 this.activeDate.setFullYear(pickedYear, pickedMonth0, pickedDay);
               },
               selected: this.activeDate
             })
           })
         }
+        .width('100%')
+        .justifyContent(FlexAlign.Center)
+        .backgroundColor(Color.White)
 
+        // 数字键盘
         GridRow({ columns: 4, gutter: 0 }) {
           ForEach(this.balanceInputUnits, (unit: IKeyboardUnit) => {
             GridCol() {
               Button({ type: ButtonType.Normal }) {
                 if (unit.contentType == "image") {
-                  Image(unit.content).width(18)
+                  Image(unit.content).width(22)
                 } else {
-                  Text(unit.content).fontSize(18).fontColor(unit.foreColor ?? "black")
+                  Text(unit.content)
+                    .fontSize(22)
+                    .fontColor(unit.foreColor ?? "#1a1a1a")
+                    .fontWeight(FontWeight.Medium)
                 }
               }
-              .height(49)
-              .backgroundColor(unit.bgColor ?? "white")
+              .height(52)
+              .backgroundColor(unit.bgColor ?? Color.White)
               .width('100%')
               .borderRadius(0)
               .onClick(() => {
-                // Call the callback function if it exists
                 if (unit.callback) {
                   unit.callback();
                 }
               })
-            }.border({
+            }
+            .border({
               width: {
                 top: 0.5,
                 right: 0.5,
                 bottom: 0,
                 left: 0
               },
-              color: '#ffcdcdcd'
+              color: '#fff0f0f0'
             })
           })
         }
       }
       .width('100%')
       .shadow({
-        radius: 20,
-        offsetY: 16
+        radius: 16,
+        offsetY: -4,
+        color: '#1a000000'
       })
       .margin({ top: this.inputMarginTop })
       .opacity(this.inputOpacity)

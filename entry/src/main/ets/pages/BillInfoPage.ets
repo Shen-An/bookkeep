@@ -47,110 +47,216 @@ struct BillInfoPage {
 
   build() {
     Column() {
+      // 顶部栏 - 渐变背景
       Row() {
-        Text(`${this.activeDate.getFullYear()}`)
-          .fontSize(16)
-          .margin({ left: 16 })
-        Text($r("app.string.year"))
-          .fontSize(14)
-        Image($r("app.media.ic_public_extract_list_dark"))
-          .width(8)
-          .height(8)
-          .margin({ left: 8 })
-      }.onClick(() => {
-        DatePickerDialog.show({
-          start: new Date("2000-01-01"),
-          onAccept: (v) => {
-            this.activeDate.setFullYear(v.year, v.month, v.day);
-          }
+        Text('返回')
+          .fontSize(15)
+          .fontColor(Color.White)
+          .margin({ left: 16, right: 12 })
+          .onClick(() => router.back());
+
+        Blank();
+
+        Row() {
+          Text(`${this.activeDate.getFullYear()}`)
+            .fontSize(17)
+            .fontColor(Color.White)
+            .fontWeight(FontWeight.Bold)
+          Text($r("app.string.year"))
+            .fontSize(14)
+            .fontColor('#ffffffcc')
+          Image($r("app.media.ic_public_extract_list_light"))
+            .width(10)
+            .height(10)
+            .margin({ left: 6 })
+        }
+        .margin({ right: 16 })
+        .padding({ left: 12, right: 12, top: 4, bottom: 4 })
+        .backgroundColor('#ffffff33')
+        .borderRadius(16)
+        .onClick(() => {
+          DatePickerDialog.show({
+            start: new Date("2000-01-01"),
+            onAccept: (v) => {
+              this.activeDate.setFullYear(v.year, v.month, v.day);
+            }
+          })
         })
-      })
-      .height(36)
-      .margin(16)
-      .width('100%')
 
-      Row() {
-        Column() {
-          Text("年结余").fontSize(14).fontColor('#ffffff').margin(4).height(22)
-          Text(`${this.yearlyLeft}`).fontSize(28).fontColor('#ffffff').margin(4).height(36)
-          Row() {
-            Text(`年收入 ${this.yearlyIncome}`)
-              .fontColor('#ffffff')
-              .fontSize(14)
-              .height(30)
-            Text(`年支出 ${this.yearlyOutBill}`)
-              .fontColor('#ffffff')
-              .fontSize(14)
-              .height(30)
-          }
-          .justifyContent(FlexAlign.SpaceAround)
-          .width('100%')
-        }.padding({ left: 24, right: 24, top: 16, bottom: 16 })
+        Blank();
       }
-      .height(132)
-      .backgroundColor($r("app.color.main_theme_blue"))
-      .margin({ left: 16, right: 16 })
-      .borderRadius(12)
-      .shadow({ radius: 12, color: $r('app.color.main_theme_shadow') })
+      .padding({ top: 20, bottom: 20 })
+      .width('100%')
+      .linearGradient({
+        angle: 180,
+        colors: [
+          [$r('app.color.main_theme_gradient_start'), 0],
+          [$r('app.color.main_theme_gradient_end'), 1]
+        ]
+      })
 
+      // 年度概览卡片
       Row() {
         Column() {
-          GridRow({ columns: 4 }) {
-            GridCol() {
-              Text("月份").fontSize(12).fontColor($r("app.color.text_gray"))
-            }
+          Text("年结余")
+            .fontSize(14)
+            .fontColor('#ffffffcc')
+            .margin({ bottom: 4 })
 
-            GridCol() {
-              Text("月收入").fontSize(12).fontColor($r("app.color.text_gray"))
-            }
-
-            GridCol() {
-              Text("月支出").fontSize(12).fontColor($r("app.color.text_gray"))
-            }
-
-            GridCol() {
-              Text("月结余").fontSize(12).fontColor($r("app.color.text_gray"))
-            }
-          }
-          .width('100%')
-          .margin({ bottom: 8 })
+          Text(`${this.yearlyLeft.toFixed(2)}`)
+            .fontSize(32)
+            .fontColor(Color.White)
+            .fontWeight(FontWeight.Bold)
+            .margin({ bottom: 8 })
 
           Row() {
-            List() {
-              ForEach(this.monthlySepBillInfo, (monthlyInfo: BillingInfo[], index: number) => {
-                ListItem() {
-                  GridRow({ columns: 4 }) {
-                    GridCol() {
-                      Text(`${index + 1}月`).fontSize(16)
-                    }
+            Column() {
+              Text('年收入')
+                .fontColor('#ffffffb3')
+                .fontSize(13)
+              Text(`${this.yearlyIncome.toFixed(2)}`)
+                .fontColor(Color.White)
+                .fontSize(15)
+                .fontWeight(FontWeight.Medium)
+                .margin({ top: 2 })
+            }
+            .layoutWeight(1)
 
-                    GridCol() {
-                      Text(`${BillingInfoUtils.calculateTotalIncome(monthlyInfo)}`).fontSize(14)
-                    }
-
-                    GridCol() {
-                      Text(`${BillingInfoUtils.calculateTotalOutBill(monthlyInfo)}`).fontSize(14)
-                    }
-
-                    GridCol() {
-                      Text(`${BillingInfoUtils.calculateTotalLeft(monthlyInfo)}`).fontSize(14)
-                    }
-                  }
-                  .padding(12)
-                  .border({
-                    width: { top: 0.5 },
-                    color: $r("app.color.text_gray")
-                  })
-                  .width('100%')
-                }
-              })
-            }.listDirection(Axis.Vertical)
+            Column() {
+              Text('年支出')
+                .fontColor('#ffffffb3')
+                .fontSize(13)
+              Text(`${this.yearlyOutBill.toFixed(2)}`)
+                .fontColor(Color.White)
+                .fontSize(15)
+                .fontWeight(FontWeight.Medium)
+                .margin({ top: 2 })
+            }
+            .layoutWeight(1)
           }
           .width('100%')
         }
+        .padding({ left: 24, right: 24, top: 20, bottom: 20 })
+      }
+      .width('100%')
+      .margin({ left: 16, right: 16 })
+      .linearGradient({
+        angle: 135,
+        colors: [
+          [$r('app.color.main_theme_gradient_start'), 0],
+          [$r('app.color.main_theme_gradient_end'), 1]
+        ]
+      })
+      .borderRadius(16)
+      .shadow({
+        radius: 12,
+        color: '#333a9df0',
+        offsetY: 4
+      })
+
+      // 月度明细表
+      Column() {
+        // 表头
+        Row() {
+          Row() {
+            Text("月份")
+              .fontSize(13)
+              .fontColor($r("app.color.text_gray"))
+              .fontWeight(FontWeight.Medium)
+          }
+          .layoutWeight(1)
+
+          Row() {
+            Text("月收入")
+              .fontSize(13)
+              .fontColor($r("app.color.text_gray"))
+              .fontWeight(FontWeight.Medium)
+          }
+          .layoutWeight(1)
+
+          Row() {
+            Text("月支出")
+              .fontSize(13)
+              .fontColor($r("app.color.text_gray"))
+              .fontWeight(FontWeight.Medium)
+          }
+          .layoutWeight(1)
+
+          Row() {
+            Text("月结余")
+              .fontSize(13)
+              .fontColor($r("app.color.text_gray"))
+              .fontWeight(FontWeight.Medium)
+          }
+          .layoutWeight(1)
+        }
+        .width('100%')
+        .padding({ left: 12, right: 12, bottom: 8 })
+
+        Divider()
+          .color($r('app.color.divider_color'))
+          .margin({ bottom: 4 })
+
+        // 列表
+        List() {
+          ForEach(this.monthlySepBillInfo, (monthlyInfo: BillingInfo[], index: number) => {
+            ListItem() {
+              Row() {
+                Row() {
+                  Text(`${index + 1}月`)
+                    .fontSize(15)
+                    .fontColor('#1a1a1a')
+                    .fontWeight(FontWeight.Medium)
+                }
+                .layoutWeight(1)
+
+                Row() {
+                  Text(`${BillingInfoUtils.calculateTotalIncome(monthlyInfo).toFixed(2)}`)
+                    .fontSize(14)
+                    .fontColor($r('app.color.income_green'))
+                }
+                .layoutWeight(1)
+
+                Row() {
+                  Text(`${BillingInfoUtils.calculateTotalOutBill(monthlyInfo).toFixed(2)}`)
+                    .fontSize(14)
+                    .fontColor($r('app.color.expense_red'))
+                }
+                .layoutWeight(1)
+
+                Row() {
+                  Text(`${BillingInfoUtils.calculateTotalLeft(monthlyInfo).toFixed(2)}`)
+                    .fontSize(14)
+                    .fontColor(BillingInfoUtils.calculateTotalLeft(monthlyInfo) >= 0 ? $r('app.color.income_green') : $r('app.color.expense_red'))
+                    .fontWeight(FontWeight.Medium)
+                }
+                .layoutWeight(1)
+              }
+              .width('100%')
+              .padding({ left: 12, right: 12, top: 14, bottom: 14 })
+              .border({
+                width: { bottom: 0.5 },
+                color: $r('app.color.divider_color')
+              })
+            }
+          })
+        }
+        .listDirection(Axis.Vertical)
+        .width('100%')
       }
       .padding(16)
-      .width('100%')
+      .margin({ left: 16, right: 16, top: 16, bottom: 24 })
+      .backgroundColor(Color.White)
+      .borderRadius(16)
+      .shadow({
+        radius: 8,
+        color: '#1a000000',
+        offsetY: 2
+      })
+      .layoutWeight(1)
     }
+    .width('100%')
+    .height('100%')
+    .backgroundColor($r('app.color.page_background'))
   }
 }
