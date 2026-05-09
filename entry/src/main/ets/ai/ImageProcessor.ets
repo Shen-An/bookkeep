@@ -211,8 +211,10 @@ export class ImageProcessor {
     }
 
     // 解析响应
+    console.info('AI原始响应:', resp.bodyText);
     const json: OpenAiResponse = JSON.parse(resp.bodyText) as OpenAiResponse;
     const content: string = json?.choices?.[0]?.message?.content ?? '';
+    console.info('AI返回内容:', content);
 
     // 提取JSON部分
     const jsonStart: number = content.indexOf('{');
@@ -224,6 +226,7 @@ export class ImageProcessor {
     }
 
     const jsonStr: string = content.substring(jsonStart, jsonEnd + 1);
+    console.info('提取的JSON:', jsonStr);
     return jsonStr;
   }
 
@@ -236,14 +239,24 @@ export class ImageProcessor {
     try {
       const data: ImageRecognitionResult = JSON.parse(response);
 
-      // 处理金额 - 增加合理性校验
+      // 处理金额 - 增加合理性校验，兼容数字和字符串格式
       let amount: number | undefined;
-      if (typeof data.amount === 'number' && data.amount > 0) {
-        // 金额合理性校验：通常微信支付金额在 0.01 ~ 999999 之间
-        if (data.amount >= 0.01 && data.amount <= 999999) {
-          amount = data.amount;
+      let rawAmount: number | undefined;
+      if (typeof data.amount === 'number') {
+        rawAmount = data.amount;
+      } else if (typeof data.amount === 'string') {
+        const parsed = parseFloat(data.amount);
+        if (!isNaN(parsed)) {
+          rawAmount = parsed;
+        }
+      }
+      if (rawAmount !== undefined && rawAmount !== 0) {
+        // 金额合理性校验：取绝对值后判断，通常微信支付金额在 0.01 ~ 999999 之间
+        const absAmount = Math.abs(rawAmount);
+        if (absAmount >= 0.01 && absAmount <= 999999) {
+          amount = absAmount;
         } else {
-          console.warn('AI返回的金额不合理:', data.amount);
+          console.warn('AI返回的金额不合理:', rawAmount);
           amount = undefined;
         }
       }
