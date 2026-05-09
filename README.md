@@ -14,13 +14,17 @@
 
 - Windows 11 2H2 Build.22621.2134
 - DevEco Studio 6.1.1.268
-- SDK API9 3.2.12.5 Release
+
 
 ## 测试环境
 
 - DevEco Studio 6.1.1.268
 - Pura 90 - OpenHarmony
 
+## 安装说明
+
+请复制/entry/src/main/ets/ai/AiBillingConfig.template.ets文件为 AiBillingConfig.ets 并填入你的真实 API Key
+使用 DevEco Studio 6.1.1.268编译运行
 ## 已实现功能
 
 - **记账**：支持支出/收入分类选择、自定义备注、日期选择
