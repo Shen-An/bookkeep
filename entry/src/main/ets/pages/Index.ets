@@ -87,6 +87,9 @@ struct Index {
         totalBalance: $totalBalance,
         totalIncome: $totalIncome
       })
+      .layoutWeight(1)
     }
+    .height('100%')
+    .width('100%')
   }
 }

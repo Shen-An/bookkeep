@@ -1,4 +1,3 @@
-// Copyright (c) 2023 Ericple
 // OpenBill is licensed under Mulan PSL v2.
 // You can use this software according to the terms and conditions of the Mulan PSL v2.
 // You may obtain a copy of Mulan PSL v2 at:
@@ -136,8 +135,11 @@ export struct BalanceList {
           })
         }
         .listDirection(Axis.Vertical)
-        .height('100%')
+        .layoutWeight(1)
       }
-    }.padding(8).width('100%')
+    }
+    .padding(8)
+    .width('100%')
+    .height('100%')
   }
 }
