@@ -24,9 +24,9 @@ export interface AiBillingConfig {
  * 文字识别AI配置
  */
 export const TEXT_AI_CONFIG: AiBillingConfig = {
-  baseUrl: '',
-  apiKey: '',
-  model: '',
+  baseUrl: 'https://token.sensenova.cn/v1/chat/completions',
+  apiKey: 'sk-sTeEIGUmIF3MKsaG6PJi26UZvIfQYkn4',
+  model: 'deepseek-v4-flash',
   apiKeyHeader: 'Authorization',
   apiKeyPrefix: 'Bearer ',
   timeoutMs: 120_000
@@ -39,8 +39,8 @@ export const TEXT_AI_CONFIG: AiBillingConfig = {
  */
 export const IMAGE_AI_CONFIG: AiBillingConfig = {
   baseUrl: 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
-  apiKey: '',
-  model: '',
+  apiKey: '33829b6e4fc84a6ea6e27f13468ea7fc.43DCuGO2fSDiQLGQ',
+  model: 'glm-4v-flash',
   apiKeyHeader: 'Authorization',
   apiKeyPrefix: 'Bearer ',
   timeoutMs: 120_000

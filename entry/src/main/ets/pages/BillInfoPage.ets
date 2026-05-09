@@ -79,6 +79,7 @@ struct BillInfoPage {
             start: new Date("2000-01-01"),
             onAccept: (v) => {
               this.activeDate.setFullYear(v.year, v.month, v.day);
+              this.onPageShow();
             }
           })
         })
