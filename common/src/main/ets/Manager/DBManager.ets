@@ -230,6 +230,27 @@ export class DBManager {
   }
 
   /**
+   * @returns affected rows; -2: db not ready; -1: failed; >=0: deleted successfully
+   */
+  public async deleteBillingInfo(id: number): Promise<number> {
+    const store = await this.waitForStore();
+    if (!store) {
+      Logger.err(TAG, 'db not ready while deleting billing info');
+      return -2;
+    }
+    try {
+      const predicates = new relationalStore.RdbPredicates(CommonConfiguration.DB_MANAGER.TABLES.BILLING.NAME)
+        .equalTo('ID', id);
+      const affected = await store.delete(predicates);
+      Logger.info(TAG, 'deleteBillingInfo affected rows', affected);
+      return affected;
+    } catch (e) {
+      Logger.err(TAG, 'error while deleting billing info', id, e as BusinessError);
+      return -1;
+    }
+  }
+
+  /**
    * @returns affected rows; -2: db not ready; -1: failed
    */
   public async updateBillingInfo(data: BillingInfo): Promise<number> {

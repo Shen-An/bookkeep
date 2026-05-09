@@ -6,8 +6,9 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 import common from '@ohos.app.ability.common';
-import { BillingDirection, BillingInfo, BillingInfoUtils, StringUtils } from '@ohos/common';
+import { BillingDirection, BillingInfo, BillingInfoUtils, DBManager, StringUtils } from '@ohos/common';
 import router from '@ohos.router';
+import { BusinessError } from '@ohos.base';
 
 @Component
 export struct BalanceList {
@@ -17,47 +18,51 @@ export struct BalanceList {
   @Link totalIncome: number;
   context = getContext(this) as common.UIAbilityContext;
   filesDir = this.context.filesDir;
-  // calculateTotalIncomeBalance = (source: string) => {
-  //   const billingInfo = JSON.parse(source);
-  //   this.totalBalance = 0.00;
-  //   this.totalIncome = 0.00;
-  //   billingInfo.forEach(dayInfo => {
-  //     dayInfo.forEach(info => {
-  //       if (info.direction == "in") {
-  //         this.totalIncome += parseFloat(info.amount);
-  //       } else {
-  //         this.totalBalance += parseFloat(info.amount);
-  //       }
-  //     })
-  //   })
-  // }
-  // calculateSingleDayBalance = (dayInfo: any) => {
-  //   let sdTotalBalance = 0;
-  //   dayInfo.forEach(info => {
-  //     if (info.direction == "out") {
-  //       sdTotalBalance += parseFloat(info.amount);
-  //     }
-  //   })
-  //   return sdTotalBalance;
-  // }
-  // getDayOfWeek = (day: number) => {
-  //   switch (day) {
-  //     case 0:
-  //       return $r("app.string.day_of_week_sunday");
-  //     case 1:
-  //       return $r("app.string.day_of_week_monday");
-  //     case 2:
-  //       return $r("app.string.day_of_week_tuesday");
-  //     case 3:
-  //       return $r("app.string.day_of_week_wednesday");
-  //     case 4:
-  //       return $r("app.string.day_of_week_wednesday");
-  //     case 5:
-  //       return $r("app.string.day_of_week_friday");
-  //     case 6:
-  //       return $r("app.string.day_of_week_saturday");
-  //   }
-  // }
+
+  private confirmDelete(item: BillingInfo): void {
+    AlertDialog.show({
+      title: '确认删除',
+      message: `确定要删除「${item.remark}」这条记录吗？`,
+      autoCancel: true,
+      alignment: DialogAlignment.Center,
+      primaryButton: {
+        value: '取消',
+        action: () => {
+          // do nothing
+        }
+      },
+      secondaryButton: {
+        value: '删除',
+        fontColor: '#ff0000',
+        action: () => {
+          this.doDelete(item);
+        }
+      }
+    })
+  }
+
+  private doDelete(item: BillingInfo): void {
+    if (typeof item.id !== 'number') {
+      return;
+    }
+    DBManager.getInstance().deleteBillingInfo(item.id)
+      .then((affected: number) => {
+        if (affected > 0) {
+          const idx = this.currentBillingInfo.findIndex((info: BillingInfo) => info.id === item.id);
+          if (idx >= 0) {
+            this.currentBillingInfo.splice(idx, 1);
+            if (item.direction == BillingDirection.IN) {
+              this.totalIncome -= item.amount;
+            } else {
+              this.totalBalance -= item.amount;
+            }
+          }
+        }
+      })
+      .catch((e: BusinessError) => {
+        console.error('delete failed', JSON.stringify(e));
+      })
+  }
 
   build() {
     Column() {
@@ -100,7 +105,6 @@ export struct BalanceList {
                             .fontColor($r('app.color.text_gray'))
                             .fontSize(12)
                         }
-
                         Text(`${balance.direction == BillingDirection.IN ? "+" : "-"} ${balance.amount}`)
                       }
                       .width('100%')
@@ -118,6 +122,12 @@ export struct BalanceList {
                         }
                       })
                     })
+                    .gesture(
+                      LongPressGesture({ repeat: false, duration: 500 })
+                        .onAction(() => {
+                          this.confirmDelete(balance);
+                        })
+                    )
                   })
                 }
               }
