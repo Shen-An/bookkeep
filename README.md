@@ -74,7 +74,9 @@ AI 解析支持"本地规则解析 + 可选 LLM 增强"。如果你有自己的 
   <img src="screenshots/20260509_161010.png" width="128" />
   <img src="screenshots/20260509_160742.png" width="128" />
   <img src="screenshots/20260509_160717.png" width="128" />
-    <img src="screenshots/20260509_162352.png" width="128" />
+  <img src="screenshots/20260510_191758.png" width="128" />
+  <img src="screenshots/20260509_162352.png" width="128" />
+
 </div>
 
 
