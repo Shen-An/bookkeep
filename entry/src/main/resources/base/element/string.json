@@ -14,7 +14,7 @@
     },
     {
       "name": "app_title",
-      "value": "OpenBill"
+      "value": "风风记账"
     },
     {
       "name": "income",
@@ -154,7 +154,7 @@
     },
     {
       "name": "data_import_format_desc",
-      "value": "Supports importing bills from CSV or Excel files. Automatically recognizes OpenBill standard format and WeChat Pay bill format."
+      "value": "Supports importing bills from CSV or Excel files. Automatically recognizes 风风记账 standard format and WeChat Pay bill format."
     },
     {
       "name": "data_import_support_csv",

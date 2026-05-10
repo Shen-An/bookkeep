@@ -1,5 +1,5 @@
 // Copyright (c) 2023 Ericple
-// OpenBill is licensed under Mulan PSL v2.
+// 风风记账 is licensed under Mulan PSL v2.
 // You can use this software according to the terms and conditions of the Mulan PSL v2.
 // You may obtain a copy of Mulan PSL v2 at:
 // http://license.coscl.org.cn/MulanPSL2
@@ -19,6 +19,7 @@ struct DataImport {
   @State importStatus: string = '';
   @State isImporting: boolean = false;
   @State selectedFileName: string = '';
+  @State selectedFileUri: string = '';
   @State importedCount: number = 0;
   @State previewItems: BillingInfo[] = [];
   @State showPreview: boolean = false;
@@ -299,6 +300,7 @@ struct DataImport {
           // 从 URI 中提取文件名
           const fileName = uri.substring(uri.lastIndexOf('/') + 1);
           this.selectedFileName = fileName;
+          this.selectedFileUri = uri;
           this.importStatus = "已选择文件: " + fileName;
           this.showPreview = false;
           this.previewItems = [];
@@ -318,9 +320,14 @@ struct DataImport {
   }
 
   /**
-   * 执行导入
+   * 执行导入（使用已选择的文件 URI）
    */
   private async doImport() {
+    if (!this.selectedFileUri) {
+      this.importStatus = "请先选择文件";
+      return;
+    }
+
     this.isImporting = true;
     this.importStatus = '';
     this.showPreview = false;
@@ -334,20 +341,8 @@ struct DataImport {
       const isXLSX = this.selectedFileName.toLowerCase().endsWith('.xlsx');
 
       if (isXLSX) {
-        // XLSX 格式 - 使用文件选择器返回的 URI
-        let documentPicker = new picker.DocumentViewPicker();
-        let uris = await documentPicker.select({
-          maxSelectNumber: 1,
-          fileSuffixFilters: ['.xlsx']
-        });
-
-        if (!uris || uris.length === 0) {
-          this.importStatus = "请先选择文件";
-          this.isImporting = false;
-          return;
-        }
-
-        const fileUri = uris[0];
+        // XLSX 格式 - 使用已选择的文件 URI
+        const fileUri = this.selectedFileUri;
         // 复制文件到应用沙箱（因为 zip.decompressFile 需要本地文件路径）
         const tempPath = context.filesDir + "/temp_import_" + new Date().getTime() + ".xlsx";
         try {
@@ -375,20 +370,8 @@ struct DataImport {
           Logger.err(TAG, "cleanup temp file error: " + (e as Error).message);
         }
       } else {
-        // CSV 格式
-        let documentPicker = new picker.DocumentViewPicker();
-        let uris = await documentPicker.select({
-          maxSelectNumber: 1,
-          fileSuffixFilters: ['.csv']
-        });
-
-        if (!uris || uris.length === 0) {
-          this.importStatus = "请先选择文件";
-          this.isImporting = false;
-          return;
-        }
-
-        const fileUri = uris[0];
+        // CSV 格式 - 使用已选择的文件 URI
+        const fileUri = this.selectedFileUri;
         // 读取 CSV 文件内容
         let file = fileIo.openSync(fileUri, fileIo.OpenMode.READ_ONLY);
         let stat = fileIo.statSync(fileUri);

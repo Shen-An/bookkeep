@@ -14,7 +14,7 @@
     },
     {
       "name": "app_title",
-      "value": "OpenBill"
+      "value": "风风记账"
     },
     {
       "name": "income",
@@ -154,7 +154,7 @@
     },
     {
       "name": "data_import_format_desc",
-      "value": "支持从 CSV 或 Excel 文件导入账单，自动识别 OpenBill 标准格式和微信支付账单格式。"
+      "value": "支持从 CSV 或 Excel 文件导入账单，自动识别 风风记账 标准格式和微信支付账单格式。"
     },
     {
       "name": "data_import_support_csv",

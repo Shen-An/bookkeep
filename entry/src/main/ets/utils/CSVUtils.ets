@@ -1,5 +1,5 @@
 // Copyright (c) 2023 Ericple
-// OpenBill is licensed under Mulan PSL v2.
+// 风风记账 is licensed under Mulan PSL v2.
 // You can use this software according to the terms and conditions of the Mulan PSL v2.
 // You may obtain a copy of Mulan PSL v2 at:
 // http://license.coscl.org.cn/MulanPSL2
@@ -35,7 +35,7 @@ export class CSVUtils {
   public static exportToCSV(items: BillingInfo[]): string {
     // CSV 头部说明
     let csv = "\uFEFF"; // BOM for UTF-8
-    csv += "OpenBill 账单导出\n";
+    csv += "风风记账 账单导出\n";
     csv += "导出时间: " + CSVUtils.formatDate(new Date()) + "\n";
     csv += "共" + items.length + "笔记录\n";
     csv += "----------------------账单明细列表--------------------\n";
@@ -607,7 +607,8 @@ export class CSVUtils {
       if (isNaN(amount)) return null;
 
       const direction = directionStr === "收入" ? BillingDirection.IN : BillingDirection.OUT;
-      const billType = CSVUtils.getWeChatType(typeStr);
+      // 使用交易对方+商品描述进行智能分类
+      const billType = CSVUtils.getWeChatType(typeStr, counterparty, goods, direction);
 
       // 构建备注：优先使用交易对方，其次商品描述
       let remark = counterparty;
@@ -648,19 +649,14 @@ export class CSVUtils {
   }
 
   /**
-   * 根据微信交易类型获取 BillingType
+   * 根据微信交易类型 + 交易对方 + 商品描述 智能获取 BillingType
+   * @param typeStr 微信交易类型（转账/二维码收款/其他等）
+   * @param counterparty 交易对方
+   * @param goods 商品描述
+   * @param direction 收支方向
    */
-  private static getWeChatType(typeStr: string): BillingType {
-    // 微信交易类型 -> 应用分类名称 映射
-    if (typeStr === "转账") {
-      return { icon: $r("app.media.otherIcon"), name: "其他" };
-    }
-    if (typeStr === "二维码收款") {
-      return { icon: $r("app.media.otherIcon"), name: "其他" };
-    }
-    if (typeStr === "其他") {
-      return { icon: $r("app.media.otherIcon"), name: "其他" };
-    }
+  private static getWeChatType(typeStr: string, counterparty: string = "", goods: string = "", direction: BillingDirection = BillingDirection.OUT): BillingType {
+    // 1. 先按交易类型映射
     if (typeStr === "美食") {
       return { icon: $r("app.media.eatIcon"), name: "餐饮" };
     }
@@ -671,15 +667,116 @@ export class CSVUtils {
       return { icon: $r("app.media.shoppingIcon"), name: "购物" };
     }
 
-    // 尝试模糊匹配
-    if (typeStr.indexOf("转账") !== -1) {
-      return { icon: $r("app.media.otherIcon"), name: "其他" };
+    // 2. 根据交易对方/商品描述进行智能分类
+    const keywords = counterparty + " " + goods;
+
+    // 收入类关键词匹配
+    if (direction === BillingDirection.IN) {
+      if (keywords.indexOf("工资") !== -1 || keywords.indexOf("薪资") !== -1 || keywords.indexOf("薪酬") !== -1) {
+        return { icon: $r("app.media.salaryIcon"), name: "工资" };
+      }
+      if (keywords.indexOf("理财") !== -1 || keywords.indexOf("基金") !== -1 || keywords.indexOf("利息") !== -1) {
+        return { icon: $r("app.media.foundationIcon"), name: "理财" };
+      }
+      if (keywords.indexOf("兼职") !== -1 || keywords.indexOf("劳务") !== -1 || keywords.indexOf("稿费") !== -1) {
+        return { icon: $r("app.media.partTimeIncomeIcon"), name: "兼职" };
+      }
+      if (keywords.indexOf("红包") !== -1 || keywords.indexOf("礼金") !== -1 || keywords.indexOf("转账") !== -1) {
+        return { icon: $r("app.media.giftMoneyIcon"), name: "礼金" };
+      }
+      // 默认收入归为"其它"
+      return { icon: $r("app.media.otherIcon"), name: "其它" };
     }
-    if (typeStr.indexOf("收款") !== -1) {
+
+    // 支出类关键词匹配
+    if (keywords.indexOf("餐饮") !== -1 || keywords.indexOf("美食") !== -1 || keywords.indexOf("外卖") !== -1 ||
+        keywords.indexOf("吃饭") !== -1 || keywords.indexOf("餐厅") !== -1 || keywords.indexOf("食堂") !== -1 ||
+        keywords.indexOf("早餐") !== -1 || keywords.indexOf("午餐") !== -1 || keywords.indexOf("晚餐") !== -1) {
+      return { icon: $r("app.media.eatIcon"), name: "餐饮" };
+    }
+    if (keywords.indexOf("购物") !== -1 || keywords.indexOf("超市") !== -1 || keywords.indexOf("商场") !== -1 ||
+        keywords.indexOf("淘宝") !== -1 || keywords.indexOf("京东") !== -1 || keywords.indexOf("拼多多") !== -1 ||
+        keywords.indexOf("便利店") !== -1 || keywords.indexOf("商店") !== -1) {
+      return { icon: $r("app.media.shoppingIcon"), name: "购物" };
+    }
+    if (keywords.indexOf("蔬菜") !== -1 || keywords.indexOf("水果") !== -1 || keywords.indexOf("菜市场") !== -1 ||
+        keywords.indexOf("生鲜") !== -1 || keywords.indexOf("买菜") !== -1) {
+      return { icon: $r("app.media.vegetablesExpenseIcon"), name: "蔬菜" };
+    }
+    if (keywords.indexOf("日用") !== -1 || keywords.indexOf("家居") !== -1 || keywords.indexOf("家用品") !== -1 ||
+        keywords.indexOf("生活用品") !== -1) {
+      return { icon: $r("app.media.dailyExpenseIcon"), name: "日用" };
+    }
+    if (keywords.indexOf("交通") !== -1 || keywords.indexOf("地铁") !== -1 || keywords.indexOf("公交") !== -1 ||
+        keywords.indexOf("打车") !== -1 || keywords.indexOf("滴滴") !== -1 || keywords.indexOf("出租车") !== -1 ||
+        keywords.indexOf("加油") !== -1 || keywords.indexOf("停车") !== -1) {
+      return { icon: $r("app.media.metroExpenseIcon"), name: "交通" };
+    }
+    if (keywords.indexOf("旅行") !== -1 || keywords.indexOf("旅游") !== -1 || keywords.indexOf("酒店") !== -1 ||
+        keywords.indexOf("机票") !== -1 || keywords.indexOf("火车票") !== -1 || keywords.indexOf("景点") !== -1) {
+      return { icon: $r("app.media.travelExpenseIcon"), name: "旅行" };
+    }
+    if (keywords.indexOf("宠物") !== -1 || keywords.indexOf("猫") !== -1 || keywords.indexOf("狗") !== -1 ||
+        keywords.indexOf("兽医") !== -1 || keywords.indexOf("宠物店") !== -1) {
+      return { icon: $r("app.media.petExpenseIcon"), name: "宠物" };
+    }
+    if (keywords.indexOf("知识") !== -1 || keywords.indexOf("课程") !== -1 || keywords.indexOf("培训") !== -1 ||
+        keywords.indexOf("教育") !== -1 || keywords.indexOf("学习") !== -1 || keywords.indexOf("书") !== -1 ||
+        keywords.indexOf("图书") !== -1 || keywords.indexOf("付费") !== -1) {
+      return { icon: $r("app.media.knowledgeExpenseIcon"), name: "知识" };
+    }
+    if (keywords.indexOf("服装") !== -1 || keywords.indexOf("衣服") !== -1 || keywords.indexOf("鞋") !== -1 ||
+        keywords.indexOf("包") !== -1 || keywords.indexOf("服饰") !== -1 || keywords.indexOf("穿搭") !== -1) {
+      return { icon: $r("app.media.clothExpenseIcon"), name: "服装" };
+    }
+    if (keywords.indexOf("数码") !== -1 || keywords.indexOf("手机") !== -1 || keywords.indexOf("电脑") !== -1 ||
+        keywords.indexOf("电子") !== -1 || keywords.indexOf("配件") !== -1) {
+      return { icon: $r("app.media.digitalProductExpenseIcon"), name: "数码" };
+    }
+    if (keywords.indexOf("烟酒") !== -1 || keywords.indexOf("香烟") !== -1 || keywords.indexOf("酒") !== -1 ||
+        keywords.indexOf("白酒") !== -1 || keywords.indexOf("啤酒") !== -1) {
+      return { icon: $r("app.media.wineExpenseIcon"), name: "烟酒" };
+    }
+    if (keywords.indexOf("零食") !== -1 || keywords.indexOf("小吃") !== -1 || keywords.indexOf("奶茶") !== -1 ||
+        keywords.indexOf("饮料") !== -1 || keywords.indexOf("甜品") !== -1 || keywords.indexOf("蛋糕") !== -1) {
+      return { icon: $r("app.media.snacksExpenseIcon"), name: "零食" };
+    }
+    if (keywords.indexOf("医疗") !== -1 || keywords.indexOf("医院") !== -1 || keywords.indexOf("药") !== -1 ||
+        keywords.indexOf("看病") !== -1 || keywords.indexOf("体检") !== -1 || keywords.indexOf("医保") !== -1) {
+      return { icon: $r("app.media.medicalExpenseIcon"), name: "医疗" };
+    }
+    if (keywords.indexOf("住房") !== -1 || keywords.indexOf("房租") !== -1 || keywords.indexOf("物业") !== -1 ||
+        keywords.indexOf("水电") !== -1 || keywords.indexOf("燃气") !== -1 || keywords.indexOf("装修") !== -1) {
+      return { icon: $r("app.media.houseExpenseIcon"), name: "住房" };
+    }
+    if (keywords.indexOf("儿童") !== -1 || keywords.indexOf("母婴") !== -1 || keywords.indexOf("玩具") !== -1 ||
+        keywords.indexOf("奶粉") !== -1 || keywords.indexOf("尿不湿") !== -1) {
+      return { icon: $r("app.media.childExpenseIcon"), name: "儿童" };
+    }
+    if (keywords.indexOf("汽车") !== -1 || keywords.indexOf("洗车") !== -1 || keywords.indexOf("保养") !== -1 ||
+        keywords.indexOf("维修") !== -1 || keywords.indexOf("轮胎") !== -1) {
+      return { icon: $r("app.media.carExpenseIcon"), name: "汽车" };
+    }
+    if (keywords.indexOf("礼物") !== -1 || keywords.indexOf("礼品") !== -1 || keywords.indexOf("送礼") !== -1) {
+      return { icon: $r("app.media.giftExpenseIcon"), name: "礼物" };
+    }
+    if (keywords.indexOf("捐赠") !== -1 || keywords.indexOf("捐款") !== -1 || keywords.indexOf("公益") !== -1 ||
+        keywords.indexOf("慈善") !== -1) {
+      return { icon: $r("app.media.supportExpenseIcon"), name: "捐赠" };
+    }
+
+    // 3. 对于"转账"类型，如果对方名称包含特定关键词，尝试分类
+    if (typeStr === "转账" && direction === BillingDirection.OUT) {
+      // 转账给个人，默认归为"其他"
       return { icon: $r("app.media.otherIcon"), name: "其他" };
     }
 
-    // 默认为"其他"
+    // 4. 二维码收款 - 收入归为"其它"，支出归为"其他"
+    if (typeStr === "二维码收款") {
+      return { icon: $r("app.media.otherIcon"), name: "其他" };
+    }
+
+    // 5. 默认为"其他"
     return { icon: $r("app.media.otherIcon"), name: "其他" };
   }
 

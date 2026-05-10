@@ -1,6 +1,6 @@
 // Copyright (c) 2023 Ericple
 // Copyright (c) 2025 兑泽含光 (2025124051@chd.edu.cn)
-// OpenBill is licensed under Mulan PSL v2.
+// 风风记账 is licensed under Mulan PSL v2.
 // You can use this software according to the terms and conditions of the Mulan PSL v2.
 // You may obtain a copy of Mulan PSL v2 at:
 // http://license.coscl.org.cn/MulanPSL2
@@ -62,7 +62,7 @@ struct Copyright {
               .fontWeight(FontWeight.Bold)
               .fontColor('#1a1a1a')
 
-            Text('OpenBill(易记账)开源记账应用')
+            Text('风风记账(易记账)开源记账应用')
               .fontSize(12)
               .fontColor($r('app.color.text_gray'))
               .margin({ top: 4 })

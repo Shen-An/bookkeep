@@ -1,5 +1,5 @@
 // Copyright (c) 2023 Ericple
-// OpenBill is licensed under Mulan PSL v2.
+// 风风记账 is licensed under Mulan PSL v2.
 // You can use this software according to the terms and conditions of the Mulan PSL v2.
 // You may obtain a copy of Mulan PSL v2 at:
 // http://license.coscl.org.cn/MulanPSL2
@@ -172,11 +172,11 @@ struct DataExport {
       // 生成 CSV 内容
       const csvContent = CSVUtils.exportToCSV(this.allBillingInfo);
 
-      // 生成文件名: OpenBill_账单导出_2025-01-01_12-00-00.csv
+      // 生成文件名: 风风记账_账单导出_2025-01-01_12-00-00.csv
       const now = new Date();
       const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
       const timeStr = `${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}-${String(now.getSeconds()).padStart(2, '0')}`;
-      const fileName = `OpenBill_${dateStr}_${timeStr}.csv`;
+      const fileName = `风风记账_${dateStr}_${timeStr}.csv`;
 
       // 获取应用沙箱路径
       let context = getContext(this);

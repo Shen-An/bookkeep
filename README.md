@@ -35,6 +35,8 @@
 - **编辑账单**：长按账单列表项进入编辑，修改金额/分类/备注/日期
 - **删除账单**：长按账单列表项弹出确认删除对话框
 - **数字键盘计算器**：记账时支持加、减、乘计算后填入金额
+- **数据导入**：支持导入标准 CSV 格式账单、微信官方导出的 CSV/XLSX 账单，自动识别文件格式并智能分类
+- **数据导出**：将账单数据导出为标准 CSV 文件，便于备份与迁移
 - **开源信息页面**：展示项目开源许可信息
 
 ## AI 记账配置（可选）
@@ -53,7 +55,7 @@ AI 解析支持"本地规则解析 + 可选 LLM 增强"。如果你有自己的 
 
 ## 待开发功能
 
-第一阶段（P0）    → 搜索筛选 + 数据导出 + 设置页面
+第一阶段（P0）    → 搜索筛选 + 设置页面
 第二阶段（P1）    → 预算管理 + 暗黑模式 + 手势优化
 第三阶段（P2）    → 多账户 + 周期账单 + 统计增强
 第四阶段（P3）    → 语音记账 + 储蓄目标 + 附件
@@ -146,10 +148,12 @@ https://gitee.com/ericple/oh-bill
 │              UI 展示层（ArkUI）                │
 │  Index  |  AddBalance  |  EconomicCharts     │
 │  BillInfoPage  |  Copyright  |  Charts       │
+│  DataImport  |  DataExport                   │
 ├─────────────────────────────────────────────┤
 │              业务逻辑层                        │
 │  AiBillingParser  |  ImageProcessor          │
 │  BalanceViewer  |  BalanceList  |  PageEntries│
+│  CSVUtils                                    │
 ├─────────────────────────────────────────────┤
 │              数据管理层                        │
 │  DBManager  |  BillingInfoUtils             │
@@ -158,6 +162,7 @@ https://gitee.com/ericple/oh-bill
 │           鸿蒙系统能力层                        │
 │  RelationalStore  |  Router  |  HTTP         │
 │  File I/O  |  PhotoAccessHelper              │
+│  FilePicker  |  XLSX (SheetJS)               │
 └─────────────────────────────────────────────┘
 ```
 
@@ -228,6 +233,18 @@ https://gitee.com/ericple/oh-bill
 - 顶部展示年结余、年收入、年支出概览
 - 主区域展示 1-12 月的月度明细列表
 - 支持年份选择切换
+
+#### DataImport.ets（数据导入页）
+- **核心职责**：提供文件选择与导入功能，支持标准 CSV 格式和微信官方导出的 CSV/XLSX 格式
+- 通过 `FilePicker` 选择文件，使用 `CSVUtils` 解析文件内容
+- 自动识别文件格式（标准 CSV / 微信 CSV / 微信 XLSX），智能匹配字段并分类
+- 导入前展示预览列表，支持用户确认后批量写入数据库
+
+#### DataExport.ets（数据导出页）
+- **核心职责**：将本地账单数据导出为标准 CSV 文件
+- 支持选择导出时间范围（全部/指定月份）
+- 通过 `FilePicker` 选择保存路径，使用 `CSVUtils` 生成 CSV 文件
+- 导出完成后提示用户导出结果
 
 #### Copyright.ets（开源信息页）
 - 展示项目开源许可证信息（Mulan PSL v2）
@@ -503,11 +520,15 @@ oh-bill/
 │   │   │   │   └── charts/            # 图表组件
 │   │   │   │       ├── PieChart.ets    # 饼图组件
 │   │   │   │       └── LineChart.ets   # 折线图组件
+│   │   │   ├── utils/                  # 工具类
+│   │   │   │   └── CSVUtils.ets        # CSV/XLSX 导入导出工具
 │   │   │   └── pages/                  # 页面
 │   │   │       ├── Index.ets           # 首页
 │   │   │       ├── addBalance.ets      # 记账页
 │   │   │       ├── BillInfoPage.ets    # 年度账单页
 │   │   │       ├── EconomicCharts.ets  # 经济图表页
+│   │   │       ├── DataImport.ets      # 数据导入页
+│   │   │       ├── DataExport.ets      # 数据导出页
 │   │   │       └── Copyright.ets       # 开源信息页
 │   │   ├── module.json5                # HAP 模块配置
 │   │   └── resources/                  # 页面资源文件
@@ -588,6 +609,8 @@ oh-bill/
 - ✅ **月度/年度账单**：按日/月/年维度聚合展示
 - ✅ **可视化图表**：折线趋势图 + 分类占比饼图
 - ✅ **经济分析**：环比变化 + 异常消费检测
+- ✅ **数据导入**：支持标准 CSV、微信 CSV/XLSX 格式导入，自动识别文件格式并智能分类
+- ✅ **数据导出**：将账单数据导出为标准 CSV 文件，便于备份与迁移
 
 ### 后续可扩展方向
 
