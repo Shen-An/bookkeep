@@ -107,6 +107,94 @@
     {
       "name": "ai_image_recognize",
       "value": "截图识别"
+    },
+    {
+      "name": "data_export_title",
+      "value": "Export Data"
+    },
+    {
+      "name": "data_export_overview",
+      "value": "Data Overview"
+    },
+    {
+      "name": "data_export_total_records",
+      "value": "Total Records"
+    },
+    {
+      "name": "data_export_format",
+      "value": "Export Format"
+    },
+    {
+      "name": "data_export_csv_desc",
+      "value": "CSV file, compatible with Excel and other tools"
+    },
+    {
+      "name": "data_export_start",
+      "value": "Start Export"
+    },
+    {
+      "name": "data_export_exporting",
+      "value": "Exporting..."
+    },
+    {
+      "name": "data_export_success",
+      "value": "Export successful! File saved to app sandbox:"
+    },
+    {
+      "name": "data_export_failed",
+      "value": "Export failed: "
+    },
+    {
+      "name": "data_import_title",
+      "value": "Import Data"
+    },
+    {
+      "name": "data_import_guide",
+      "value": "Import Guide"
+    },
+    {
+      "name": "data_import_format_desc",
+      "value": "Supports importing bills from CSV or Excel files. Automatically recognizes OpenBill standard format and WeChat Pay bill format."
+    },
+    {
+      "name": "data_import_support_csv",
+      "value": "Standard CSV bill format (.csv)"
+    },
+    {
+      "name": "data_import_support_xlsx",
+      "value": "Excel bill format (.xlsx)"
+    },
+    {
+      "name": "data_import_support_wechat",
+      "value": "WeChat Pay bill format (auto-detect)"
+    },
+    {
+      "name": "data_import_select_file",
+      "value": "Select File"
+    },
+    {
+      "name": "data_import_choose_file",
+      "value": "Choose File"
+    },
+    {
+      "name": "data_import_rechoose",
+      "value": "Re-select File"
+    },
+    {
+      "name": "data_import_start",
+      "value": "Start Import"
+    },
+    {
+      "name": "data_import_importing",
+      "value": "Importing..."
+    },
+    {
+      "name": "data_import_preview",
+      "value": "Preview (first 10 records)"
+    },
+    {
+      "name": "data_import_save_to_db",
+      "value": "Save to Database"
     }
   ]
 }

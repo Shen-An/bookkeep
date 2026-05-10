@@ -6,15 +6,15 @@
     },
     {
       "name": "EntryAbility_desc",
-      "value": "description"
+      "value": "描述"
     },
     {
       "name": "EntryAbility_label",
-      "value": "风风记账"
+      "value": "标签"
     },
     {
       "name": "app_title",
-      "value": "风风记账"
+      "value": "OpenBill"
     },
     {
       "name": "income",
@@ -22,7 +22,7 @@
     },
     {
       "name": "balance",
-      "value": "支出"
+      "value": "余额"
     },
     {
       "name": "year",
@@ -34,7 +34,7 @@
     },
     {
       "name": "no_record",
-      "value": "暂无数据"
+      "value": "暂无账单记录"
     },
     {
       "name": "cancel",
@@ -42,7 +42,7 @@
     },
     {
       "name": "add_balance_remark_placeholder",
-      "value": "点击填写备注"
+      "value": "点击输入备注"
     },
     {
       "name": "add_balance_done",
@@ -50,11 +50,11 @@
     },
     {
       "name": "ai_billing_placeholder",
-      "value": "一句话记账：如 今天午饭25 / 发工资5000"
+      "value": "一句话记账：如 午餐 25 / 工资 5000"
     },
     {
       "name": "ai_billing_parse",
-      "value": "AI解析"
+      "value": "AI 解析"
     },
     {
       "name": "ai_billing_parsing",
@@ -62,35 +62,139 @@
     },
     {
       "name": "day_of_week_monday",
-      "value": "星期一"
+      "value": "周一"
     },
     {
       "name": "day_of_week_tuesday",
-      "value": "星期二"
+      "value": "周二"
     },
     {
       "name": "day_of_week_wednesday",
-      "value": "星期三"
+      "value": "周三"
     },
     {
       "name": "day_of_week_thursday",
-      "value": "星期四"
+      "value": "周四"
     },
     {
       "name": "day_of_week_friday",
-      "value": "星期五"
+      "value": "周五"
     },
     {
       "name": "day_of_week_saturday",
-      "value": "星期六"
+      "value": "周六"
     },
     {
       "name": "day_of_week_sunday",
-      "value": "星期日"
+      "value": "周日"
     },
     {
       "name": "day",
       "value": "日"
+    },
+    {
+      "name": "ai_image_upload",
+      "value": "上传图片"
+    },
+    {
+      "name": "ai_image_upload_hint",
+      "value": "选择微信截图进行识别"
+    },
+    {
+      "name": "ai_image_parsing",
+      "value": "识别中..."
+    },
+    {
+      "name": "ai_image_recognize",
+      "value": "截图识别"
+    },
+    {
+      "name": "data_export_title",
+      "value": "数据导出"
+    },
+    {
+      "name": "data_export_overview",
+      "value": "数据概览"
+    },
+    {
+      "name": "data_export_total_records",
+      "value": "总记录数"
+    },
+    {
+      "name": "data_export_format",
+      "value": "导出格式"
+    },
+    {
+      "name": "data_export_csv_desc",
+      "value": "CSV 文件，兼容 Excel 等工具打开"
+    },
+    {
+      "name": "data_export_start",
+      "value": "开始导出"
+    },
+    {
+      "name": "data_export_exporting",
+      "value": "导出中..."
+    },
+    {
+      "name": "data_export_success",
+      "value": "导出成功！文件保存在应用沙箱："
+    },
+    {
+      "name": "data_export_failed",
+      "value": "导出失败："
+    },
+    {
+      "name": "data_import_title",
+      "value": "数据导入"
+    },
+    {
+      "name": "data_import_guide",
+      "value": "导入说明"
+    },
+    {
+      "name": "data_import_format_desc",
+      "value": "支持从 CSV 或 Excel 文件导入账单，自动识别 OpenBill 标准格式和微信支付账单格式。"
+    },
+    {
+      "name": "data_import_support_csv",
+      "value": "标准 CSV 账单格式 (.csv)"
+    },
+    {
+      "name": "data_import_support_xlsx",
+      "value": "Excel 账单格式 (.xlsx)"
+    },
+    {
+      "name": "data_import_support_wechat",
+      "value": "微信支付账单格式 (自动识别)"
+    },
+    {
+      "name": "data_import_select_file",
+      "value": "选择文件"
+    },
+    {
+      "name": "data_import_choose_file",
+      "value": "选择文件"
+    },
+    {
+      "name": "data_import_rechoose",
+      "value": "重新选择"
+    },
+    {
+      "name": "data_import_start",
+      "value": "开始导入"
+    },
+    {
+      "name": "data_import_importing",
+      "value": "导入中..."
+    },
+    {
+      "name": "data_import_preview",
+      "value": "数据预览 (前10条)"
+    },
+    {
+      "name": "data_import_save_to_db",
+      "value": "保存到数据库"
     }
   ]
 }

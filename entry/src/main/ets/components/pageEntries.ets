@@ -13,6 +13,7 @@ export struct PageEntries {
 
   build() {
     Column() {
+      // 第一行：原有功能入口
       Flex({ justifyContent: FlexAlign.SpaceAround }) {
         Button({ type: ButtonType.Normal }) {
           Column() {
@@ -168,6 +169,73 @@ export struct PageEntries {
             }
           })
         }).borderRadius(12)
+      }
+      .height(80)
+      .width('100%')
+      .backgroundColor(Color.White)
+      .borderRadius(16)
+      .padding({ top: 8, bottom: 8 })
+      .shadow({
+        radius: 8,
+        color: '#1a000000',
+        offsetY: 2
+      })
+
+      // 第二行：数据导出/导入
+      Flex({ justifyContent: FlexAlign.SpaceAround }) {
+        Button({ type: ButtonType.Normal }) {
+          Column() {
+            Row() {
+              Image($r("app.media.ic_public_export"))
+                .width(28)
+                .height(28)
+            }
+            .width(44)
+            .height(44)
+            .backgroundColor('#fff8e1')
+            .borderRadius(22)
+            .justifyContent(FlexAlign.Center)
+
+            Row() {
+              Text("导出数据")
+                .fontSize(11)
+                .fontColor('#333333')
+                .width('100%')
+                .textAlign(TextAlign.Center)
+            }.height(16).width(56)
+          }.width(56).alignItems(HorizontalAlign.Center)
+        }.backgroundColor(Color.Transparent).borderRadius(12).onClick(() => {
+          router.pushUrl({
+            url: "pages/DataExport"
+          });
+        })
+
+        Button({ type: ButtonType.Normal }) {
+          Column() {
+            Row() {
+              Image($r("app.media.ic_public_import"))
+                .width(28)
+                .height(28)
+            }
+            .width(44)
+            .height(44)
+            .backgroundColor('#e8f5e9')
+            .borderRadius(22)
+            .justifyContent(FlexAlign.Center)
+
+            Row() {
+              Text("导入数据")
+                .fontSize(11)
+                .fontColor('#333333')
+                .width('100%')
+                .textAlign(TextAlign.Center)
+            }.height(16).width(56)
+          }.width(56).alignItems(HorizontalAlign.Center)
+        }.backgroundColor(Color.Transparent).borderRadius(12).onClick(() => {
+          router.pushUrl({
+            url: "pages/DataImport"
+          });
+        })
       }
       .height(80)
       .width('100%')

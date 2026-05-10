@@ -4,6 +4,8 @@
     "pages/Copyright",
     "pages/addBalance",
     "pages/BillInfoPage",
-    "pages/EconomicCharts"
+    "pages/EconomicCharts",
+    "pages/DataExport",
+    "pages/DataImport"
   ]
 }
