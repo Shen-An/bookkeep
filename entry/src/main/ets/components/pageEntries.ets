@@ -181,8 +181,35 @@ export struct PageEntries {
         offsetY: 2
       })
 
-      // 第二行：数据导出/导入
+      // 第二行：设置 / 数据导出/导入
       Flex({ justifyContent: FlexAlign.SpaceAround }) {
+        Button({ type: ButtonType.Normal }) {
+          Column() {
+            Row() {
+              Image($r("app.media.ic_public_budget"))
+                .width(28)
+                .height(28)
+            }
+            .width(44)
+            .height(44)
+            .backgroundColor('#f0f0ff')
+            .borderRadius(22)
+            .justifyContent(FlexAlign.Center)
+
+            Row() {
+              Text($r('app.string.settings'))
+                .fontSize(11)
+                .fontColor('#333333')
+                .width('100%')
+                .textAlign(TextAlign.Center)
+            }.height(16).width(56)
+          }.width(56).alignItems(HorizontalAlign.Center)
+        }.backgroundColor(Color.Transparent).borderRadius(12).onClick(() => {
+          router.pushUrl({
+            url: "pages/SettingsPage"
+          });
+        })
+
         Button({ type: ButtonType.Normal }) {
           Column() {
             Row() {

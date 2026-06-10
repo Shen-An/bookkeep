@@ -15,6 +15,9 @@ export struct BalanceList {
   @Link selectedDate: Date;
   @Link totalBalance: number;
   @Link totalIncome: number;
+  @Prop searchKeyword: string = '';
+  @Prop filterDirection: number = -1; // -1: all, 0: IN, 1: OUT
+  @Prop filterCategory: string = '';
   context = getContext(this) as common.UIAbilityContext;
   filesDir = this.context.filesDir;
 
@@ -63,9 +66,28 @@ export struct BalanceList {
       })
   }
 
+  private getFilteredData(): BillingInfo[] {
+    let result = this.currentBillingInfo;
+    if (this.searchKeyword) {
+      const kw = this.searchKeyword.toLowerCase().trim();
+      result = result.filter((i: BillingInfo) => {
+        const remarkMatch = i.remark && i.remark.toLowerCase().includes(kw);
+        const typeMatch = i.type && i.type.name && i.type.name.toLowerCase().includes(kw);
+        return remarkMatch || typeMatch;
+      });
+    }
+    if (this.filterDirection >= 0) {
+      result = result.filter((i: BillingInfo) => i.direction === this.filterDirection);
+    }
+    if (this.filterCategory) {
+      result = result.filter((i: BillingInfo) => i.type && i.type.name === this.filterCategory);
+    }
+    return result;
+  }
+
   build() {
     Column() {
-      if (this.currentBillingInfo.length == 0) {
+      if (this.getFilteredData().length == 0) {
         Row() {
           Column() {
             Image($r("app.media.ic_public_budget"))
@@ -85,7 +107,7 @@ export struct BalanceList {
         .width('100%')
       } else {
         List() {
-          ForEach(BillingInfoUtils.explodeMonthlyArray(this.currentBillingInfo, this.selectedDate), (balances: BillingInfo[], day: number) => {
+          ForEach(BillingInfoUtils.explodeMonthlyArray(this.getFilteredData(), this.selectedDate), (balances: BillingInfo[], day: number) => {
             ListItem() {
               Column() {
                 if (balances.length > 0) {

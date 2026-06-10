@@ -1,5 +1,6 @@
 import { SettingManager } from '@ohos/common';
 import { TEXT_AI_CONFIG, IMAGE_AI_CONFIG, AiBillingConfig } from './AiBillingConfig';
+import router from '@ohos.router';
 
 // Keys for Text AI Config
 const KEY_TEXT_BASE_URL = 'ai.billing.text.baseUrl';
@@ -122,5 +123,245 @@ export class AiBillingSettings {
     const stored = await AiBillingSettings.loadImage(context);
     AiBillingSettings.applyImageToRuntimeConfig(stored);
     return stored;
+  }
+}
+
+// ──── AI 配置页面（可路由）────────
+
+@Entry
+@Component
+export struct AiBillingSettingsPage {
+  @State textBaseUrl: string = '';
+  @State textApiKey: string = '';
+  @State textModel: string = '';
+  @State textApiKeyHeader: string = '';
+  @State textApiKeyPrefix: string = '';
+  @State textTimeoutMs: number = 120000;
+
+  @State imageBaseUrl: string = '';
+  @State imageApiKey: string = '';
+  @State imageModel: string = '';
+  @State imageApiKeyHeader: string = '';
+  @State imageApiKeyPrefix: string = '';
+  @State imageTimeoutMs: number = 120000;
+
+  @State saving: boolean = false;
+  @State saved: boolean = false;
+
+  aboutToAppear() {
+    this.loadConfigs();
+  }
+
+  private loadConfigs() {
+    AiBillingSettings.loadText(getContext()).then((cfg: AiBillingTextStoredConfig) => {
+      this.textBaseUrl = cfg.baseUrl;
+      this.textApiKey = cfg.apiKey;
+      this.textModel = cfg.model;
+      this.textApiKeyHeader = cfg.apiKeyHeader;
+      this.textApiKeyPrefix = cfg.apiKeyPrefix;
+      this.textTimeoutMs = cfg.timeoutMs;
+    }).catch(() => {});
+    AiBillingSettings.loadImage(getContext()).then((cfg: AiBillingImageStoredConfig) => {
+      this.imageBaseUrl = cfg.baseUrl;
+      this.imageApiKey = cfg.apiKey;
+      this.imageModel = cfg.model;
+      this.imageApiKeyHeader = cfg.apiKeyHeader;
+      this.imageApiKeyPrefix = cfg.apiKeyPrefix;
+      this.imageTimeoutMs = cfg.timeoutMs;
+    }).catch(() => {});
+  }
+
+  private saveConfigs() {
+    this.saving = true;
+    this.saved = false;
+    AiBillingSettings.saveText(getContext(), {
+      baseUrl: this.textBaseUrl,
+      apiKey: this.textApiKey,
+      model: this.textModel,
+      apiKeyHeader: this.textApiKeyHeader,
+      apiKeyPrefix: this.textApiKeyPrefix,
+      timeoutMs: this.textTimeoutMs
+    });
+    AiBillingSettings.saveImage(getContext(), {
+      baseUrl: this.imageBaseUrl,
+      apiKey: this.imageApiKey,
+      model: this.imageModel,
+      apiKeyHeader: this.imageApiKeyHeader,
+      apiKeyPrefix: this.imageApiKeyPrefix,
+      timeoutMs: this.imageTimeoutMs
+    });
+    // Apply to runtime config
+    AiBillingSettings.loadAndApplyText(getContext());
+    AiBillingSettings.loadAndApplyImage(getContext());
+    this.saving = false;
+    this.saved = true;
+    setTimeout(() => { this.saved = false; }, 2000);
+  }
+
+  build() {
+    Column() {
+      // 顶部标题栏
+      Row() {
+        Button({ type: ButtonType.Normal }) {
+          Text('←')
+            .fontSize(22)
+            .fontColor(Color.White)
+        }
+        .backgroundColor(Color.Transparent)
+        .onClick(() => {
+          router.back();
+        })
+
+        Text($r('app.string.settings_ai_config'))
+          .fontColor(Color.White)
+          .fontSize(20)
+          .fontWeight(FontWeight.Bold)
+          .textAlign(TextAlign.Center)
+          .layoutWeight(1)
+          .margin({ right: 40 })
+      }
+      .padding({ top: 28, bottom: 16, left: 8, right: 8 })
+      .width('100%')
+      .linearGradient({
+        angle: 180,
+        colors: [
+          [$r('app.color.main_theme_gradient_start'), 0],
+          [$r('app.color.main_theme_gradient_end'), 1]
+        ]
+      })
+
+      Scroll() {
+        Column() {
+          // 文字 AI 配置
+          Column() {
+            Row() {
+              Text('文字识别 AI')
+                .fontSize(13)
+                .fontColor('#999999')
+                .fontWeight(FontWeight.Medium)
+            }
+            .width('100%')
+            .padding({ left: 16, right: 16, top: 16, bottom: 8 })
+
+            Column() {
+              this.settingInput('Base URL', this.textBaseUrl, (v: string) => { this.textBaseUrl = v; })
+              Divider().opacity(0.1).width('92%').margin({ left: 12 })
+              this.settingInput('API Key', this.textApiKey, (v: string) => { this.textApiKey = v; }, true)
+              Divider().opacity(0.1).width('92%').margin({ left: 12 })
+              this.settingInput('Model', this.textModel, (v: string) => { this.textModel = v; })
+              Divider().opacity(0.1).width('92%').margin({ left: 12 })
+              this.settingInput('Auth Header', this.textApiKeyHeader, (v: string) => { this.textApiKeyHeader = v; })
+              Divider().opacity(0.1).width('92%').margin({ left: 12 })
+              this.settingInput('Auth Prefix', this.textApiKeyPrefix, (v: string) => { this.textApiKeyPrefix = v; })
+              Divider().opacity(0.1).width('92%').margin({ left: 12 })
+              this.settingInput('Timeout (ms)', this.textTimeoutMs.toString(), (v: string) => {
+                let n = parseInt(v);
+                if (!isNaN(n) && n > 0) this.textTimeoutMs = n;
+              })
+            }
+            .width('100%')
+            .backgroundColor(Color.White)
+            .borderRadius(12)
+            .padding({ left: 4, right: 4 })
+          }
+          .width('100%')
+
+          // 图片 AI 配置
+          Column() {
+            Row() {
+              Text('图片识别 AI')
+                .fontSize(13)
+                .fontColor('#999999')
+                .fontWeight(FontWeight.Medium)
+            }
+            .width('100%')
+            .padding({ left: 16, right: 16, top: 20, bottom: 8 })
+
+            Column() {
+              this.settingInput('Base URL', this.imageBaseUrl, (v: string) => { this.imageBaseUrl = v; })
+              Divider().opacity(0.1).width('92%').margin({ left: 12 })
+              this.settingInput('API Key', this.imageApiKey, (v: string) => { this.imageApiKey = v; }, true)
+              Divider().opacity(0.1).width('92%').margin({ left: 12 })
+              this.settingInput('Model', this.imageModel, (v: string) => { this.imageModel = v; })
+              Divider().opacity(0.1).width('92%').margin({ left: 12 })
+              this.settingInput('Auth Header', this.imageApiKeyHeader, (v: string) => { this.imageApiKeyHeader = v; })
+              Divider().opacity(0.1).width('92%').margin({ left: 12 })
+              this.settingInput('Auth Prefix', this.imageApiKeyPrefix, (v: string) => { this.imageApiKeyPrefix = v; })
+              Divider().opacity(0.1).width('92%').margin({ left: 12 })
+              this.settingInput('Timeout (ms)', this.imageTimeoutMs.toString(), (v: string) => {
+                let n = parseInt(v);
+                if (!isNaN(n) && n > 0) this.imageTimeoutMs = n;
+              })
+            }
+            .width('100%')
+            .backgroundColor(Color.White)
+            .borderRadius(12)
+            .padding({ left: 4, right: 4 })
+          }
+          .width('100%')
+
+          // 保存按钮
+          Row() {
+            Button({ type: ButtonType.Capsule }) {
+              if (this.saved) {
+                Text('✓ 已保存')
+                  .fontColor(Color.White)
+                  .fontSize(15)
+              } else {
+                Text(this.saving ? '保存中...' : '保存配置')
+                  .fontColor(Color.White)
+                  .fontSize(15)
+              }
+            }
+            .width(200)
+            .height(40)
+            .backgroundColor(this.saved ? '#4CAF50' : '#4a7dff')
+            .onClick(() => {
+              if (!this.saving && !this.saved) {
+                this.saveConfigs();
+              }
+            })
+          }
+          .width('100%')
+          .justifyContent(FlexAlign.Center)
+          .margin({ top: 24, bottom: 32 })
+        }
+        .width('100%')
+        .padding({ left: 12, right: 12 })
+      }
+      .layoutWeight(1)
+      .width('100%')
+    }
+    .height('100%')
+    .width('100%')
+    .backgroundColor($r('app.color.page_background'))
+  }
+
+  @Builder settingInput(label: string, value: string, onChange: (v: string) => void, isPassword: boolean = false) {
+    Row() {
+      Text(label)
+        .fontSize(13)
+        .fontColor('#666666')
+        .width(90)
+
+      if (isPassword) {
+        TextInput({ text: value })
+          .fontSize(14)
+          .layoutWeight(1)
+          .type(InputType.Password)
+          .onChange(onChange)
+          .placeholderColor('#cccccc')
+          .placeholderFont({ size: 14 })
+      } else {
+        TextInput({ text: value })
+          .fontSize(14)
+          .layoutWeight(1)
+          .onChange(onChange)
+          .placeholderColor('#cccccc')
+          .placeholderFont({ size: 14 })
+      }
+    }
+    .width('100%')
+    .padding({ left: 12, right: 12, top: 10, bottom: 10 })
   }
 }

@@ -195,6 +195,82 @@
     {
       "name": "data_import_save_to_db",
       "value": "保存到数据库"
+    },
+    {
+      "name": "search_placeholder",
+      "value": "搜索备注、分类..."
+    },
+    {
+      "name": "search_filter",
+      "value": "筛选"
+    },
+    {
+      "name": "filter_all",
+      "value": "全部"
+    },
+    {
+      "name": "filter_income",
+      "value": "收入"
+    },
+    {
+      "name": "filter_expense",
+      "value": "支出"
+    },
+    {
+      "name": "filter_direction",
+      "value": "收支方向"
+    },
+    {
+      "name": "filter_category",
+      "value": "分类筛选"
+    },
+    {
+      "name": "filter_reset",
+      "value": "重置"
+    },
+    {
+      "name": "settings",
+      "value": "设置"
+    },
+    {
+      "name": "settings_general",
+      "value": "通用"
+    },
+    {
+      "name": "settings_ai_config",
+      "value": "AI 配置"
+    },
+    {
+      "name": "settings_data_management",
+      "value": "数据管理"
+    },
+    {
+      "name": "settings_about",
+      "value": "关于"
+    },
+    {
+      "name": "settings_default_category",
+      "value": "默认分类"
+    },
+    {
+      "name": "settings_currency_unit",
+      "value": "货币单位"
+    },
+    {
+      "name": "settings_clear_data",
+      "value": "清除所有数据"
+    },
+    {
+      "name": "settings_clear_confirm",
+      "value": "确定要清除所有账单数据吗？"
+    },
+    {
+      "name": "settings_cleared",
+      "value": "已清除所有数据"
+    },
+    {
+      "name": "settings_version",
+      "value": "版本"
     }
   ]
 }

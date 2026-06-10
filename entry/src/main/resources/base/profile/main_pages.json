@@ -6,6 +6,8 @@
     "pages/BillInfoPage",
     "pages/EconomicCharts",
     "pages/DataExport",
-    "pages/DataImport"
+    "pages/DataImport",
+    "pages/SettingsPage",
+    "ai/AiBillingSettings"
   ]
 }

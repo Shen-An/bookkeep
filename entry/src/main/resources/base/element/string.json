@@ -195,6 +195,82 @@
     {
       "name": "data_import_save_to_db",
       "value": "Save to Database"
+    },
+    {
+      "name": "search_placeholder",
+      "value": "Search remark, category..."
+    },
+    {
+      "name": "search_filter",
+      "value": "Filter"
+    },
+    {
+      "name": "filter_all",
+      "value": "All"
+    },
+    {
+      "name": "filter_income",
+      "value": "Income"
+    },
+    {
+      "name": "filter_expense",
+      "value": "Expense"
+    },
+    {
+      "name": "filter_direction",
+      "value": "Direction"
+    },
+    {
+      "name": "filter_category",
+      "value": "Category"
+    },
+    {
+      "name": "filter_reset",
+      "value": "Reset"
+    },
+    {
+      "name": "settings",
+      "value": "Settings"
+    },
+    {
+      "name": "settings_general",
+      "value": "General"
+    },
+    {
+      "name": "settings_ai_config",
+      "value": "AI Config"
+    },
+    {
+      "name": "settings_data_management",
+      "value": "Data Management"
+    },
+    {
+      "name": "settings_about",
+      "value": "About"
+    },
+    {
+      "name": "settings_default_category",
+      "value": "Default Category"
+    },
+    {
+      "name": "settings_currency_unit",
+      "value": "Currency Unit"
+    },
+    {
+      "name": "settings_clear_data",
+      "value": "Clear All Data"
+    },
+    {
+      "name": "settings_clear_confirm",
+      "value": "Are you sure to clear all billing data?"
+    },
+    {
+      "name": "settings_cleared",
+      "value": "All data cleared"
+    },
+    {
+      "name": "settings_version",
+      "value": "Version"
     }
   ]
 }

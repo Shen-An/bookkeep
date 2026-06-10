@@ -117,4 +117,12 @@ export class BillingInfoUtils {
     }
     return ret;
   }
+
+  public static setToArray(set: Set<string>): string[] {
+    let result: string[] = [];
+    set.forEach((value: string) => {
+      result.push(value);
+    });
+    return result;
+  }
 }
