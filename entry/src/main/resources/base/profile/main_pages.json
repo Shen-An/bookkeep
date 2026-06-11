@@ -8,6 +8,7 @@
     "pages/DataExport",
     "pages/DataImport",
     "pages/SettingsPage",
+    "pages/BudgetPage",
     "ai/AiBillingSettings"
   ]
 }

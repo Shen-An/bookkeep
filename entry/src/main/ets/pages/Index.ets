@@ -8,10 +8,23 @@
 import { BalanceViewer } from '../components/BalanceViewer';
 import { BalanceList } from '../components/BalanceList';
 import { PageEntries } from '../components/pageEntries';
-import { BillingDirection, BillingInfo, BillingInfoUtils, DBManager, Logger, CurrencyManager } from '@ohos/common';
+import { LockScreen } from '../components/LockScreen';
+import { BillingDirection, BillingInfo, BillingInfoUtils, DBManager, Logger, CurrencyManager, SettingManager } from '@ohos/common';
 import router from '@ohos.router';
+import window from '@ohos.window';
 
 let TAG = "INDEX";
+
+interface CategoryBudgetItem {
+  name: string;
+  limit: number;
+  spent: number;
+}
+
+interface BudgetData {
+  monthlyTotal: number;
+  categories: CategoryBudgetItem[];
+}
 
 @Entry
 @Component
@@ -29,6 +42,33 @@ struct Index {
   @State availableTypes: string[] = [];
   @State currencySymbol: string = '¥';
   @State currencyRate: number = 1.0;
+
+  // PIN 锁状态
+  @State pinLocked: boolean = false;
+  @State pinCode: string = '';
+  @State pinSetupMode: boolean = false;
+  sessionVerified: boolean = false;
+  pinSetupConsumed: boolean = false;
+
+  // 消费简报状态
+  @State todayIncome: number = 0;
+  @State todayExpense: number = 0;
+  @State yesterdayExpense: number = 0;
+  @State dailyAvgExpense: number = 0;
+  @State todayCount: number = 0;
+  @State todayNet: number = 0;
+  @State diffPercent: number = 0;
+  @State avgDiffPercent: number = 0;
+  @State diffSign: string = '';
+  @State avgDiffSign: string = '';
+  @State diffColor: string = '#999999';
+  @State avgDiffColor: string = '#999999';
+  @State netColor: string = '#2ed573';
+
+  // 预算状态
+  @State budgetTotal: number = 0;
+  @State budgetUsed: number = 0;
+  @State budgetExceeded: boolean = false;
 
   // 日期变化时的回调
   private onDateChange() {
@@ -70,7 +110,116 @@ struct Index {
           }
         })
         Logger.info(TAG, "get info success ", r);
+
+        // 加载消费简报
+        this.refreshDailySummary();
+        // 加载预算
+        this.refreshBudget();
       })
+  }
+
+  private refreshDailySummary() {
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const todayEnd = new Date(todayStart.getTime() + 86400000);
+    const yesterdayStart = new Date(todayStart.getTime() - 86400000);
+
+    this.todayIncome = 0;
+    this.todayExpense = 0;
+    this.todayCount = 0;
+    this.yesterdayExpense = 0;
+
+    const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    let totalMonthExpense = 0;
+    let daysInMonth = 0;
+
+    for (let i = 0; i < this.currentBillingInfo.length; i++) {
+      const info = this.currentBillingInfo[i];
+      const ts = info.timestamp;
+      const d = new Date(ts);
+
+      if (ts >= todayStart.getTime() && ts < todayEnd.getTime()) {
+        this.todayCount++;
+        if (info.direction === BillingDirection.IN) {
+          this.todayIncome += info.amount;
+        } else {
+          this.todayExpense += info.amount;
+        }
+      }
+
+      if (ts >= yesterdayStart.getTime() && ts < todayStart.getTime()) {
+        if (info.direction === BillingDirection.OUT) {
+          this.yesterdayExpense += info.amount;
+        }
+      }
+
+      if (ts >= currentMonthStart.getTime() && ts < todayEnd.getTime()) {
+        if (info.direction === BillingDirection.OUT) {
+          totalMonthExpense += info.amount;
+        }
+      }
+    }
+
+    // 计算本月已过天数
+    const daysPassed = now.getDate();
+    this.dailyAvgExpense = daysPassed > 0 ? totalMonthExpense / daysPassed : 0;
+
+    // 预计算对比值（避免在 build() 中使用 const）
+    this.todayNet = this.todayIncome - this.todayExpense;
+    this.netColor = this.todayNet >= 0 ? '#2ed573' : '#ff4757';
+
+    if (this.yesterdayExpense > 0) {
+      const diff = this.todayExpense - this.yesterdayExpense;
+      this.diffPercent = diff / this.yesterdayExpense * 100;
+      this.diffSign = diff > 0 ? '+' : '';
+      this.diffColor = diff > 0 ? '#ff4757' : '#2ed573';
+    } else {
+      this.diffPercent = 0;
+      this.diffSign = '';
+      this.diffColor = '#999999';
+    }
+
+    if (this.dailyAvgExpense > 0) {
+      const avgDiff = this.todayExpense - this.dailyAvgExpense;
+      this.avgDiffPercent = avgDiff / this.dailyAvgExpense * 100;
+      this.avgDiffSign = avgDiff > 0 ? '+' : '';
+      this.avgDiffColor = avgDiff > 0 ? '#ff4757' : '#2ed573';
+    } else {
+      this.avgDiffPercent = 0;
+      this.avgDiffSign = '';
+      this.avgDiffColor = '#999999';
+    }
+  }
+
+  private refreshBudget() {
+    SettingManager.getInstance().get<string>('budget_data', '').then((v: string) => {
+      if (v) {
+        try {
+          const data: BudgetData = JSON.parse(v);
+          this.budgetTotal = data.monthlyTotal || 0;
+          if (this.budgetTotal > 0) {
+            this.budgetUsed = this.getCurrentMonthExpense();
+            this.budgetExceeded = this.budgetUsed > this.budgetTotal;
+          }
+        } catch (e) {
+          // ignore
+        }
+      }
+    });
+  }
+
+  private getCurrentMonthExpense(): number {
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+    let total = 0;
+    for (let i = 0; i < this.currentBillingInfo.length; i++) {
+      const info = this.currentBillingInfo[i];
+      if (info.direction === BillingDirection.OUT && info.timestamp >= monthStart) {
+        total += info.amount;
+      }
+    }
+    return total;
   }
 
   clearCache() {
@@ -81,11 +230,53 @@ struct Index {
   onPageShow() {
     this.loadCurrency();
     this.reloadBillingInfo();
+
+    // 检查是否有 params 中的 setupPin 标记
+    const params = router.getParams() as Record<string, Object> | undefined;
+    if (params && params['setupPin'] === true && !this.pinSetupConsumed) {
+      this.pinSetupConsumed = true;
+      this.pinSetupMode = true;
+      this.pinLocked = true;
+    }
   }
 
   aboutToAppear() {
     this.reloadBillingInfo();
     this.loadCurrency();
+    this.checkPinLock();
+    this.setupForegroundListener();
+  }
+
+  private setupForegroundListener() {
+    try {
+      window.getLastWindow(getContext(this)).then((win: window.Window) => {
+        win.on('windowVisibilityChange', (visible: boolean) => {
+          if (visible && !this.pinSetupMode && !this.pinLocked) {
+            this.sessionVerified = false;
+            this.checkPinLock();
+          }
+        });
+      });
+    } catch (_e) {
+      Logger.info(TAG, 'window listener setup failed');
+    }
+  }
+
+  private checkPinLock() {
+    if (this.sessionVerified) {
+      return;
+    }
+    SettingManager.getInstance().get<boolean>('pin_enabled', false).then((enabled: boolean) => {
+      if (enabled) {
+        SettingManager.getInstance().get<string>('pin_code', '').then((code: string) => {
+          if (code) {
+            this.pinCode = code;
+            this.pinLocked = true;
+            this.pinSetupMode = false;
+          }
+        });
+      }
+    });
   }
 
   private loadCurrency() {
@@ -95,213 +286,353 @@ struct Index {
   }
 
   build() {
-    Column() {
-      Scroll() {
-        Column() {
-      BalanceViewer({
-        selectedDate: $selectedDate,
-        currentBillingInfo: $currentBillingInfo,
-        totalIncome: $totalIncome,
-        totalBalance: $totalBalance,
-        currencySymbol: this.currencySymbol
-      })
-        .margin({ top: 0 })
+    Stack() {
+      // 主内容
+      Column() {
+        Scroll() {
+          Column() {
+            BalanceViewer({
+              selectedDate: $selectedDate,
+              currentBillingInfo: $currentBillingInfo,
+              totalIncome: $totalIncome,
+              totalBalance: $totalBalance,
+              currencySymbol: this.currencySymbol
+            })
+              .margin({ top: 0 })
 
-      PageEntries({
-        selectedDate: $selectedDate
-      })
+            PageEntries({
+              selectedDate: $selectedDate
+            })
 
-      // 搜索栏
-      Row() {
-        TextInput({ placeholder: $r('app.string.search_placeholder'), text: this.searchKeyword })
-          .height(40)
-          .fontSize(14)
-          .layoutWeight(1)
-          .backgroundColor('#f6f9fd')
-          .borderRadius(20)
-          .padding({ left: 14, right: 14 })
-          .onChange((v: string) => {
-            this.searchKeyword = v;
-          })
-          .placeholderColor('#999999')
-          .placeholderFont({ size: 14 })
-
-        Button({ type: ButtonType.Normal }) {
-          Row() {
-            Image($r("app.media.ic_public_extract_list_light"))
-              .width(16)
-              .height(18)
-              .margin({ right: 6 })
-            Text($r('app.string.search_filter'))
-              .fontSize(13)
-              .fontColor(this.showFilterPanel || this.filterDirection >= 0 || this.filterCategory ? '#ffffff' : '#4f5f75')
-          }
-        }
-        .height(40)
-        .backgroundColor(this.showFilterPanel || this.filterDirection >= 0 || this.filterCategory ? '#1FA1FF' : '#f2f6fb')
-        .borderRadius(20)
-        .padding({ left: 14, right: 14 })
-        .onClick(() => {
-          this.showFilterPanel = !this.showFilterPanel;
-        })
-        .margin({ left: 8 })
-      }
-      .padding({ left: 14, right: 14, top: 8, bottom: 6 })
-      .width('100%')
-      .backgroundColor('#00ffffff')
-
-      // 筛选面板
-      if (this.showFilterPanel) {
-        Column() {
-          // 收支方向
-          Row() {
-            Text($r('app.string.filter_direction'))
-              .fontSize(13)
-              .fontColor('#666666')
-              .margin({ right: 12 })
-            Flex({ justifyContent: FlexAlign.Start, alignItems: ItemAlign.Center }) {
-              Button({ type: ButtonType.Normal }) {
-                Text($r('app.string.filter_all'))
-                  .fontSize(12)
-                  .fontColor(this.filterDirection == -1 ? '#ffffff' : '#666666')
-              }
-              .height(28)
-              .backgroundColor(this.filterDirection == -1 ? '#4a7dff' : '#f5f5f5')
-              .borderRadius(14)
-              .padding({ left: 12, right: 12 })
-              .margin({ right: 8 })
-              .onClick(() => {
-                this.filterDirection = -1;
-              })
-
-              Button({ type: ButtonType.Normal }) {
-                Text($r('app.string.filter_income'))
-                  .fontSize(12)
-                  .fontColor(this.filterDirection == 0 ? '#ffffff' : '#4CAF50')
-              }
-              .height(28)
-              .backgroundColor(this.filterDirection == 0 ? '#4CAF50' : '#e8f5e9')
-              .borderRadius(14)
-              .padding({ left: 12, right: 12 })
-              .margin({ right: 8 })
-              .onClick(() => {
-                this.filterDirection = this.filterDirection == 0 ? -1 : 0;
-              })
-
-              Button({ type: ButtonType.Normal }) {
-                Text($r('app.string.filter_expense'))
-                  .fontSize(12)
-                  .fontColor(this.filterDirection == 1 ? '#ffffff' : '#ff5722')
-              }
-              .height(28)
-              .backgroundColor(this.filterDirection == 1 ? '#ff5722' : '#fbe9e7')
-              .borderRadius(14)
-              .padding({ left: 12, right: 12 })
-              .onClick(() => {
-                this.filterDirection = this.filterDirection == 1 ? -1 : 1;
-              })
-            }
-            .layoutWeight(1)
-          }
-          .width('100%')
-          .padding({ top: 4, bottom: 4 })
-
-          // 分类筛选（水平滚动）
-          if (this.availableTypes.length > 0) {
-            Row() {
-              Text($r('app.string.filter_category'))
-                .fontSize(13)
-                .fontColor('#666666')
-                .margin({ right: 12 })
-              Scroll() {
+            // 今日消费简报
+            if (this.todayCount > 0 || this.todayExpense > 0) {
+              Column() {
                 Row() {
-                  Button({ type: ButtonType.Normal }) {
-                    Text($r('app.string.filter_all'))
-                      .fontSize(12)
-                      .fontColor(this.filterCategory == '' ? '#ffffff' : '#666666')
-                  }
-                  .height(28)
-                  .backgroundColor(this.filterCategory == '' ? '#4a7dff' : '#f5f5f5')
-                  .borderRadius(14)
-                  .padding({ left: 12, right: 12 })
-                  .margin({ right: 6 })
-                  .onClick(() => {
-                    this.filterCategory = '';
-                  })
+                  Text('今日消费')
+                    .fontSize(15)
+                    .fontColor('#1f2a3d')
+                    .fontWeight(FontWeight.Bold)
 
-                  ForEach(this.availableTypes, (typeName: string) => {
-                    Button({ type: ButtonType.Normal }) {
-                      Text(typeName)
-                        .fontSize(12)
-                        .fontColor(this.filterCategory == typeName ? '#ffffff' : '#666666')
+                  Row() {
+                    Circle()
+                      .width(6)
+                      .height(6)
+                      .fill('#2ed573')
+                      .margin({ right: 4 })
+                    Text(`${this.todayIncome > 0 ? '+' : ''}${CurrencyManager.formatWithSymbol(this.todayIncome, this.currencySymbol)}`)
+                      .fontSize(12)
+                      .fontColor('#2ed573')
+                  }
+                  .margin({ left: 12, right: 10 })
+
+                  Row() {
+                    Circle()
+                      .width(6)
+                      .height(6)
+                      .fill('#ff4757')
+                      .margin({ right: 4 })
+                    Text(`-${CurrencyManager.formatWithSymbol(this.todayExpense, this.currencySymbol)}`)
+                      .fontSize(12)
+                      .fontColor('#ff4757')
+                  }
+                  .margin({ right: 10 })
+
+                  Blank()
+
+                  Text(`${this.todayCount} 笔`)
+                    .fontSize(11)
+                    .fontColor('#999999')
+                }
+                .width('100%')
+
+                // 与昨日比较
+                Row() {
+                  if (this.yesterdayExpense > 0) {
+                    Row() {
+                      Text('较昨日')
+                        .fontSize(11)
+                        .fontColor('#999999')
+                      Text(`${this.diffSign}${this.diffPercent.toFixed(1)}%`)
+                        .fontSize(11)
+                        .fontColor(this.diffColor)
+                        .fontWeight(FontWeight.Bold)
+                        .margin({ left: 4 })
                     }
-                    .height(28)
-                    .backgroundColor(this.filterCategory == typeName ? '#4a7dff' : '#f5f5f5')
-                    .borderRadius(14)
-                    .padding({ left: 12, right: 12 })
-                    .margin({ right: 6 })
-                    .onClick(() => {
-                      this.filterCategory = this.filterCategory == typeName ? '' : typeName;
-                    })
-                  })
+
+                    Text(' · ')
+                      .fontSize(11)
+                      .fontColor('#dddddd')
+                      .margin({ left: 4, right: 4 })
+                  }
+
+                  Row() {
+                    Text('较日均')
+                      .fontSize(11)
+                      .fontColor('#999999')
+                    if (this.dailyAvgExpense > 0) {
+                      Text(`${this.avgDiffSign}${this.avgDiffPercent.toFixed(1)}%`)
+                        .fontSize(11)
+                        .fontColor(this.avgDiffColor)
+                        .fontWeight(FontWeight.Bold)
+                        .margin({ left: 4 })
+                    }
+                  }
+
+                  Blank()
+
+                  if (this.todayExpense > 0) {
+                    Text(`结余 ${CurrencyManager.formatWithSymbol(this.todayNet, this.currencySymbol)}`)
+                      .fontSize(11)
+                      .fontColor(this.netColor)
+                      .fontWeight(FontWeight.Medium)
+                  }
+                }
+                .width('100%')
+                .margin({ top: 4 })
+
+                // 预算进度
+                if (this.budgetTotal > 0) {
+                  Row() {
+                    Row() {
+                      Row()
+                        .width(`${Math.min(100, this.budgetUsed / this.budgetTotal * 100)}%`)
+                        .height(6)
+                        .backgroundColor(this.budgetExceeded ? '#ff4757' :
+                          this.budgetUsed / this.budgetTotal >= 0.8 ? '#ffa502' : '#1FA1FF')
+                        .borderRadius(3)
+                    }
+                    .width('100%')
+                    .height(6)
+                    .backgroundColor('#eef3f9')
+                    .borderRadius(3)
+                    .layoutWeight(1)
+                    .margin({ right: 10 })
+
+                    Text(this.budgetExceeded ? '预算超支！' :
+                      `预算 ${(this.budgetUsed / this.budgetTotal * 100).toFixed(0)}%`)
+                      .fontSize(11)
+                      .fontColor(this.budgetExceeded ? '#ff4757' : '#999999')
+                  }
+                  .width('100%')
+                  .margin({ top: 6 })
                 }
               }
-              .layoutWeight(1)
-              .scrollable(ScrollDirection.Horizontal)
+              .width('100%')
+              .padding({ left: 18, right: 18, top: 12, bottom: 12 })
+              .backgroundColor(Color.White)
+              .borderRadius(20)
+              .margin({ left: 14, right: 14, top: 6, bottom: 4 })
+              .shadow({ radius: 12, color: '#0f000000', offsetY: 4 })
             }
-            .width('100%')
-            .padding({ top: 4, bottom: 4 })
-          }
 
-          // 重置按钮
-          Row() {
-            Blank()
-            Button({ type: ButtonType.Normal }) {
-              Text($r('app.string.filter_reset'))
-                .fontSize(12)
-                .fontColor('#999999')
+            // 搜索栏
+            Row() {
+              TextInput({ placeholder: $r('app.string.search_placeholder'), text: this.searchKeyword })
+                .height(40)
+                .fontSize(14)
+                .layoutWeight(1)
+                .backgroundColor('#f6f9fd')
+                .borderRadius(20)
+                .padding({ left: 14, right: 14 })
+                .onChange((v: string) => {
+                  this.searchKeyword = v;
+                })
+                .placeholderColor('#999999')
+                .placeholderFont({ size: 14 })
+
+              Button({ type: ButtonType.Normal }) {
+                Row() {
+                  Image($r("app.media.ic_public_extract_list_light"))
+                    .width(16)
+                    .height(18)
+                    .margin({ right: 6 })
+                  Text($r('app.string.search_filter'))
+                    .fontSize(13)
+                    .fontColor(this.showFilterPanel || this.filterDirection >= 0 || this.filterCategory ? '#ffffff' : '#4f5f75')
+                }
+              }
+              .height(40)
+              .backgroundColor(this.showFilterPanel || this.filterDirection >= 0 || this.filterCategory ? '#1FA1FF' : '#f2f6fb')
+              .borderRadius(20)
+              .padding({ left: 14, right: 14 })
+              .onClick(() => {
+                this.showFilterPanel = !this.showFilterPanel;
+              })
+              .margin({ left: 8 })
             }
-            .height(28)
-            .backgroundColor('#eef3f9')
-            .borderRadius(14)
-            .padding({ left: 16, right: 16 })
-            .onClick(() => {
-              this.searchKeyword = '';
-              this.filterDirection = -1;
-              this.filterCategory = '';
+            .padding({ left: 14, right: 14, top: 8, bottom: 6 })
+            .width('100%')
+            .backgroundColor('#00ffffff')
+
+            // 筛选面板
+            if (this.showFilterPanel) {
+              Column() {
+                // 收支方向
+                Row() {
+                  Text($r('app.string.filter_direction'))
+                    .fontSize(13)
+                    .fontColor('#666666')
+                    .margin({ right: 12 })
+                  Flex({ justifyContent: FlexAlign.Start, alignItems: ItemAlign.Center }) {
+                    Button({ type: ButtonType.Normal }) {
+                      Text($r('app.string.filter_all'))
+                        .fontSize(12)
+                        .fontColor(this.filterDirection == -1 ? '#ffffff' : '#666666')
+                    }
+                    .height(28)
+                    .backgroundColor(this.filterDirection == -1 ? '#4a7dff' : '#f5f5f5')
+                    .borderRadius(14)
+                    .padding({ left: 12, right: 12 })
+                    .margin({ right: 8 })
+                    .onClick(() => {
+                      this.filterDirection = -1;
+                    })
+
+                    Button({ type: ButtonType.Normal }) {
+                      Text($r('app.string.filter_income'))
+                        .fontSize(12)
+                        .fontColor(this.filterDirection == 0 ? '#ffffff' : '#4CAF50')
+                    }
+                    .height(28)
+                    .backgroundColor(this.filterDirection == 0 ? '#4CAF50' : '#e8f5e9')
+                    .borderRadius(14)
+                    .padding({ left: 12, right: 12 })
+                    .margin({ right: 8 })
+                    .onClick(() => {
+                      this.filterDirection = this.filterDirection == 0 ? -1 : 0;
+                    })
+
+                    Button({ type: ButtonType.Normal }) {
+                      Text($r('app.string.filter_expense'))
+                        .fontSize(12)
+                        .fontColor(this.filterDirection == 1 ? '#ffffff' : '#ff5722')
+                    }
+                    .height(28)
+                    .backgroundColor(this.filterDirection == 1 ? '#ff5722' : '#fbe9e7')
+                    .borderRadius(14)
+                    .padding({ left: 12, right: 12 })
+                    .onClick(() => {
+                      this.filterDirection = this.filterDirection == 1 ? -1 : 1;
+                    })
+                  }
+                  .layoutWeight(1)
+                }
+                .width('100%')
+                .padding({ top: 4, bottom: 4 })
+
+                // 分类筛选（水平滚动）
+                if (this.availableTypes.length > 0) {
+                  Row() {
+                    Text($r('app.string.filter_category'))
+                      .fontSize(13)
+                      .fontColor('#666666')
+                      .margin({ right: 12 })
+                    Scroll() {
+                      Row() {
+                        Button({ type: ButtonType.Normal }) {
+                          Text($r('app.string.filter_all'))
+                            .fontSize(12)
+                            .fontColor(this.filterCategory == '' ? '#ffffff' : '#666666')
+                        }
+                        .height(28)
+                        .backgroundColor(this.filterCategory == '' ? '#4a7dff' : '#f5f5f5')
+                        .borderRadius(14)
+                        .padding({ left: 12, right: 12 })
+                        .margin({ right: 6 })
+                        .onClick(() => {
+                          this.filterCategory = '';
+                        })
+
+                        ForEach(this.availableTypes, (typeName: string) => {
+                          Button({ type: ButtonType.Normal }) {
+                            Text(typeName)
+                              .fontSize(12)
+                              .fontColor(this.filterCategory == typeName ? '#ffffff' : '#666666')
+                          }
+                          .height(28)
+                          .backgroundColor(this.filterCategory == typeName ? '#4a7dff' : '#f5f5f5')
+                          .borderRadius(14)
+                          .padding({ left: 12, right: 12 })
+                          .margin({ right: 6 })
+                          .onClick(() => {
+                            this.filterCategory = this.filterCategory == typeName ? '' : typeName;
+                          })
+                        })
+                      }
+                    }
+                    .layoutWeight(1)
+                    .scrollable(ScrollDirection.Horizontal)
+                  }
+                  .width('100%')
+                  .padding({ top: 4, bottom: 4 })
+                }
+
+                // 重置按钮
+                Row() {
+                  Blank()
+                  Button({ type: ButtonType.Normal }) {
+                    Text($r('app.string.filter_reset'))
+                      .fontSize(12)
+                      .fontColor('#999999')
+                  }
+                  .height(28)
+                  .backgroundColor('#eef3f9')
+                  .borderRadius(14)
+                  .padding({ left: 16, right: 16 })
+                  .onClick(() => {
+                    this.searchKeyword = '';
+                    this.filterDirection = -1;
+                    this.filterCategory = '';
+                  })
+                }
+                .width('100%')
+                .padding({ top: 4 })
+              }
+              .width('100%')
+              .padding({ left: 14, right: 14, top: 10, bottom: 10 })
+              .backgroundColor('#fbfdff')
+              .borderRadius(18)
+              .margin({ left: 14, right: 14, top: 2, bottom: 4 })
+              .shadow({ radius: 10, color: '#0f000000', offsetY: 3 })
+            }
+
+            BalanceList({
+              currentBillingInfo: $currentBillingInfo,
+              selectedDate: $selectedDate,
+              totalBalance: $totalBalance,
+              totalIncome: $totalIncome,
+              searchKeyword: this.searchKeyword,
+              filterDirection: this.filterDirection,
+              filterCategory: this.filterCategory,
+              currencySymbol: this.currencySymbol
             })
           }
           .width('100%')
-          .padding({ top: 4 })
         }
+        .height('100%')
         .width('100%')
-        .padding({ left: 14, right: 14, top: 10, bottom: 10 })
-        .backgroundColor('#fbfdff')
-        .borderRadius(18)
-        .margin({ left: 14, right: 14, top: 2, bottom: 4 })
-        .shadow({ radius: 10, color: '#0f000000', offsetY: 3 })
-      }
-
-      BalanceList({
-        currentBillingInfo: $currentBillingInfo,
-        selectedDate: $selectedDate,
-        totalBalance: $totalBalance,
-        totalIncome: $totalIncome,
-        searchKeyword: this.searchKeyword,
-        filterDirection: this.filterDirection,
-        filterCategory: this.filterCategory,
-        currencySymbol: this.currencySymbol
-      })
-        }
-        .width('100%')
+        .scrollable(ScrollDirection.Vertical)
+        .backgroundColor($r('app.color.page_background'))
       }
       .height('100%')
       .width('100%')
-      .scrollable(ScrollDirection.Vertical)
       .backgroundColor($r('app.color.page_background'))
+
+      // PIN 锁覆盖层
+      if (this.pinLocked) {
+        LockScreen({
+          title: this.pinSetupMode ? '设置 PIN 码' : '输入 PIN 码解锁',
+          correctPin: this.pinCode,
+          isSetupMode: this.pinSetupMode,
+          onUnlock: () => {
+            this.pinLocked = false;
+            this.pinSetupMode = false;
+            this.sessionVerified = true;
+          }
+        })
+      }
     }
     .height('100%')
     .width('100%')
-    .backgroundColor($r('app.color.page_background'))
   }
 }

@@ -133,17 +133,9 @@ export class AiBillingSettings {
 export struct AiBillingSettingsPage {
   @State textBaseUrl: string = '';
   @State textApiKey: string = '';
-  @State textModel: string = '';
-  @State textApiKeyHeader: string = '';
-  @State textApiKeyPrefix: string = '';
-  @State textTimeoutMs: number = 120000;
 
   @State imageBaseUrl: string = '';
   @State imageApiKey: string = '';
-  @State imageModel: string = '';
-  @State imageApiKeyHeader: string = '';
-  @State imageApiKeyPrefix: string = '';
-  @State imageTimeoutMs: number = 120000;
 
   @State saving: boolean = false;
   @State saved: boolean = false;
@@ -156,18 +148,10 @@ export struct AiBillingSettingsPage {
     AiBillingSettings.loadText(getContext()).then((cfg: AiBillingTextStoredConfig) => {
       this.textBaseUrl = cfg.baseUrl;
       this.textApiKey = cfg.apiKey;
-      this.textModel = cfg.model;
-      this.textApiKeyHeader = cfg.apiKeyHeader;
-      this.textApiKeyPrefix = cfg.apiKeyPrefix;
-      this.textTimeoutMs = cfg.timeoutMs;
     }).catch(() => {});
     AiBillingSettings.loadImage(getContext()).then((cfg: AiBillingImageStoredConfig) => {
       this.imageBaseUrl = cfg.baseUrl;
       this.imageApiKey = cfg.apiKey;
-      this.imageModel = cfg.model;
-      this.imageApiKeyHeader = cfg.apiKeyHeader;
-      this.imageApiKeyPrefix = cfg.apiKeyPrefix;
-      this.imageTimeoutMs = cfg.timeoutMs;
     }).catch(() => {});
   }
 
@@ -177,18 +161,18 @@ export struct AiBillingSettingsPage {
     AiBillingSettings.saveText(getContext(), {
       baseUrl: this.textBaseUrl,
       apiKey: this.textApiKey,
-      model: this.textModel,
-      apiKeyHeader: this.textApiKeyHeader,
-      apiKeyPrefix: this.textApiKeyPrefix,
-      timeoutMs: this.textTimeoutMs
+      model: TEXT_AI_CONFIG.model,
+      apiKeyHeader: TEXT_AI_CONFIG.apiKeyHeader,
+      apiKeyPrefix: TEXT_AI_CONFIG.apiKeyPrefix,
+      timeoutMs: TEXT_AI_CONFIG.timeoutMs
     });
     AiBillingSettings.saveImage(getContext(), {
       baseUrl: this.imageBaseUrl,
       apiKey: this.imageApiKey,
-      model: this.imageModel,
-      apiKeyHeader: this.imageApiKeyHeader,
-      apiKeyPrefix: this.imageApiKeyPrefix,
-      timeoutMs: this.imageTimeoutMs
+      model: IMAGE_AI_CONFIG.model,
+      apiKeyHeader: IMAGE_AI_CONFIG.apiKeyHeader,
+      apiKeyPrefix: IMAGE_AI_CONFIG.apiKeyPrefix,
+      timeoutMs: IMAGE_AI_CONFIG.timeoutMs
     });
     // Apply to runtime config
     AiBillingSettings.loadAndApplyText(getContext());
@@ -247,17 +231,6 @@ export struct AiBillingSettingsPage {
               this.settingInput('Base URL', this.textBaseUrl, (v: string) => { this.textBaseUrl = v; })
               Divider().opacity(0.1).width('92%').margin({ left: 12 })
               this.settingInput('API Key', this.textApiKey, (v: string) => { this.textApiKey = v; }, true)
-              Divider().opacity(0.1).width('92%').margin({ left: 12 })
-              this.settingInput('Model', this.textModel, (v: string) => { this.textModel = v; })
-              Divider().opacity(0.1).width('92%').margin({ left: 12 })
-              this.settingInput('Auth Header', this.textApiKeyHeader, (v: string) => { this.textApiKeyHeader = v; })
-              Divider().opacity(0.1).width('92%').margin({ left: 12 })
-              this.settingInput('Auth Prefix', this.textApiKeyPrefix, (v: string) => { this.textApiKeyPrefix = v; })
-              Divider().opacity(0.1).width('92%').margin({ left: 12 })
-              this.settingInput('Timeout (ms)', this.textTimeoutMs.toString(), (v: string) => {
-                let n = parseInt(v);
-                if (!isNaN(n) && n > 0) this.textTimeoutMs = n;
-              })
             }
             .width('100%')
             .backgroundColor(Color.White)
@@ -281,17 +254,6 @@ export struct AiBillingSettingsPage {
               this.settingInput('Base URL', this.imageBaseUrl, (v: string) => { this.imageBaseUrl = v; })
               Divider().opacity(0.1).width('92%').margin({ left: 12 })
               this.settingInput('API Key', this.imageApiKey, (v: string) => { this.imageApiKey = v; }, true)
-              Divider().opacity(0.1).width('92%').margin({ left: 12 })
-              this.settingInput('Model', this.imageModel, (v: string) => { this.imageModel = v; })
-              Divider().opacity(0.1).width('92%').margin({ left: 12 })
-              this.settingInput('Auth Header', this.imageApiKeyHeader, (v: string) => { this.imageApiKeyHeader = v; })
-              Divider().opacity(0.1).width('92%').margin({ left: 12 })
-              this.settingInput('Auth Prefix', this.imageApiKeyPrefix, (v: string) => { this.imageApiKeyPrefix = v; })
-              Divider().opacity(0.1).width('92%').margin({ left: 12 })
-              this.settingInput('Timeout (ms)', this.imageTimeoutMs.toString(), (v: string) => {
-                let n = parseInt(v);
-                if (!isNaN(n) && n > 0) this.imageTimeoutMs = n;
-              })
             }
             .width('100%')
             .backgroundColor(Color.White)

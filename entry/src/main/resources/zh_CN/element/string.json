@@ -271,6 +271,106 @@
     {
       "name": "settings_version",
       "value": "版本"
+    },
+    {
+      "name": "settings_privacy_lock",
+      "value": "隐私锁"
+    },
+    {
+      "name": "settings_privacy_lock_desc",
+      "value": "设置 PIN 码保护账单数据"
+    },
+    {
+      "name": "settings_budget",
+      "value": "预算管理"
+    },
+    {
+      "name": "settings_budget_desc",
+      "value": "设置月度支出限额"
+    },
+    {
+      "name": "pin_set_title",
+      "value": "设置 PIN 码"
+    },
+    {
+      "name": "pin_change_title",
+      "value": "修改 PIN 码"
+    },
+    {
+      "name": "pin_verify_title",
+      "value": "输入 PIN 码解锁"
+    },
+    {
+      "name": "pin_enter",
+      "value": "请输入 PIN 码"
+    },
+    {
+      "name": "pin_confirm",
+      "value": "请再次确认 PIN 码"
+    },
+    {
+      "name": "pin_mismatch",
+      "value": "两次输入不一致，请重新设置"
+    },
+    {
+      "name": "pin_wrong",
+      "value": "PIN 码错误"
+    },
+    {
+      "name": "pin_remove",
+      "value": "关闭 PIN 锁"
+    },
+    {
+      "name": "budget_title",
+      "value": "预算设置"
+    },
+    {
+      "name": "budget_monthly_total",
+      "value": "月度总预算"
+    },
+    {
+      "name": "budget_category_title",
+      "value": "分类预算"
+    },
+    {
+      "name": "budget_summary_today",
+      "value": "今日概览"
+    },
+    {
+      "name": "budget_remaining",
+      "value": "剩余"
+    },
+    {
+      "name": "budget_exceeded",
+      "value": "预算超支！"
+    },
+    {
+      "name": "budget_warning",
+      "value": "预算预警"
+    },
+    {
+      "name": "spending_today",
+      "value": "今日消费"
+    },
+    {
+      "name": "spending_today_income",
+      "value": "收入"
+    },
+    {
+      "name": "spending_today_expense",
+      "value": "支出"
+    },
+    {
+      "name": "spending_net",
+      "value": "结余"
+    },
+    {
+      "name": "spending_vs_yesterday",
+      "value": "较昨日"
+    },
+    {
+      "name": "spending_vs_daily_avg",
+      "value": "较日均"
     }
   ]
 }

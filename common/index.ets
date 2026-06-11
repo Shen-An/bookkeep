@@ -4,6 +4,8 @@ export { DBManager } from './src/main/ets/Manager/DBManager';
 
 export { CurrencyManager } from './src/main/ets/Manager/CurrencyManager';
 
+export { CommonConfiguration } from './src/main/ets/Manager/CommonConfiguration';
+
 export { Logger } from './src/main/ets/Utils/Logger';
 
 export { BillingInfo, BillingDirection } from './src/main/ets/DataTypes/BillingInfo';

@@ -271,6 +271,106 @@
     {
       "name": "settings_version",
       "value": "Version"
+    },
+    {
+      "name": "settings_privacy_lock",
+      "value": "Privacy Lock"
+    },
+    {
+      "name": "settings_privacy_lock_desc",
+      "value": "Set PIN to protect your billing data"
+    },
+    {
+      "name": "settings_budget",
+      "value": "Budget"
+    },
+    {
+      "name": "settings_budget_desc",
+      "value": "Set monthly spending limits"
+    },
+    {
+      "name": "pin_set_title",
+      "value": "Set PIN Code"
+    },
+    {
+      "name": "pin_change_title",
+      "value": "Change PIN Code"
+    },
+    {
+      "name": "pin_verify_title",
+      "value": "Enter PIN to Unlock"
+    },
+    {
+      "name": "pin_enter",
+      "value": "Enter PIN"
+    },
+    {
+      "name": "pin_confirm",
+      "value": "Confirm PIN"
+    },
+    {
+      "name": "pin_mismatch",
+      "value": "PIN mismatch, please re-enter"
+    },
+    {
+      "name": "pin_wrong",
+      "value": "Wrong PIN"
+    },
+    {
+      "name": "pin_remove",
+      "value": "Remove PIN"
+    },
+    {
+      "name": "budget_title",
+      "value": "Budget Settings"
+    },
+    {
+      "name": "budget_monthly_total",
+      "value": "Monthly Total Budget"
+    },
+    {
+      "name": "budget_category_title",
+      "value": "Category Budgets"
+    },
+    {
+      "name": "budget_summary_today",
+      "value": "Today's Summary"
+    },
+    {
+      "name": "budget_remaining",
+      "value": "Remaining"
+    },
+    {
+      "name": "budget_exceeded",
+      "value": "Budget exceeded!"
+    },
+    {
+      "name": "budget_warning",
+      "value": "Budget warning"
+    },
+    {
+      "name": "spending_today",
+      "value": "Today's Spending"
+    },
+    {
+      "name": "spending_today_income",
+      "value": "Income"
+    },
+    {
+      "name": "spending_today_expense",
+      "value": "Expense"
+    },
+    {
+      "name": "spending_net",
+      "value": "Net"
+    },
+    {
+      "name": "spending_vs_yesterday",
+      "value": "vs Yesterday"
+    },
+    {
+      "name": "spending_vs_daily_avg",
+      "value": "vs Daily Avg"
     }
   ]
 }

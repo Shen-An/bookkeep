@@ -97,6 +97,51 @@ struct SettingsPage {
     })
   }
 
+  private handlePinSetup() {
+    SettingManager.getInstance().get<boolean>('pin_enabled', false).then((enabled: boolean) => {
+      if (enabled) {
+        AlertDialog.show({
+          title: '修改 PIN 码',
+          message: '',
+          autoCancel: true,
+          alignment: DialogAlignment.Center,
+          primaryButton: {
+            value: $r('app.string.cancel'),
+            action: () => {}
+          },
+          secondaryButton: {
+            value: '关闭 PIN',
+            fontColor: '#ff4757',
+            action: () => {
+              SettingManager.getInstance().set('pin_enabled', false);
+              SettingManager.getInstance().set('pin_code', '');
+            }
+          }
+        })
+      } else {
+        AlertDialog.show({
+          title: '设置 PIN 码',
+          message: '设置 PIN 码保护账单数据',
+          autoCancel: true,
+          alignment: DialogAlignment.Center,
+          primaryButton: {
+            value: $r('app.string.cancel'),
+            action: () => {}
+          },
+          secondaryButton: {
+            value: '设置',
+            action: () => {
+              router.pushUrl({
+                url: 'pages/Index',
+                params: { setupPin: true }
+              });
+            }
+          }
+        })
+      }
+    })
+  }
+
   build() {
     Column() {
       Row() {
@@ -250,6 +295,64 @@ struct SettingsPage {
             .margin({ top: 12 })
             .onClick(() => {
               router.pushUrl({ url: 'ai/AiBillingSettings' });
+            })
+
+            Row() {
+              Column() {
+                Text('预算管理')
+                  .fontSize(16)
+                  .fontColor('#1f2a3d')
+                  .fontWeight(FontWeight.Bold)
+                Text('设置月度支出限额')
+                  .fontSize(12)
+                  .fontColor('#8b96a8')
+                  .margin({ top: 5 })
+              }
+              .alignItems(HorizontalAlign.Start)
+              .layoutWeight(1)
+              Image($r("app.media.ic_public_budget"))
+                .width(26)
+                .height(26)
+                .fillColor('#ffa502')
+              Text('›')
+                .fontSize(22)
+                .fontColor('#b7c0ce')
+                .margin({ left: 10 })
+            }
+            .width('100%')
+            .padding(18)
+            .backgroundColor('#fffbf0')
+            .borderRadius(22)
+            .margin({ top: 12 })
+            .onClick(() => {
+              router.pushUrl({ url: 'pages/BudgetPage' });
+            })
+
+            Row() {
+              Column() {
+                Text('隐私锁')
+                  .fontSize(16)
+                  .fontColor('#1f2a3d')
+                  .fontWeight(FontWeight.Bold)
+                Text('设置 PIN 码保护账单数据')
+                  .fontSize(12)
+                  .fontColor('#8b96a8')
+                  .margin({ top: 5 })
+              }
+              .alignItems(HorizontalAlign.Start)
+              .layoutWeight(1)
+              Text('›')
+                .fontSize(22)
+                .fontColor('#b7c0ce')
+                .margin({ left: 10 })
+            }
+            .width('100%')
+            .padding(18)
+            .backgroundColor('#f5f0ff')
+            .borderRadius(22)
+            .margin({ top: 12 })
+            .onClick(() => {
+              this.handlePinSetup();
             })
           }
           .width('100%')
