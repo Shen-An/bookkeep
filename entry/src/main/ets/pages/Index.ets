@@ -96,26 +96,8 @@ struct Index {
 
   build() {
     Column() {
-      // 顶部标题栏 - 渐变背景
-      Row() {
-        Text($r("app.string.app_title"))
-          .fontColor(Color.White)
-          .fontSize(26)
-          .fontWeight(FontWeight.Bold)
-          .textAlign(TextAlign.Center)
-          .width('100%')
-          .letterSpacing(2)
-      }
-      .padding({ top: 28, bottom: 20 })
-      .width('100%')
-      .linearGradient({
-        angle: 180,
-        colors: [
-          [$r('app.color.main_theme_gradient_start'), 0],
-          [$r('app.color.main_theme_gradient_end'), 1]
-        ]
-      })
-
+      Scroll() {
+        Column() {
       BalanceViewer({
         selectedDate: $selectedDate,
         currentBillingInfo: $currentBillingInfo,
@@ -310,7 +292,13 @@ struct Index {
         filterCategory: this.filterCategory,
         currencySymbol: this.currencySymbol
       })
-        .layoutWeight(1)
+        }
+        .width('100%')
+      }
+      .height('100%')
+      .width('100%')
+      .scrollable(ScrollDirection.Vertical)
+      .backgroundColor($r('app.color.page_background'))
     }
     .height('100%')
     .width('100%')

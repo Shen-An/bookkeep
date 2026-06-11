@@ -16,7 +16,7 @@ export struct BalanceList {
   @Link totalBalance: number;
   @Link totalIncome: number;
   @Prop searchKeyword: string = '';
-  @Prop filterDirection: number = -1; // -1: all, 0: IN, 1: OUT
+  @Prop filterDirection: number = -1;
   @Prop filterCategory: string = '';
   @Prop currencySymbol: string = '¥';
   context = getContext(this) as common.UIAbilityContext;
@@ -30,9 +30,7 @@ export struct BalanceList {
       alignment: DialogAlignment.Center,
       primaryButton: {
         value: '取消',
-        action: () => {
-          // do nothing
-        }
+        action: () => {}
       },
       secondaryButton: {
         value: '删除',
@@ -88,112 +86,138 @@ export struct BalanceList {
 
   build() {
     Column() {
-      if (this.getFilteredData().length == 0) {
-        Row() {
-          Column() {
-            Image($r("app.media.ic_public_budget"))
-              .width(54)
-              .height(54)
-              .margin({ bottom: 14 })
-              .opacity(0.22)
-            Text($r("app.string.no_record"))
-              .fontColor('#8a94a6')
-              .fontSize(16)
-              .fontWeight(FontWeight.Medium)
-            Text('选择其他日期或添加一笔账单')
-              .fontColor('#b0b7c3')
-              .fontSize(12)
-              .margin({ top: 6 })
-          }
-          .alignItems(HorizontalAlign.Center)
-          .justifyContent(FlexAlign.Center)
+      Row() {
+        Column() {
+          Text('账单明细')
+            .fontSize(20)
+            .fontColor('#1f2a3d')
+            .fontWeight(FontWeight.Bold)
+          Text(`${StringUtils.formatDate(this.selectedDate, 'M月')} · 按日期分组`)
+            .fontSize(12)
+            .fontColor('#8b96a8')
+            .margin({ top: 3 })
         }
-        .height('100%')
+        .alignItems(HorizontalAlign.Start)
+        Blank()
+        Text(`${this.getFilteredData().length} 笔`)
+          .fontSize(13)
+          .fontColor('#126dff')
+          .fontWeight(FontWeight.Medium)
+          .padding({ left: 12, right: 12, top: 6, bottom: 6 })
+          .backgroundColor('#eef6ff')
+          .borderRadius(16)
+      }
+      .width('100%')
+      .padding({ left: 18, right: 18, top: 10, bottom: 8 })
+
+      if (this.getFilteredData().length == 0) {
+        Column() {
+          Image($r("app.media.ic_public_budget"))
+            .width(72)
+            .height(72)
+            .opacity(0.18)
+          Text($r("app.string.no_record"))
+            .fontColor('#5f6c80')
+            .fontSize(18)
+            .fontWeight(FontWeight.Bold)
+            .margin({ top: 18 })
+          Text('今天还没有记录，去添加第一笔吧')
+            .fontColor('#a4adba')
+            .fontSize(13)
+            .margin({ top: 8 })
+        }
+        .justifyContent(FlexAlign.Center)
+        .alignItems(HorizontalAlign.Center)
+        .height(280)
         .width('100%')
+        .backgroundColor('#ffffff')
+        .borderRadius(28)
+        .margin({ left: 16, right: 16, top: 8, bottom: 20 })
       } else {
-        List() {
+        Column() {
           ForEach(BillingInfoUtils.explodeMonthlyArray(this.getFilteredData(), this.selectedDate), (balances: BillingInfo[], day: number) => {
-            ListItem() {
-              Column() {
+            Column() {
                 if (balances.length > 0) {
-                  // 日期头部分组
                   Row() {
-                    Text(StringUtils.formatDate(this.selectedDate, 'M月') + `${day + 1}` + "日")
-                      .fontColor('#6c778a')
-                      .fontSize(13)
-                      .fontWeight(FontWeight.Medium)
-                    
+                    Text(`${day + 1}`)
+                      .fontSize(22)
+                      .fontColor('#1f2a3d')
+                      .fontWeight(FontWeight.Bold)
+                    Text(StringUtils.formatDate(this.selectedDate, 'M月'))
+                      .fontSize(12)
+                      .fontColor('#8b96a8')
+                      .margin({ left: 6, top: 6 })
                     Blank()
-                    
                     Text(`共 ${balances.length} 笔`)
-                      .fontSize(11)
-                      .fontColor('#9aa4b2')
-                      .padding({ left: 8, right: 8, top: 2, bottom: 2 })
-                      .backgroundColor('#f1f5fb')
-                      .borderRadius(10)
+                      .fontSize(12)
+                      .fontColor('#8b96a8')
                   }
                   .width('100%')
-                  .margin({ bottom: 10, top: 14 })
-                  .padding({ left: 8, right: 8 })
+                  .padding({ left: 4, right: 4, bottom: 10 })
                 }
-                List() {
-                  ForEach(balances, (balance: BillingInfo) => {
-                    ListItem() {
-                      // 每条账单卡片
-                      Row() {
-                        // 左侧：图标 + 详情
-                        Row() {
-                          // 图标圆形背景
-                          Image(balance.type.icon)
-                            .width(42)
-                            .height(42)
-                            .borderRadius(21)
-                            .padding(10)
-                            .backgroundColor(balance.direction == BillingDirection.IN ? '#ffe8f8e8' : '#fffce8e8')
-                            .margin({ right: 12 })
-                          
-                          Column() {
-                            Text(balance.remark)
-                              .fontSize(16)
-                              .fontColor('#202938')
-                              .fontWeight(FontWeight.Medium)
-                              .margin({ bottom: 4 })
-                              .maxLines(1)
-                              .textOverflow({ overflow: TextOverflow.Ellipsis })
-                            Text(StringUtils.formatDate(balance.timestamp, 'h:m:s'))
-                              .fontColor('#9aa4b2')
-                              .fontSize(12)
-                          }
-                          .alignItems(HorizontalAlign.Start)
-                        }
 
-                        // 右侧：金额（按当前汇率换算）
-                        Text(`${balance.direction == BillingDirection.IN ? "+" : "-"} ${CurrencyManager.formatWithSymbol(balance.amount, this.currencySymbol)}`)
-                          .fontSize(17)
-                          .fontColor(balance.direction == BillingDirection.IN ? $r('app.color.income_green') : $r('app.color.expense_red'))
-                          .fontWeight(FontWeight.Medium)
+                Column() {
+                  ForEach(balances, (balance: BillingInfo) => {
+                    Row() {
+                      Row() {
+                        Image(balance.type.icon)
+                          .width(46)
+                          .height(46)
+                          .borderRadius(16)
+                          .padding(11)
+                          .backgroundColor(balance.direction == BillingDirection.IN ? '#eafff4' : '#fff0f1')
+                          .margin({ right: 12 })
+
+                        Column() {
+                          Text(balance.remark && balance.remark.length > 0 ? balance.remark : balance.type.name)
+                            .fontSize(16)
+                            .fontColor('#1f2a3d')
+                            .fontWeight(FontWeight.Bold)
+                            .maxLines(1)
+                            .textOverflow({ overflow: TextOverflow.Ellipsis })
+                          Row() {
+                            Text(balance.type.name)
+                              .fontSize(11)
+                              .fontColor('#7b8798')
+                            Text(' · ')
+                              .fontSize(11)
+                              .fontColor('#b7c0ce')
+                            Text(StringUtils.formatDate(balance.timestamp, 'h:m:s'))
+                              .fontSize(11)
+                              .fontColor('#7b8798')
+                          }
+                          .margin({ top: 5 })
+                        }
+                        .alignItems(HorizontalAlign.Start)
+                        .layoutWeight(1)
                       }
-                      .width('100%')
-                      .justifyContent(FlexAlign.SpaceBetween)
-                      .padding({ left: 16, right: 16, top: 14, bottom: 14 })
-                      .backgroundColor('#fbfdff')
-                      .borderRadius(16)
-                      .shadow({
-                        radius: 10,
-                        color: '#10000000',
-                        offsetY: 4
-                      })
+                      .layoutWeight(1)
+
+                      Column() {
+                        Text(`${balance.direction == BillingDirection.IN ? '+' : '-'}${CurrencyManager.formatWithSymbol(balance.amount, this.currencySymbol)}`)
+                          .fontSize(17)
+                          .fontColor(balance.direction == BillingDirection.IN ? '#21c36f' : '#ff4d5d')
+                          .fontWeight(FontWeight.Bold)
+                        Text(balance.direction == BillingDirection.IN ? '收入' : '支出')
+                          .fontSize(11)
+                          .fontColor('#a4adba')
+                          .margin({ top: 4 })
+                      }
+                      .alignItems(HorizontalAlign.End)
                     }
+                    .width('100%')
+                    .padding({ left: 14, right: 14, top: 14, bottom: 14 })
+                    .backgroundColor(Color.White)
+                    .borderRadius(22)
                     .margin({ bottom: 10 })
+                    .shadow({ radius: 14, color: '#12000000', offsetY: 6 })
                     .onClick(() => {
                       if (typeof balance.id !== 'number') {
                         return;
                       }
                       router.pushUrl({
                         url: 'pages/addBalance',
-                        params: {
-                          editId: balance.id
-                        }
+                        params: { editId: balance.id }
                       })
                     })
                     .gesture(
@@ -204,17 +228,16 @@ export struct BalanceList {
                     )
                   })
                 }
-              }
-              .width('100%')
+                .width('100%')
             }
+            .width('100%')
+            .margin({ bottom: 10 })
           })
         }
-        .listDirection(Axis.Vertical)
-        .layoutWeight(1)
-        .padding({ left: 14, right: 14, top: 6, bottom: 12 })
+        .width('100%')
+        .padding({ left: 16, right: 16, top: 4, bottom: 20 })
       }
     }
     .width('100%')
-    .height('100%')
   }
 }

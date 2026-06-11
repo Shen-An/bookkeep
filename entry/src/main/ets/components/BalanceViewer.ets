@@ -5,9 +5,6 @@
 // http://license.coscl.org.cn/MulanPSL2
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
-import fs from '@ohos.file.fs';
-import common from '@ohos.app.ability.common';
-import { advancedTemplate } from '../data/defaultBalanceTemplate';
 import { BillingInfo, StringUtils, CurrencyManager } from '@ohos/common';
 
 @Component
@@ -18,114 +15,128 @@ export struct BalanceViewer {
   @Link totalBalance: number;
   @Prop currencySymbol: string = '¥';
 
+  private netBalance(): number {
+    return this.totalIncome - this.totalBalance;
+  }
+
+  private monthlyCount(): number {
+    const selectedYear = this.selectedDate.getFullYear();
+    const selectedMonth = this.selectedDate.getMonth();
+    return this.currentBillingInfo.filter((info: BillingInfo) => {
+      const infoDate = new Date(info.timestamp);
+      return infoDate.getFullYear() === selectedYear && infoDate.getMonth() === selectedMonth;
+    }).length;
+  }
+
   build() {
     Column() {
-      // 顶部行：年份 + 收入/支出标签
       Row() {
         Column() {
-          Row() {
-            Text(StringUtils.formatDate(this.selectedDate, 'Y'))
-              .fontSize(12)
-              .fontColor('#eaf6ff')
-              .fontWeight(FontWeight.Medium)
-            Text($r("app.string.year"))
-              .fontSize(13)
-              .fontColor('#eaf6ff')
-              .fontWeight(FontWeight.Medium)
-          }
-        }.width('20%')
+          Text('本月结余')
+            .fontSize(13)
+            .fontColor('#d9efff')
+            .fontWeight(FontWeight.Medium)
 
+          Text(CurrencyManager.formatWithSymbol(this.netBalance(), this.currencySymbol))
+            .fontSize(34)
+            .fontColor(Color.White)
+            .fontWeight(FontWeight.Bold)
+            .margin({ top: 6 })
+            .maxLines(1)
+            .textOverflow({ overflow: TextOverflow.Ellipsis })
+
+          Text(`${StringUtils.formatDate(this.selectedDate, 'Y')}年 · ${this.monthlyCount()} 笔记录`)
+            .fontSize(12)
+            .fontColor('#c9e7ff')
+            .margin({ top: 6 })
+        }
+        .alignItems(HorizontalAlign.Start)
+        .layoutWeight(1)
+
+        Button({ type: ButtonType.Normal }) {
+          Column() {
+            Text(StringUtils.formatDate(this.selectedDate, 'M'))
+              .fontSize(28)
+              .fontColor('#126dff')
+              .fontWeight(FontWeight.Bold)
+            Text($r("app.string.month"))
+              .fontSize(12)
+              .fontColor('#5d8cff')
+              .margin({ top: 1 })
+          }
+          .alignItems(HorizontalAlign.Center)
+          .justifyContent(FlexAlign.Center)
+        }
+        .width(72)
+        .height(72)
+        .backgroundColor(Color.White)
+        .borderRadius(24)
+        .shadow({ radius: 12, color: '#22000000', offsetY: 6 })
+        .onClick(() => {
+          DatePickerDialog.show({
+            start: new Date(`2000-01-01`),
+            selected: this.selectedDate,
+            onAccept: (v) => {
+              this.selectedDate.setFullYear(v.year, v.month, v.day);
+            }
+          });
+        })
+      }
+      .width('100%')
+
+      Row() {
         Column() {
           Text($r("app.string.income"))
-            .fontColor('#ffffffcc')
             .fontSize(12)
-            .textAlign(TextAlign.Start)
-            .width('100%')
-        }.width('40%').margin({ left: 10 })
+            .fontColor('#6a7c94')
+          Text(CurrencyManager.formatWithSymbol(this.totalIncome, this.currencySymbol))
+            .fontSize(18)
+            .fontColor($r('app.color.income_green'))
+            .fontWeight(FontWeight.Bold)
+            .margin({ top: 6 })
+            .maxLines(1)
+            .textOverflow({ overflow: TextOverflow.Ellipsis })
+        }
+        .alignItems(HorizontalAlign.Start)
+        .layoutWeight(1)
+        .padding({ left: 16, right: 12, top: 14, bottom: 14 })
+        .backgroundColor('#f7fffb')
+        .borderRadius(18)
+        .margin({ right: 8 })
 
         Column() {
           Text($r("app.string.balance"))
-            .fontColor('#ffffffcc')
             .fontSize(12)
-            .textAlign(TextAlign.Start)
-            .width('100%')
-        }.width('40%')
-      }
-      .height(16)
-      .width('100%')
-
-      // 数值行
-      Row() {
-        // 月份选择器
-        Column() {
-          Button({ type: ButtonType.Normal }) {
-            Row() {
-              Text(StringUtils.formatDate(this.selectedDate, 'M'))
-                .fontSize(32)
-                .fontColor(Color.White)
-                .fontWeight(FontWeight.Bold)
-              Text($r("app.string.month"))
-                .fontColor('#ffffffb3')
-                .fontSize(13)
-                .align(Alignment.Bottom)
-                .height(22)
-                .margin({ left: 2, bottom: 3 })
-              Image($r("app.media.ic_public_extract_list_light"))
-                .width(10).height(10).margin({ top: 8, left: 4 })
-            }
-          }.onClick(() => {
-            DatePickerDialog.show({
-              start: new Date(`2000-01-01`),
-              selected: this.selectedDate,
-              onAccept: (v) => {
-                this.selectedDate.setFullYear(v.year, v.month, v.day);
-              }
-            });
-          })
-          .backgroundColor('#1affffff')
-          .width('100%')
-          .borderRadius(14)
-        }
-        .width('20%')
-
-        // 收入金额
-        Column() {
-          Text(CurrencyManager.formatWithSymbol(this.totalIncome, this.currencySymbol))
-            .fontColor(Color.White)
-            .fontSize(22)
-            .fontWeight(FontWeight.Bold)
-            .textAlign(TextAlign.Start)
-            .width('100%')
-        }.width('40%')
-        .margin({ left: 10 })
-
-        // 支出金额
-        Column() {
+            .fontColor('#6a7c94')
           Text(CurrencyManager.formatWithSymbol(this.totalBalance, this.currencySymbol))
-            .fontColor(Color.White)
-            .fontSize(22)
+            .fontSize(18)
+            .fontColor($r('app.color.expense_red'))
             .fontWeight(FontWeight.Bold)
-            .textAlign(TextAlign.Start)
-            .width('100%')
-        }.width('40%')
+            .margin({ top: 6 })
+            .maxLines(1)
+            .textOverflow({ overflow: TextOverflow.Ellipsis })
+        }
+        .alignItems(HorizontalAlign.Start)
+        .layoutWeight(1)
+        .padding({ left: 16, right: 12, top: 14, bottom: 14 })
+        .backgroundColor('#fff8f8')
+        .borderRadius(18)
+        .margin({ left: 8 })
       }
-      .height(64)
       .width('100%')
-      .padding({ left: 8, right: 8, bottom: 4 })
+      .margin({ top: 18 })
     }
     .width('100%')
-    .padding({ left: 16, right: 16, top: 8, bottom: 14 })
+    .padding({ left: 20, right: 20, top: 22, bottom: 22 })
     .linearGradient({
-      angle: 180,
+      angle: 145,
       colors: [
-        [$r('app.color.main_theme_gradient_start'), 0],
+        ['#FF2CC4E1', 0],
+        [$r('app.color.main_theme_gradient_start'), 0.48],
         [$r('app.color.main_theme_gradient_end'), 1]
       ]
     })
-    .shadow({
-      radius: 16,
-      color: '#26000000',
-      offsetY: 6
-    })
+    .borderRadius({ bottomLeft: 30, bottomRight: 30 })
+    .shadow({ radius: 22, color: '#330D6EFD', offsetY: 8 })
   }
 }

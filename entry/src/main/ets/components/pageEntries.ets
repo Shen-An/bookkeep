@@ -13,119 +13,55 @@ export struct PageEntries {
 
   build() {
     Column() {
-      // 第一行：原有功能入口
-      Flex({ justifyContent: FlexAlign.SpaceAround }) {
-        Button({ type: ButtonType.Normal }) {
-          Column() {
-            Row() {
-              Image($r("app.media.ic_public_budget"))
-                .width(26)
-                .height(26)
-            }
-            .width(46)
-            .height(46)
-            .backgroundColor('#f0f7ff')
-            .borderRadius(23)
-            .justifyContent(FlexAlign.Center)
+      Row() {
+        Text('快速开始')
+          .fontSize(18)
+          .fontWeight(FontWeight.Bold)
+          .fontColor('#1f2a3d')
+        Blank()
+        Text('记一笔更轻松')
+          .fontSize(12)
+          .fontColor('#8b96a8')
+      }
+      .width('100%')
+      .margin({ bottom: 12 })
 
-            Row() {
-              Text("年度账单")
-                .fontSize(12)
-                .fontColor('#2f3747')
-                .width('100%')
-                .textAlign(TextAlign.Center)
-            }.height(16).width(56)
-          }.width(56).alignItems(HorizontalAlign.Center)
-        }.backgroundColor(Color.Transparent).borderRadius(12).onClick(() => {
-          router.pushUrl({
-            url: "pages/BillInfoPage",
-            params: {
-              date: this.selectedDate
-            }
-          });
-        })
-
-        Button({ type: ButtonType.Normal }) {
-          Column() {
-            Row() {
-              Image($r("app.media.ic_public_opensource_info"))
-                .width(26)
-                .height(26)
-            }
-            .width(46)
-            .height(46)
-            .backgroundColor('#fff0f0')
-            .borderRadius(23)
-            .justifyContent(FlexAlign.Center)
-
-            Row() {
-              Text("开源信息")
-                .fontSize(12)
-                .fontColor('#2f3747')
-                .width('100%')
-                .textAlign(TextAlign.Center)
-            }.height(16).width(56)
-          }.width(56).alignItems(HorizontalAlign.Center)
-        }.backgroundColor(Color.Transparent).onClick(() => {
-          router.pushUrl({
-            url: 'pages/Copyright'
-          }, router.RouterMode.Standard, err => {
-            return;
-          })
-        }).borderRadius(12)
-
-        Button({ type: ButtonType.Normal }) {
-          Column() {
-            Row() {
-              Image($r("app.media.ic_public_billing_graphic"))
-                .width(26)
-                .height(26)
-            }
-            .width(46)
-            .height(46)
-            .backgroundColor('#f5f0ff')
-            .borderRadius(23)
-            .justifyContent(FlexAlign.Center)
-
-            Row() {
-              Text("经济图表")
-                .fontSize(12)
-                .fontColor('#2f3747')
-                .width('100%')
-                .textAlign(TextAlign.Center)
-            }.height(16).width(56)
-          }.width(56).alignItems(HorizontalAlign.Center)
-        }.backgroundColor(Color.Transparent).borderRadius(12).onClick(() => {
-          router.pushUrl({
-            url: 'pages/EconomicCharts',
-            params: {
-              date: this.selectedDate
-            }
-          })
-        })
-
+      Row() {
         Button({ type: ButtonType.Normal }) {
           Column() {
             Row() {
               Image($r("app.media.ic_public_add_billing"))
-                .width(26)
-                .height(26)
+                .width(30)
+                .height(30)
+              Blank()
+              Text('AI')
+                .fontSize(13)
+                .fontColor('#ffffffcc')
+                .fontWeight(FontWeight.Bold)
             }
-            .width(46)
-            .height(46)
-            .backgroundColor('#f0fff4')
-            .borderRadius(23)
-            .justifyContent(FlexAlign.Center)
+            .width('100%')
 
-            Row() {
-              Text("AI记账")
-                .fontSize(12)
-                .fontColor('#2f3747')
-                .width('100%')
-                .textAlign(TextAlign.Center)
-            }.height(16).width(56)
-          }.width(56).alignItems(HorizontalAlign.Center)
-        }.stateEffect(false).backgroundColor(Color.Transparent).onClick(() => {
+            Text('AI 记账')
+              .fontSize(18)
+              .fontColor(Color.White)
+              .fontWeight(FontWeight.Bold)
+              .width('100%')
+              .margin({ top: 18 })
+            Text('拍照或文字智能识别')
+              .fontSize(12)
+              .fontColor('#ffffffcc')
+              .width('100%')
+              .margin({ top: 4 })
+          }
+          .alignItems(HorizontalAlign.Start)
+        }
+        .layoutWeight(1)
+        .height(120)
+        .padding(18)
+        .backgroundColor('#1FA1FF')
+        .borderRadius(24)
+        .shadow({ radius: 18, color: '#331FA1FF', offsetY: 8 })
+        .onClick(() => {
           router.pushUrl({
             url: "pages/addBalance",
             params: {
@@ -135,30 +71,44 @@ export struct PageEntries {
               mode: 'ai'
             }
           })
-        }).borderRadius(12)
+        })
 
         Button({ type: ButtonType.Normal }) {
           Column() {
             Row() {
               Image($r("app.media.icon"))
-                .width(26)
-                .height(26)
+                .width(30)
+                .height(30)
+              Blank()
+              Text('+')
+                .fontSize(20)
+                .fontColor('#202938')
+                .fontWeight(FontWeight.Bold)
             }
-            .width(46)
-            .height(46)
-            .backgroundColor('#fff0e8')
-            .borderRadius(23)
-            .justifyContent(FlexAlign.Center)
+            .width('100%')
 
-            Row() {
-              Text("手动记账")
-                .fontSize(12)
-                .fontColor('#2f3747')
-                .width('100%')
-                .textAlign(TextAlign.Center)
-            }.height(16).width(56)
-          }.width(56).alignItems(HorizontalAlign.Center)
-        }.stateEffect(false).backgroundColor(Color.Transparent).onClick(() => {
+            Text('手动记账')
+              .fontSize(18)
+              .fontColor('#202938')
+              .fontWeight(FontWeight.Bold)
+              .width('100%')
+              .margin({ top: 18 })
+            Text('快速录入金额分类')
+              .fontSize(12)
+              .fontColor('#718096')
+              .width('100%')
+              .margin({ top: 4 })
+          }
+          .alignItems(HorizontalAlign.Start)
+        }
+        .layoutWeight(1)
+        .height(120)
+        .padding(18)
+        .backgroundColor('#fff5ea')
+        .borderRadius(24)
+        .shadow({ radius: 16, color: '#18ff922b', offsetY: 7 })
+        .margin({ left: 12 })
+        .onClick(() => {
           router.pushUrl({
             url: "pages/addBalance",
             params: {
@@ -168,115 +118,150 @@ export struct PageEntries {
               mode: 'manual'
             }
           })
-        }).borderRadius(12)
-      }
-      .height(88)
-      .width('100%')
-      .backgroundColor('#fbfdff')
-      .borderRadius(20)
-      .padding({ top: 10, bottom: 10 })
-      .margin({ bottom: 10 })
-      .shadow({
-        radius: 12,
-        color: '#12000000',
-        offsetY: 4
-      })
-
-      // 第二行：设置 / 数据导出/导入
-      Flex({ justifyContent: FlexAlign.SpaceAround }) {
-        Button({ type: ButtonType.Normal }) {
-          Column() {
-            Row() {
-              Image($r("app.media.ic_public_budget"))
-                .width(26)
-                .height(26)
-            }
-            .width(46)
-            .height(46)
-            .backgroundColor('#f0f0ff')
-            .borderRadius(23)
-            .justifyContent(FlexAlign.Center)
-
-            Row() {
-              Text($r('app.string.settings'))
-                .fontSize(12)
-                .fontColor('#2f3747')
-                .width('100%')
-                .textAlign(TextAlign.Center)
-            }.height(16).width(56)
-          }.width(56).alignItems(HorizontalAlign.Center)
-        }.backgroundColor(Color.Transparent).borderRadius(12).onClick(() => {
-          router.pushUrl({
-            url: "pages/SettingsPage"
-          });
-        })
-
-        Button({ type: ButtonType.Normal }) {
-          Column() {
-            Row() {
-              Image($r("app.media.ic_public_export"))
-                .width(26)
-                .height(26)
-            }
-            .width(46)
-            .height(46)
-            .backgroundColor('#fff8e1')
-            .borderRadius(23)
-            .justifyContent(FlexAlign.Center)
-
-            Row() {
-              Text("导出数据")
-                .fontSize(12)
-                .fontColor('#2f3747')
-                .width('100%')
-                .textAlign(TextAlign.Center)
-            }.height(16).width(56)
-          }.width(56).alignItems(HorizontalAlign.Center)
-        }.backgroundColor(Color.Transparent).borderRadius(12).onClick(() => {
-          router.pushUrl({
-            url: "pages/DataExport"
-          });
-        })
-
-        Button({ type: ButtonType.Normal }) {
-          Column() {
-            Row() {
-              Image($r("app.media.ic_public_import"))
-                .width(26)
-                .height(26)
-            }
-            .width(46)
-            .height(46)
-            .backgroundColor('#e8f5e9')
-            .borderRadius(23)
-            .justifyContent(FlexAlign.Center)
-
-            Row() {
-              Text("导入数据")
-                .fontSize(12)
-                .fontColor('#2f3747')
-                .width('100%')
-                .textAlign(TextAlign.Center)
-            }.height(16).width(56)
-          }.width(56).alignItems(HorizontalAlign.Center)
-        }.backgroundColor(Color.Transparent).borderRadius(12).onClick(() => {
-          router.pushUrl({
-            url: "pages/DataImport"
-          });
         })
       }
-      .height(88)
       .width('100%')
-      .backgroundColor('#fbfdff')
-      .borderRadius(20)
-      .padding({ top: 10, bottom: 10 })
-      .margin({ bottom: 10 })
-      .shadow({
-        radius: 12,
-        color: '#12000000',
-        offsetY: 4
-      })
+
+      Row() {
+        Button({ type: ButtonType.Normal }) {
+          Column() {
+            Image($r("app.media.ic_public_budget"))
+              .width(24)
+              .height(24)
+            Text('年度账单')
+              .fontSize(12)
+              .fontColor('#253044')
+              .fontWeight(FontWeight.Medium)
+              .margin({ top: 8 })
+          }
+        }
+        .layoutWeight(1)
+        .height(82)
+        .backgroundColor('#f0f7ff')
+        .borderRadius(20)
+        .onClick(() => {
+          router.pushUrl({ url: "pages/BillInfoPage", params: { date: this.selectedDate } });
+        })
+
+        Button({ type: ButtonType.Normal }) {
+          Column() {
+            Image($r("app.media.ic_public_billing_graphic"))
+              .width(24)
+              .height(24)
+            Text('经济图表')
+              .fontSize(12)
+              .fontColor('#253044')
+              .fontWeight(FontWeight.Medium)
+              .margin({ top: 8 })
+          }
+        }
+        .layoutWeight(1)
+        .height(82)
+        .backgroundColor('#f4f0ff')
+        .borderRadius(20)
+        .margin({ left: 10 })
+        .onClick(() => {
+          router.pushUrl({ url: 'pages/EconomicCharts', params: { date: this.selectedDate } })
+        })
+
+        Button({ type: ButtonType.Normal }) {
+          Column() {
+            Image($r("app.media.ic_public_budget"))
+              .width(24)
+              .height(24)
+            Text($r('app.string.settings'))
+              .fontSize(12)
+              .fontColor('#253044')
+              .fontWeight(FontWeight.Medium)
+              .margin({ top: 8 })
+          }
+        }
+        .layoutWeight(1)
+        .height(82)
+        .backgroundColor('#eef5ff')
+        .borderRadius(20)
+        .margin({ left: 10 })
+        .onClick(() => {
+          router.pushUrl({ url: "pages/SettingsPage" });
+        })
+      }
+      .width('100%')
+      .margin({ top: 14 })
+
+      Row() {
+        Button({ type: ButtonType.Normal }) {
+          Row() {
+            Image($r("app.media.ic_public_import"))
+              .width(20)
+              .height(20)
+              .margin({ right: 8 })
+            Text('导入')
+              .fontSize(13)
+              .fontColor('#344256')
+              .fontWeight(FontWeight.Medium)
+          }
+          .justifyContent(FlexAlign.Center)
+        }
+        .layoutWeight(1)
+        .height(48)
+        .backgroundColor('#f4faf3')
+        .borderRadius(18)
+        .onClick(() => {
+          router.pushUrl({ url: "pages/DataImport" });
+        })
+
+        Button({ type: ButtonType.Normal }) {
+          Row() {
+            Image($r("app.media.ic_public_export"))
+              .width(20)
+              .height(20)
+              .margin({ right: 8 })
+            Text('导出')
+              .fontSize(13)
+              .fontColor('#344256')
+              .fontWeight(FontWeight.Medium)
+          }
+          .justifyContent(FlexAlign.Center)
+        }
+        .layoutWeight(1)
+        .height(48)
+        .backgroundColor('#fff8e1')
+        .borderRadius(18)
+        .margin({ left: 10 })
+        .onClick(() => {
+          router.pushUrl({ url: "pages/DataExport" });
+        })
+
+        Button({ type: ButtonType.Normal }) {
+          Row() {
+            Image($r("app.media.ic_public_opensource_info"))
+              .width(20)
+              .height(20)
+              .margin({ right: 8 })
+            Text('关于')
+              .fontSize(13)
+              .fontColor('#344256')
+              .fontWeight(FontWeight.Medium)
+          }
+          .justifyContent(FlexAlign.Center)
+        }
+        .layoutWeight(1)
+        .height(48)
+        .backgroundColor('#fff0f0')
+        .borderRadius(18)
+        .margin({ left: 10 })
+        .onClick(() => {
+          router.pushUrl({ url: 'pages/Copyright' }, router.RouterMode.Standard, err => { return; })
+        })
+      }
+      .width('100%')
+      .margin({ top: 10 })
     }
-    .padding({ left: 14, right: 14, top: 10, bottom: 8 })
+    .width('100%')
+    .padding({ left: 18, right: 18, top: 18, bottom: 16 })
+    .backgroundColor(Color.White)
+    .borderRadius(28)
+    .margin({ left: 14, right: 14, top: -10, bottom: 10 })
+    .shadow({ radius: 18, color: '#16000000', offsetY: 8 })
   }
 }

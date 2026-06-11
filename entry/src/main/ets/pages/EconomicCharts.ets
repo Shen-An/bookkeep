@@ -86,9 +86,7 @@ struct EconomicCharts {
     }
     const start = months[0];
     const end = months[months.length - 1];
-    const startText = `${start.getFullYear()}-${start.getMonth() + 1}`;
-    const endText = `${end.getFullYear()}-${end.getMonth() + 1}`;
-    return `范围：${startText} ~ ${endText}`;
+    return `${start.getFullYear()}-${start.getMonth() + 1} 至 ${end.getFullYear()}-${end.getMonth() + 1}`;
   }
 
   private toPieSlices(src: CategoryRatio[]): PieSlice[] {
@@ -105,41 +103,85 @@ struct EconomicCharts {
   }
 
   private monthTitle(): string {
-    const y = this.activeMonth.getFullYear();
-    const m = this.activeMonth.getMonth() + 1;
-    return `${y}年${m}月`;
+    return `${this.activeMonth.getFullYear()}年${this.activeMonth.getMonth() + 1}月`;
+  }
+
+  @Builder
+  private CategoryRows(items: CategoryRatio[], accent: ResourceColor) {
+    Column() {
+      ForEach(items, (i: CategoryRatio) => {
+        Row() {
+          Column() {
+            Text(i.name)
+              .fontSize(14)
+              .fontColor('#1f2a3d')
+              .fontWeight(FontWeight.Medium)
+            Text(`${i.percent.toFixed(1)}%`)
+              .fontSize(11)
+              .fontColor('#8b96a8')
+              .margin({ top: 3 })
+          }
+          .alignItems(HorizontalAlign.Start)
+          .layoutWeight(1)
+
+          Text(CurrencyManager.formatWithSymbol(i.amount, this.currencySymbol))
+            .fontSize(14)
+            .fontColor(accent)
+            .fontWeight(FontWeight.Bold)
+        }
+        .width('100%')
+        .padding({ top: 12, bottom: 12 })
+        .border({ width: { bottom: 0.5 }, color: '#eef2f7' })
+      })
+    }
+    .width('100%')
   }
 
   build() {
     Column() {
-      // 顶部栏 - 渐变背景
       Row() {
-        Text('返回')
-          .fontSize(15)
-          .fontColor(Color.White)
-          .margin({ left: 16, right: 12 })
-          .onClick(() => router.back());
-
-        Text('经济图表')
-          .fontSize(19)
-          .fontColor(Color.White)
-          .fontWeight(FontWeight.Bold);
-
-        Blank();
-
-        Row() {
-          Text(this.monthTitle())
-            .fontSize(15)
-            .fontColor(Color.White);
-          Image($r('app.media.ic_public_extract_list_dark'))
-            .width(10)
-            .height(10)
-            .margin({ left: 6 });
+        Button({ type: ButtonType.Normal }) {
+          Text('‹')
+            .fontSize(30)
+            .fontColor(Color.White)
+            .fontWeight(FontWeight.Bold)
         }
-        .margin({ right: 16 })
-        .padding({ left: 10, right: 10, top: 4, bottom: 4 })
-        .backgroundColor(Color.Blue)
+        .width(44)
+        .height(44)
+        .backgroundColor('#24ffffff')
         .borderRadius(16)
+        .onClick(() => router.back())
+
+        Column() {
+          Text('经济分析')
+            .fontSize(24)
+            .fontColor(Color.White)
+            .fontWeight(FontWeight.Bold)
+          Text('趋势、结构与风险一屏掌握')
+            .fontSize(12)
+            .fontColor('#d8efff')
+            .margin({ top: 3 })
+        }
+        .alignItems(HorizontalAlign.Start)
+        .layoutWeight(1)
+        .margin({ left: 12 })
+
+        Button({ type: ButtonType.Normal }) {
+          Row() {
+            Text(this.monthTitle())
+              .fontSize(13)
+              .fontColor('#126dff')
+              .fontWeight(FontWeight.Bold)
+            Image($r('app.media.ic_public_extract_list_dark'))
+              .width(10)
+              .height(10)
+              .margin({ left: 6 })
+          }
+        }
+        .height(40)
+        .padding({ left: 12, right: 12 })
+        .backgroundColor(Color.White)
+        .borderRadius(18)
         .onClick(() => {
           DatePickerDialog.show({
             start: new Date('2000-01-01'),
@@ -151,236 +193,195 @@ struct EconomicCharts {
           })
         })
       }
-      .padding({ top: 20, bottom: 20 })
       .width('100%')
+      .padding({ left: 18, right: 18, top: 28, bottom: 20 })
       .linearGradient({
-        angle: 180,
+        angle: 145,
         colors: [
-          [$r('app.color.main_theme_gradient_start'), 0],
+          ['#FF2CC4E1', 0],
+          [$r('app.color.main_theme_gradient_start'), 0.5],
           [$r('app.color.main_theme_gradient_end'), 1]
         ]
       })
 
       if (this.loading) {
         Column() {
-          Text('加载中...')
-            .fontSize(14)
-            .fontColor($r('app.color.text_gray'))
-            .margin({ top: 32 });
           LoadingProgress()
-            .width(32)
-            .height(32)
+            .width(36)
+            .height(36)
             .color($r('app.color.main_theme_blue'))
-            .margin({ top: 12 })
+          Text('正在生成分析...')
+            .fontSize(14)
+            .fontColor('#8b96a8')
+            .margin({ top: 14 })
         }
         .width('100%')
-        .alignItems(HorizontalAlign.Center)
-        .margin({ top: 80 })
+        .layoutWeight(1)
+        .justifyContent(FlexAlign.Center)
       } else {
         Scroll() {
           Column() {
-            // 1) 月度收支趋势折线图
             Column() {
-              Row() {
-                Image($r('app.media.ic_public_billing_graphic'))
-                  .width(20)
-                  .height(20)
-                  .margin({ right: 6 })
-                Text('月度收支趋势')
-                  .fontSize(16)
-                  .fontWeight(FontWeight.Bold)
-                  .fontColor('#1a1a1a')
-              }
-              .margin({ bottom: 12 })
-
-              ForEach([this.chartRefreshToken], (_t: number) => {
-                LineChart({
-                  series: this.buildLineSeries(),
-                  chartHeight: 200
-                })
-              })
-
-              if (this.trendRangeText().length > 0) {
-                Text(this.trendRangeText())
-                  .fontSize(12)
-                  .fontColor($r('app.color.text_gray'))
-                  .margin({ top: 6 })
-              }
+              Text('本月净结余')
+                .fontSize(13)
+                .fontColor('#d7edff')
+              Text(CurrencyManager.formatWithSymbol(this.report.current.leftTotal, this.currencySymbol))
+                .fontSize(34)
+                .fontColor(Color.White)
+                .fontWeight(FontWeight.Bold)
+                .margin({ top: 8 })
 
               Row() {
-                Row() {
-                  Text('●')
-                    .fontSize(12)
-                    .fontColor('#2CC4E1');
+                Column() {
                   Text('收入')
                     .fontSize(12)
-                    .margin({ left: 6 })
-                    .fontColor($r('app.color.text_gray'));
+                    .fontColor('#6a7c94')
+                  Text(CurrencyManager.formatWithSymbol(this.report.current.incomeTotal, this.currencySymbol))
+                    .fontSize(17)
+                    .fontColor($r('app.color.income_green'))
+                    .fontWeight(FontWeight.Bold)
+                    .margin({ top: 6 })
                 }
+                .alignItems(HorizontalAlign.Start)
+                .layoutWeight(1)
+                .padding(14)
+                .backgroundColor('#f6fffb')
+                .borderRadius(18)
+                .margin({ right: 8 })
 
-                Row() {
-                  Text('●')
-                    .fontSize(12)
-                    .fontColor('#1FA1FF');
+                Column() {
                   Text('支出')
                     .fontSize(12)
-                    .margin({ left: 6 })
-                    .fontColor($r('app.color.text_gray'));
+                    .fontColor('#6a7c94')
+                  Text(CurrencyManager.formatWithSymbol(this.report.current.expenseTotal, this.currencySymbol))
+                    .fontSize(17)
+                    .fontColor($r('app.color.expense_red'))
+                    .fontWeight(FontWeight.Bold)
+                    .margin({ top: 6 })
                 }
+                .alignItems(HorizontalAlign.Start)
+                .layoutWeight(1)
+                .padding(14)
+                .backgroundColor('#fff8f8')
+                .borderRadius(18)
+                .margin({ left: 8 })
               }
-              .justifyContent(FlexAlign.SpaceAround)
               .width('100%')
-              .margin({ top: 8 });
+              .margin({ top: 22 })
             }
-            .padding(16)
-            .margin({ left: 16, right: 16, top: 16 })
-            .backgroundColor('#fbfdff')
-            .borderRadius(20)
-            .shadow({ radius: 12, color: '#12000000', offsetY: 4 })
+            .width('100%')
+            .padding(22)
+            .linearGradient({
+              angle: 150,
+              colors: [
+                [$r('app.color.main_theme_gradient_start'), 0],
+                [$r('app.color.main_theme_gradient_end'), 1]
+              ]
+            })
+            .borderRadius(30)
+            .shadow({ radius: 22, color: '#330D6EFD', offsetY: 10 })
 
-            // 2) 支出分类占比饼图
             Column() {
               Row() {
-                Image($r('app.media.ic_public_budget'))
-                  .width(20)
-                  .height(20)
-                  .margin({ right: 6 })
-                Text('当月支出分类占比')
-                  .fontSize(16)
+                Text('半年趋势')
+                  .fontSize(20)
+                  .fontColor('#1f2a3d')
                   .fontWeight(FontWeight.Bold)
-                  .fontColor('#1a1a1a')
+                Blank()
+                Text(this.trendRangeText())
+                  .fontSize(12)
+                  .fontColor('#8b96a8')
               }
-              .margin({ bottom: 12 })
+              .width('100%')
 
               ForEach([this.chartRefreshToken], (_t: number) => {
-                PieChart({
-                  slices: this.toPieSlices(this.report.current.expenseCategories),
-                  chartHeight: 220
-                })
+                LineChart({ series: this.buildLineSeries(), chartHeight: 220 })
               })
 
-              Column() {
-                ForEach(this.report.current.expenseCategories, (i: CategoryRatio) => {
-                  Row() {
-                    Text(i.name)
-                      .fontSize(13)
-                      .fontColor('#333333')
-                      .width('35%');
-                    Text(`${CurrencyManager.formatWithSymbol(i.amount, this.currencySymbol)}`)
-                      .fontSize(13)
-                      .fontColor('#1a1a1a')
-                      .fontWeight(FontWeight.Medium)
-                      .width('35%')
-                      .textAlign(TextAlign.End);
-                    Text(`${i.percent.toFixed(1)}%`)
-                      .fontSize(13)
-                      .width('20%')
-                      .textAlign(TextAlign.End)
-                      .fontColor($r('app.color.main_theme_blue'))
-                      .fontWeight(FontWeight.Medium);
-                  }
-                  .padding({ top: 8, bottom: 8 })
-                  .border({
-                    width: { bottom: 0.5 },
-                    color: $r('app.color.divider_color')
-                  })
-                })
-              }
-              .margin({ top: 8 })
-            }
-            .padding(16)
-            .margin({ left: 16, right: 16, top: 12 })
-            .backgroundColor('#fbfdff')
-            .borderRadius(20)
-            .shadow({ radius: 12, color: '#12000000', offsetY: 4 })
-
-            // 3) 收入分类占比饼图
-            Column() {
               Row() {
-                Image($r('app.media.ic_public_add_billing'))
-                  .width(20)
-                  .height(20)
-                  .margin({ right: 6 })
-                Text('收入分类占比')
-                  .fontSize(16)
-                  .fontWeight(FontWeight.Bold)
-                  .fontColor('#1a1a1a')
+                Text('● 收入')
+                  .fontSize(12)
+                  .fontColor('#2CC4E1')
+                Text('● 支出')
+                  .fontSize(12)
+                  .fontColor('#1FA1FF')
+                  .margin({ left: 18 })
               }
-              .margin({ bottom: 12 })
+              .width('100%')
+              .justifyContent(FlexAlign.Center)
+              .margin({ top: 6 })
+            }
+            .width('100%')
+            .padding(18)
+            .backgroundColor(Color.White)
+            .borderRadius(28)
+            .margin({ top: 18 })
+            .shadow({ radius: 16, color: '#12000000', offsetY: 7 })
 
-              ForEach([this.chartRefreshToken], (_t: number) => {
-                PieChart({
-                  slices: this.toPieSlices(this.report.current.incomeCategories),
-                  chartHeight: 220
+            Row() {
+              Column() {
+                Text('支出结构')
+                  .fontSize(18)
+                  .fontColor('#1f2a3d')
+                  .fontWeight(FontWeight.Bold)
+                ForEach([this.chartRefreshToken], (_t: number) => {
+                  PieChart({ slices: this.toPieSlices(this.report.current.expenseCategories), chartHeight: 180 })
                 })
-              })
+                this.CategoryRows(this.report.current.expenseCategories, $r('app.color.expense_red'))
+              }
+              .layoutWeight(1)
+              .padding(16)
+              .backgroundColor(Color.White)
+              .borderRadius(26)
+              .shadow({ radius: 14, color: '#10000000', offsetY: 6 })
 
               Column() {
-                ForEach(this.report.current.incomeCategories, (i: CategoryRatio) => {
-                  Row() {
-                    Text(i.name)
-                      .fontSize(13)
-                      .fontColor('#333333')
-                      .width('35%');
-                    Text(`${CurrencyManager.formatWithSymbol(i.amount, this.currencySymbol)}`)
-                      .fontSize(13)
-                      .fontColor('#1a1a1a')
-                      .fontWeight(FontWeight.Medium)
-                      .width('35%')
-                      .textAlign(TextAlign.End);
-                    Text(`${i.percent.toFixed(1)}%`)
-                      .fontSize(13)
-                      .width('20%')
-                      .textAlign(TextAlign.End)
-                      .fontColor($r('app.color.income_green'))
-                      .fontWeight(FontWeight.Medium);
-                  }
-                  .padding({ top: 8, bottom: 8 })
-                  .border({
-                    width: { bottom: 0.5 },
-                    color: $r('app.color.divider_color')
-                  })
-                })
-              }
-              .margin({ top: 8 })
-            }
-            .padding(16)
-            .margin({ left: 16, right: 16, top: 12 })
-            .backgroundColor('#fbfdff')
-            .borderRadius(20)
-            .shadow({ radius: 12, color: '#12000000', offsetY: 4 })
-
-            // 4) 经济分析文案
-            Column() {
-              Row() {
-                Image($r('app.media.icon'))
-                  .width(20)
-                  .height(20)
-                  .margin({ right: 6 })
-                Text('经济分析')
-                  .fontSize(16)
+                Text('收入结构')
+                  .fontSize(18)
+                  .fontColor('#1f2a3d')
                   .fontWeight(FontWeight.Bold)
-                  .fontColor('#1a1a1a')
+                ForEach([this.chartRefreshToken], (_t: number) => {
+                  PieChart({ slices: this.toPieSlices(this.report.current.incomeCategories), chartHeight: 180 })
+                })
+                this.CategoryRows(this.report.current.incomeCategories, $r('app.color.income_green'))
               }
-              .margin({ bottom: 12 })
+              .layoutWeight(1)
+              .padding(16)
+              .backgroundColor(Color.White)
+              .borderRadius(26)
+              .margin({ left: 12 })
+              .shadow({ radius: 14, color: '#10000000', offsetY: 6 })
+            }
+            .width('100%')
+            .margin({ top: 18 })
 
+            Column() {
+              Text('智能解读')
+                .fontSize(20)
+                .fontColor('#1f2a3d')
+                .fontWeight(FontWeight.Bold)
+                .width('100%')
               Text(this.report.analysisText)
                 .fontSize(14)
-                .lineHeight(22)
-                .fontColor('#555555');
+                .lineHeight(24)
+                .fontColor('#5f6c80')
+                .margin({ top: 12 })
             }
-            .padding(16)
-            .margin({ left: 16, right: 16, top: 12, bottom: 24 })
-            .backgroundColor('#fbfdff')
-            .borderRadius(20)
-            .shadow({ radius: 12, color: '#12000000', offsetY: 4 })
+            .width('100%')
+            .padding(20)
+            .backgroundColor(Color.White)
+            .borderRadius(28)
+            .margin({ top: 18, bottom: 28 })
+            .shadow({ radius: 16, color: '#12000000', offsetY: 7 })
           }
           .width('100%')
-          .padding({ bottom: 16 })
+          .padding({ left: 16, right: 16, top: 16 })
         }
+        .layoutWeight(1)
       }
     }
     .width('100%')
-    .backgroundColor($r('app.color.page_background'))
+    .height('100%')
+    .backgroundColor('#f3f7fb')
   }
 }
