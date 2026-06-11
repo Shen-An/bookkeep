@@ -66,220 +66,245 @@ struct BillInfoPage {
       })
   }
 
+  private yearText(): string {
+    return `${this.activeDate.getFullYear()}年`;
+  }
+
+  private monthLeft(monthlyInfo: BillingInfo[]): number {
+    return BillingInfoUtils.calculateTotalLeft(monthlyInfo);
+  }
+
   build() {
     Column() {
-      // 顶部栏 - 渐变背景
-      Row() {
-        Text('返回')
-          .fontSize(15)
-          .fontColor(Color.White)
-          .margin({ left: 16, right: 12 })
-          .onClick(() => router.back());
-
-        Blank();
-
-        Row() {
-          Text(`${this.activeDate.getFullYear()}`)
-            .fontSize(17)
-            .fontColor(Color.White)
-            .fontWeight(FontWeight.Bold)
-          Text($r("app.string.year"))
-            .fontSize(13)
-            .fontColor('#eaf6ff')
-          Image($r("app.media.ic_public_extract_list_light"))
-            .width(10)
-            .height(10)
-            .margin({ left: 6 })
-        }
-        .margin({ right: 16 })
-        .padding({ left: 12, right: 12, top: 4, bottom: 4 })
-        .backgroundColor(Color.Blue)
-        .borderRadius(16)
-        .onClick(() => {
-          DatePickerDialog.show({
-            start: new Date("2000-01-01"),
-            onAccept: (v) => {
-              this.activeDate.setFullYear(v.year, v.month, v.day);
-              this.onPageShow();
-            }
-          })
-        })
-
-        Blank();
-      }
-      .padding({ top: 20, bottom: 20 })
-      .width('100%')
-      .linearGradient({
-        angle: 180,
-        colors: [
-          [$r('app.color.main_theme_gradient_start'), 0],
-          [$r('app.color.main_theme_gradient_end'), 1]
-        ]
-      })
-
-      // 年度概览卡片
-      Row() {
+      Scroll() {
         Column() {
-          Text("年结余")
-            .fontSize(13)
-            .fontColor('#eaf6ff')
-            .margin({ bottom: 6 })
-
-          Text(CurrencyManager.formatWithSymbol(this.yearlyLeft, this.currencySymbol))
-            .fontSize(34)
-            .fontColor(Color.White)
-            .fontWeight(FontWeight.Bold)
-            .margin({ bottom: 8 })
-
           Row() {
-            Column() {
-              Text('年收入')
-                .fontColor('#ffffffb3')
-                .fontSize(13)
-              Text(CurrencyManager.formatWithSymbol(this.yearlyIncome, this.currencySymbol))
+            Button({ type: ButtonType.Normal }) {
+              Text('‹')
+                .fontSize(30)
                 .fontColor(Color.White)
-                .fontSize(16)
-                .fontWeight(FontWeight.Medium)
-                .margin({ top: 2 })
+                .fontWeight(FontWeight.Bold)
             }
-            .layoutWeight(1)
+            .width(44)
+            .height(44)
+            .backgroundColor('#24ffffff')
+            .borderRadius(16)
+            .onClick(() => router.back())
 
             Column() {
-              Text('年支出')
-                .fontColor('#ffffffb3')
-                .fontSize(13)
-              Text(CurrencyManager.formatWithSymbol(this.yearlyOutBill, this.currencySymbol))
+              Text('年度账单')
+                .fontSize(24)
                 .fontColor(Color.White)
-                .fontSize(16)
-                .fontWeight(FontWeight.Medium)
-                .margin({ top: 2 })
+                .fontWeight(FontWeight.Bold)
+              Text('你的全年财务概览')
+                .fontSize(12)
+                .fontColor('#d8efff')
+                .margin({ top: 3 })
             }
+            .alignItems(HorizontalAlign.Start)
             .layoutWeight(1)
+            .margin({ left: 12 })
+
+            Button({ type: ButtonType.Normal }) {
+              Row() {
+                Text(this.yearText())
+                  .fontSize(14)
+                  .fontColor('#126dff')
+                  .fontWeight(FontWeight.Bold)
+                Image($r("app.media.ic_public_extract_list_dark"))
+                  .width(10)
+                  .height(10)
+                  .margin({ left: 6 })
+              }
+            }
+            .height(40)
+            .padding({ left: 14, right: 14 })
+            .backgroundColor(Color.White)
+            .borderRadius(18)
+            .onClick(() => {
+              DatePickerDialog.show({
+                start: new Date("2000-01-01"),
+                onAccept: (v) => {
+                  this.activeDate.setFullYear(v.year, v.month, v.day);
+                  this.onPageShow();
+                }
+              })
+            })
           }
           .width('100%')
-        }
-        .padding({ left: 24, right: 24, top: 22, bottom: 22 })
-      }
-      .width('100%')
-      .margin({ left: 16, right: 16 })
-      .linearGradient({
-        angle: 135,
-        colors: [
-          [$r('app.color.main_theme_gradient_start'), 0],
-          [$r('app.color.main_theme_gradient_end'), 1]
-        ]
-      })
-      .borderRadius(20)
-      .shadow({
-        radius: 16,
-        color: '#263a9df0',
-        offsetY: 6
-      })
+          .padding({
+            left: 18,
+            right: 18,
+            top: 28,
+            bottom: 20
+          })
+          .linearGradient({
+            angle: 145,
+            colors: [
+              ['#FF2CC4E1', 0],
+              [$r('app.color.main_theme_gradient_start'), 0.5],
+              [$r('app.color.main_theme_gradient_end'), 1]
+            ]
+          })
 
-      // 月度明细表
-      Column() {
-        // 表头
-        Row() {
-          Row() {
-            Text("月份")
-              .fontSize(13)
-              .fontColor('#7b8798')
-              .fontWeight(FontWeight.Medium)
-          }
-          .layoutWeight(1)
-
-          Row() {
-            Text("月收入")
-              .fontSize(13)
-              .fontColor('#7b8798')
-              .fontWeight(FontWeight.Medium)
-          }
-          .layoutWeight(1)
-
-          Row() {
-            Text("月支出")
-              .fontSize(13)
-              .fontColor('#7b8798')
-              .fontWeight(FontWeight.Medium)
-          }
-          .layoutWeight(1)
-
-          Row() {
-            Text("月结余")
-              .fontSize(13)
-              .fontColor('#7b8798')
-              .fontWeight(FontWeight.Medium)
-          }
-          .layoutWeight(1)
-        }
-        .width('100%')
-        .padding({ left: 12, right: 12, bottom: 8 })
-
-        Divider()
-          .color($r('app.color.divider_color'))
-          .margin({ bottom: 4 })
-
-        // 列表
-        List() {
-          ForEach(this.monthlySepBillInfo, (monthlyInfo: BillingInfo[], index: number) => {
-            ListItem() {
-              Row() {
-                Row() {
-                  Text(`${index + 1}月`)
-                    .fontSize(16)
-                    .fontColor('#202938')
-                    .fontWeight(FontWeight.Medium)
-                }
-                .layoutWeight(1)
+          Column() {
+            Column() {
+              Column() {
+                Text('年结余')
+                  .fontSize(13)
+                  .fontColor('#d7edff')
+                Text(CurrencyManager.formatWithSymbol(this.yearlyLeft, this.currencySymbol))
+                  .fontSize(36)
+                  .fontColor(Color.White)
+                  .fontWeight(FontWeight.Bold)
+                  .margin({ top: 8 })
+                  .maxLines(1)
+                  .textOverflow({ overflow: TextOverflow.Ellipsis })
 
                 Row() {
-                  Text(CurrencyManager.formatWithSymbol(BillingInfoUtils.calculateTotalIncome(monthlyInfo), this.currencySymbol))
-                    .fontSize(14)
-                    .fontColor($r('app.color.income_green'))
-                }
-                .layoutWeight(1)
+                  Column() {
+                    Text('全年收入')
+                      .fontSize(12)
+                      .fontColor('#6a7c94')
+                    Text(CurrencyManager.formatWithSymbol(this.yearlyIncome, this.currencySymbol))
+                      .fontSize(18)
+                      .fontColor($r('app.color.income_green'))
+                      .fontWeight(FontWeight.Bold)
+                      .margin({ top: 6 })
+                  }
+                  .alignItems(HorizontalAlign.Start)
+                  .layoutWeight(1)
+                  .padding(14)
+                  .backgroundColor('#f6fffb')
+                  .borderRadius(18)
+                  .margin({ right: 8 })
 
-                Row() {
-                  Text(CurrencyManager.formatWithSymbol(BillingInfoUtils.calculateTotalOutBill(monthlyInfo), this.currencySymbol))
-                    .fontSize(14)
-                    .fontColor($r('app.color.expense_red'))
+                  Column() {
+                    Text('全年支出')
+                      .fontSize(12)
+                      .fontColor('#6a7c94')
+                    Text(CurrencyManager.formatWithSymbol(this.yearlyOutBill, this.currencySymbol))
+                      .fontSize(18)
+                      .fontColor($r('app.color.expense_red'))
+                      .fontWeight(FontWeight.Bold)
+                      .margin({ top: 6 })
+                  }
+                  .alignItems(HorizontalAlign.Start)
+                  .layoutWeight(1)
+                  .padding(14)
+                  .backgroundColor('#fff8f8')
+                  .borderRadius(18)
+                  .margin({ left: 8 })
                 }
-                .layoutWeight(1)
-
-                Row() {
-                  Text(CurrencyManager.formatWithSymbol(BillingInfoUtils.calculateTotalLeft(monthlyInfo), this.currencySymbol))
-                    .fontSize(14)
-                    .fontColor(BillingInfoUtils.calculateTotalLeft(monthlyInfo) >= 0 ? $r('app.color.income_green') : $r('app.color.expense_red'))
-                    .fontWeight(FontWeight.Medium)
-                }
-                .layoutWeight(1)
+                .width('100%')
+                .margin({ top: 22 })
               }
               .width('100%')
-              .padding({ left: 12, right: 12, top: 16, bottom: 16 })
-              .backgroundColor(index % 2 == 0 ? '#fbfdff' : '#ffffff')
-              .border({
-                width: { bottom: 0.5 },
-                color: '#eef2f7'
+              .padding(22)
+              .linearGradient({
+                angle: 150,
+                colors: [
+                  [$r('app.color.main_theme_gradient_start'), 0],
+                  [$r('app.color.main_theme_gradient_end'), 1]
+                ]
               })
+              .borderRadius(30)
+              .shadow({ radius: 22, color: '#330D6EFD', offsetY: 10 })
+
+              Row() {
+                Text('月度表现')
+                  .fontSize(20)
+                  .fontColor('#1f2a3d')
+                  .fontWeight(FontWeight.Bold)
+                Blank()
+                Text('12个月')
+                  .fontSize(12)
+                  .fontColor('#8b96a8')
+              }
+              .width('100%')
+              .margin({ top: 24, bottom: 12 })
+
+              Column() {
+                ForEach(this.monthlySepBillInfo, (monthlyInfo: BillingInfo[], index: number) => {
+                  Row() {
+                    Column() {
+                      Text(`${index + 1}`)
+                        .fontSize(24)
+                        .fontColor('#126dff')
+                        .fontWeight(FontWeight.Bold)
+                      Text('月')
+                        .fontSize(11)
+                        .fontColor('#8b96a8')
+                    }
+                    .alignItems(HorizontalAlign.Center)
+                    .width(54)
+                    .height(58)
+                    .backgroundColor('#eef6ff')
+                    .borderRadius(18)
+                    .margin({ right: 14 })
+
+                    Column() {
+                      Text(this.monthLeft(monthlyInfo) >= 0 ? '本月结余为正' : '本月支出较高')
+                        .fontSize(15)
+                        .fontColor('#1f2a3d')
+                        .fontWeight(FontWeight.Bold)
+                      Row() {
+                        Text(`收 ${CurrencyManager.formatWithSymbol(BillingInfoUtils.calculateTotalIncome(monthlyInfo),
+                          this.currencySymbol)}`)
+                          .fontSize(12)
+                          .fontColor($r('app.color.income_green'))
+                        Text(
+                          ` 支 ${CurrencyManager.formatWithSymbol(BillingInfoUtils.calculateTotalOutBill(monthlyInfo),
+                            this.currencySymbol)}`)
+                          .fontSize(12)
+                          .fontColor($r('app.color.expense_red'))
+                          .margin({ left: 10 })
+                      }
+                      .margin({ top: 6 })
+                    }
+                    .alignItems(HorizontalAlign.Start)
+                    .layoutWeight(1)
+
+                    Text(CurrencyManager.formatWithSymbol(this.monthLeft(monthlyInfo), this.currencySymbol))
+                      .fontSize(15)
+                      .fontColor(
+                        this.monthLeft(monthlyInfo) >= 0 ? $r('app.color.income_green') : $r('app.color.expense_red'))
+                      .fontWeight(FontWeight.Bold)
+                  }
+                  .width('100%')
+                  .padding({
+                    left: 14,
+                    right: 14,
+                    top: 14,
+                    bottom: 14
+                  })
+                  .backgroundColor(Color.White)
+                  .borderRadius(22)
+                  .margin({ bottom: 10 })
+                  .shadow({ radius: 12, color: '#10000000', offsetY: 5 })
+                })
+              }
+              .width('100%')
             }
-          })
+            .width('100%')
+            .padding({
+              left: 16,
+              right: 16,
+              top: 16,
+              bottom: 28
+            })
+            .width('100%')
+            .backgroundColor('#f3f7fb')
+          }
+          .width('100%')
+          .backgroundColor('#f3f7fb')
         }
-        .listDirection(Axis.Vertical)
         .width('100%')
+        .backgroundColor('#f3f7fb')
       }
-      .padding(16)
-      .margin({ left: 16, right: 16, top: 16, bottom: 24 })
-      .backgroundColor(Color.White)
-      .borderRadius(16)
-      .shadow({
-        radius: 8,
-        color: '#1a000000',
-        offsetY: 2
-      })
-      .layoutWeight(1)
+      .height('100%')
+      .width('100%')
+      .backgroundColor('#f3f7fb')
     }
-    .width('100%')
-    .height('100%')
-    .backgroundColor($r('app.color.page_background'))
   }
 }

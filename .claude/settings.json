@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Write",
+      "Glob",
+      "Grep",
+      "Bash(npm *)",
+      "Bash(git *)",
+      "Bash(hvigor *)",
+      "Bash(hvigorw *)",
+      "Bash(ohpm *)",
+      "Bash(Get-ChildItem *)",
+      "Bash(Remove-Item *)",
+      "Bash(New-Item *)",
+      "Bash(Move-Item *)",
+      "Bash(Copy-Item *)",
+      "Bash(Get-Content *)",
+      "Bash(Set-Content *)",
+      "Bash(Get-Command *)",
+      "Bash(Select-String *)",
+      "Bash(Measure-Object *)",
+      "Bash(Start-Process *)",
+      "Bash(Test-Path *)",
+      "Bash(Compress-Archive *)",
+      "Bash(Expand-Archive *)",
+      "Bash(echo *)",
+      "Bash(write-output *)",
+      "Bash(type *)"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(curl * | bash)",
+      "Read(./.env*)",
+      "Read(./**/secrets/**)"
+    ]
+  },
+  "security": {
+    "sandbox": true,
+    "prompt_injection_protection": true
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "forms": [
+    {
+      "name": "BillWidget",
+      "description": "风风记账桌面卡片 - 显示今日支出和预算概览",
+      "src": "./ets/widget/WidgetCard.ets",
+      "uiSyntax": "arkts",
+      "window": {
+        "designWidth": 360,
+        "autoDesignWidth": true
+      },
+      "isDefault": true,
+      "colorMode": "auto",
+      "updateEnabled": true,
+      "scheduledUpdateTime": "08:00",
+      "updateDuration": 180,
+      "defaultDimension": "2*2",
+      "supportDimensions": ["2*2", "2*4"],
+      "formConfigAbility": "ability://com.ericple.ohbill.EntryAbility"
+    }
+  ]
+}
