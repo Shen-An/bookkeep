@@ -5,7 +5,7 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 import common from '@ohos.app.ability.common';
-import { BillingDirection, BillingInfo, BillingInfoUtils, DBManager, StringUtils } from '@ohos/common';
+import { BillingDirection, BillingInfo, BillingInfoUtils, DBManager, StringUtils, CurrencyManager } from '@ohos/common';
 import router from '@ohos.router';
 import { BusinessError } from '@ohos.base';
 
@@ -18,6 +18,7 @@ export struct BalanceList {
   @Prop searchKeyword: string = '';
   @Prop filterDirection: number = -1; // -1: all, 0: IN, 1: OUT
   @Prop filterCategory: string = '';
+  @Prop currencySymbol: string = '¥';
   context = getContext(this) as common.UIAbilityContext;
   filesDir = this.context.filesDir;
 
@@ -91,14 +92,18 @@ export struct BalanceList {
         Row() {
           Column() {
             Image($r("app.media.ic_public_budget"))
-              .width(48)
-              .height(48)
-              .margin({ bottom: 16 })
-              .opacity(0.3)
+              .width(54)
+              .height(54)
+              .margin({ bottom: 14 })
+              .opacity(0.22)
             Text($r("app.string.no_record"))
-              .fontColor($r('app.color.text_gray'))
+              .fontColor('#8a94a6')
               .fontSize(16)
               .fontWeight(FontWeight.Medium)
+            Text('选择其他日期或添加一笔账单')
+              .fontColor('#b0b7c3')
+              .fontSize(12)
+              .margin({ top: 6 })
           }
           .alignItems(HorizontalAlign.Center)
           .justifyContent(FlexAlign.Center)
@@ -114,19 +119,22 @@ export struct BalanceList {
                   // 日期头部分组
                   Row() {
                     Text(StringUtils.formatDate(this.selectedDate, 'M月') + `${day + 1}` + "日")
-                      .fontColor($r('app.color.text_gray'))
-                      .fontSize(14)
+                      .fontColor('#6c778a')
+                      .fontSize(13)
                       .fontWeight(FontWeight.Medium)
                     
                     Blank()
                     
                     Text(`共 ${balances.length} 笔`)
-                      .fontSize(12)
-                      .fontColor($r('app.color.text_gray'))
+                      .fontSize(11)
+                      .fontColor('#9aa4b2')
+                      .padding({ left: 8, right: 8, top: 2, bottom: 2 })
+                      .backgroundColor('#f1f5fb')
+                      .borderRadius(10)
                   }
                   .width('100%')
-                  .margin({ bottom: 8, top: 8 })
-                  .padding({ left: 4, right: 4 })
+                  .margin({ bottom: 10, top: 14 })
+                  .padding({ left: 8, right: 8 })
                 }
                 List() {
                   ForEach(balances, (balance: BillingInfo) => {
@@ -137,46 +145,46 @@ export struct BalanceList {
                         Row() {
                           // 图标圆形背景
                           Image(balance.type.icon)
-                            .width(40)
-                            .height(40)
-                            .borderRadius(20)
+                            .width(42)
+                            .height(42)
+                            .borderRadius(21)
                             .padding(10)
                             .backgroundColor(balance.direction == BillingDirection.IN ? '#ffe8f8e8' : '#fffce8e8')
                             .margin({ right: 12 })
                           
                           Column() {
                             Text(balance.remark)
-                              .fontSize(15)
-                              .fontColor('#1a1a1a')
+                              .fontSize(16)
+                              .fontColor('#202938')
                               .fontWeight(FontWeight.Medium)
                               .margin({ bottom: 4 })
                               .maxLines(1)
                               .textOverflow({ overflow: TextOverflow.Ellipsis })
                             Text(StringUtils.formatDate(balance.timestamp, 'h:m:s'))
-                              .fontColor($r('app.color.text_gray'))
+                              .fontColor('#9aa4b2')
                               .fontSize(12)
                           }
                           .alignItems(HorizontalAlign.Start)
                         }
 
-                        // 右侧：金额
-                        Text(`${balance.direction == BillingDirection.IN ? "+" : "-"} ¥${balance.amount.toFixed(2)}`)
-                          .fontSize(16)
+                        // 右侧：金额（按当前汇率换算）
+                        Text(`${balance.direction == BillingDirection.IN ? "+" : "-"} ${CurrencyManager.formatWithSymbol(balance.amount, this.currencySymbol)}`)
+                          .fontSize(17)
                           .fontColor(balance.direction == BillingDirection.IN ? $r('app.color.income_green') : $r('app.color.expense_red'))
                           .fontWeight(FontWeight.Medium)
                       }
                       .width('100%')
                       .justifyContent(FlexAlign.SpaceBetween)
-                      .padding({ left: 16, right: 16, top: 12, bottom: 12 })
-                      .backgroundColor(Color.White)
-                      .borderRadius(12)
+                      .padding({ left: 16, right: 16, top: 14, bottom: 14 })
+                      .backgroundColor('#fbfdff')
+                      .borderRadius(16)
                       .shadow({
-                        radius: 4,
-                        color: '#0d000000',
-                        offsetY: 1
+                        radius: 10,
+                        color: '#10000000',
+                        offsetY: 4
                       })
                     }
-                    .margin({ bottom: 8 })
+                    .margin({ bottom: 10 })
                     .onClick(() => {
                       if (typeof balance.id !== 'number') {
                         return;
@@ -203,7 +211,7 @@ export struct BalanceList {
         }
         .listDirection(Axis.Vertical)
         .layoutWeight(1)
-        .padding({ left: 12, right: 12, top: 8 })
+        .padding({ left: 14, right: 14, top: 6, bottom: 12 })
       }
     }
     .width('100%')

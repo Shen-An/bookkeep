@@ -6,7 +6,7 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 import router from '@ohos.router';
-import { DBManager, Logger, SettingManager } from '@ohos/common';
+import { DBManager, Logger, SettingManager, CurrencyManager } from '@ohos/common';
 import { BusinessError } from '@ohos.base';
 
 let TAG = "SettingsPage";
@@ -114,7 +114,7 @@ struct SettingsPage {
             Row() {
               Text($r('app.string.settings_general'))
                 .fontSize(13)
-                .fontColor('#999999')
+                .fontColor('#7b8798')
                 .fontWeight(FontWeight.Medium)
             }
             .width('100%')
@@ -125,13 +125,13 @@ struct SettingsPage {
               Row() {
                 Text($r('app.string.settings_currency_unit'))
                   .fontSize(15)
-                  .fontColor('#333333')
+                  .fontColor('#202938')
 
                 Blank()
 
                 Text(this.currencyUnit)
                   .fontSize(15)
-                  .fontColor('#999999')
+                  .fontColor('#7b8798')
                   .margin({ right: 8 })
 
                 Text('›')
@@ -139,11 +139,11 @@ struct SettingsPage {
                   .fontColor('#cccccc')
               }
               .width('100%')
-              .padding({ left: 16, right: 16, top: 14, bottom: 14 })
-              .backgroundColor(Color.White)
+              .padding({ left: 16, right: 16, top: 16, bottom: 16 })
+              .backgroundColor('#fbfdff')
               .borderRadius({ topLeft: 12, topRight: 12, bottomLeft: 12, bottomRight: 12 })
               .onClick(() => {
-                const currencies: string[] = ['¥', '$', '€', '£'];
+                const currencies: string[] = CurrencyManager.getCurrencies();
                 let selectedIdx = 0;
                 for (let i = 0; i < currencies.length; i++) {
                   if (currencies[i] == this.currencyUnit) {
@@ -152,7 +152,7 @@ struct SettingsPage {
                   }
                 }
                 TextPickerDialog.show({
-                  range: currencies,
+                  range: CurrencyManager.getCurrencies(),
                   selected: selectedIdx,
                   onAccept: (value) => {
                     if (value) {
@@ -160,6 +160,8 @@ struct SettingsPage {
                       if (typeof selected === 'string') {
                         this.currencyUnit = selected;
                         SettingManager.getInstance().set('currency_unit', selected);
+                        // Directly set symbol (avoids race with async Prefs flush)
+                        CurrencyManager.getInstance().setSymbol(selected);
                       }
                     }
                   }
@@ -175,7 +177,7 @@ struct SettingsPage {
             Row() {
               Text($r('app.string.settings_ai_config'))
                 .fontSize(13)
-                .fontColor('#999999')
+                .fontColor('#7b8798')
                 .fontWeight(FontWeight.Medium)
             }
             .width('100%')
@@ -190,7 +192,7 @@ struct SettingsPage {
 
                 Text($r('app.string.settings_ai_config'))
                   .fontSize(15)
-                  .fontColor('#333333')
+                  .fontColor('#202938')
 
                 Blank()
 
@@ -199,8 +201,8 @@ struct SettingsPage {
                   .fontColor('#cccccc')
               }
               .width('100%')
-              .padding({ left: 16, right: 16, top: 14, bottom: 14 })
-              .backgroundColor(Color.White)
+              .padding({ left: 16, right: 16, top: 16, bottom: 16 })
+              .backgroundColor('#fbfdff')
               .borderRadius({ topLeft: 12, topRight: 12, bottomLeft: 12, bottomRight: 12 })
               .onClick(() => {
                 router.pushUrl({
@@ -217,7 +219,7 @@ struct SettingsPage {
             Row() {
               Text($r('app.string.settings_data_management'))
                 .fontSize(13)
-                .fontColor('#999999')
+                .fontColor('#7b8798')
                 .fontWeight(FontWeight.Medium)
             }
             .width('100%')
@@ -237,7 +239,7 @@ struct SettingsPage {
 
                   Text(`当前 ${this.billingCount} 条记录`)
                     .fontSize(12)
-                    .fontColor('#999999')
+                    .fontColor('#7b8798')
                     .margin({ top: 2 })
                 }
                 .alignItems(HorizontalAlign.Start)
@@ -249,8 +251,8 @@ struct SettingsPage {
                   .fontColor('#cccccc')
               }
               .width('100%')
-              .padding({ left: 16, right: 16, top: 14, bottom: 14 })
-              .backgroundColor(Color.White)
+              .padding({ left: 16, right: 16, top: 16, bottom: 16 })
+              .backgroundColor('#fbfdff')
               .borderRadius({ topLeft: 12, topRight: 12, bottomLeft: 12, bottomRight: 12 })
               .onClick(() => {
                 this.handleClearData();
@@ -265,7 +267,7 @@ struct SettingsPage {
             Row() {
               Text($r('app.string.settings_about'))
                 .fontSize(13)
-                .fontColor('#999999')
+                .fontColor('#7b8798')
                 .fontWeight(FontWeight.Medium)
             }
             .width('100%')
@@ -280,7 +282,7 @@ struct SettingsPage {
 
                 Text($r('app.string.settings_about'))
                   .fontSize(15)
-                  .fontColor('#333333')
+                  .fontColor('#202938')
 
                 Blank()
 
@@ -289,8 +291,8 @@ struct SettingsPage {
                   .fontColor('#cccccc')
               }
               .width('100%')
-              .padding({ left: 16, right: 16, top: 14, bottom: 14 })
-              .backgroundColor(Color.White)
+              .padding({ left: 16, right: 16, top: 16, bottom: 16 })
+              .backgroundColor('#fbfdff')
               .borderRadius({ topLeft: 12, topRight: 12 })
               .onClick(() => {
                 router.pushUrl({
@@ -308,17 +310,17 @@ struct SettingsPage {
 
                 Text($r('app.string.settings_version'))
                   .fontSize(15)
-                  .fontColor('#333333')
+                  .fontColor('#202938')
 
                 Blank()
 
                 Text('v1.0.0')
                   .fontSize(14)
-                  .fontColor('#999999')
+                  .fontColor('#7b8798')
               }
               .width('100%')
-              .padding({ left: 16, right: 16, top: 14, bottom: 14 })
-              .backgroundColor(Color.White)
+              .padding({ left: 16, right: 16, top: 16, bottom: 16 })
+              .backgroundColor('#fbfdff')
               .borderRadius({ bottomLeft: 12, bottomRight: 12 })
             }
             .width('100%')

@@ -11,7 +11,7 @@ export struct PieChart {
   private lastWidth: number = 0;
   private lastHeight: number = 0;
 
-  private palette: string[] = ['#1FA1FF', '#2CC4E1', '#FF6B6B', '#51CF66', '#845EF7', '#FF922B', '#F06595', '#20C997'];
+  private palette: string[] = ['#1FA1FF', '#2CC4E1', '#FF7A7A', '#4CD97B', '#8B7CF6', '#FFB020', '#F46BA5', '#22C7A9'];
 
   private draw(width: number, height: number): void {
     if (width <= 0 || height <= 0) {
@@ -22,9 +22,9 @@ export struct PieChart {
 
     const total = this.slices.reduce((sum, s) => sum + (s.value ?? 0), 0);
     if (total <= 0 || this.slices.length === 0) {
-      this.ctx.fillStyle = '#858585';
-      this.ctx.font = '12px sans-serif';
-      this.ctx.fillText('暂无占比数据', 16, 24);
+      this.ctx.fillStyle = '#9aa4b2';
+      this.ctx.font = '13px sans-serif';
+      this.ctx.fillText('暂无占比数据', 16, 26);
       return;
     }
 

@@ -8,7 +8,7 @@
 import router from '@ohos.router';
 import common from '@ohos.app.ability.common';
 import { defaultExpenseType, defaultIncomeType, IBillType } from '../data/balanceTypes';
-import { BillingDirection, DBManager } from '@ohos/common';
+import { BillingDirection, DBManager, CurrencyManager } from '@ohos/common';
 import promptAction from '@ohos.promptAction';
 import { AiBillingParser } from '../ai/AiBillingParser';
 import { TEXT_AI_CONFIG, IMAGE_AI_CONFIG } from '../ai/AiBillingConfig';
@@ -661,7 +661,7 @@ struct AddBalance {
       Column() {
         // 金额显示
         Row() {
-          Text(`¥ ${this.balanceAmount}`)
+          Text(`${CurrencyManager.getInstance().getSymbol()} ${this.balanceAmount}`)
             .textAlign(TextAlign.End)
             .width('100%')
             .padding({ left: 16, right: 16 })

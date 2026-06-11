@@ -8,7 +8,7 @@
 import fs from '@ohos.file.fs';
 import common from '@ohos.app.ability.common';
 import { advancedTemplate } from '../data/defaultBalanceTemplate';
-import { BillingInfo, StringUtils } from '@ohos/common';
+import { BillingInfo, StringUtils, CurrencyManager } from '@ohos/common';
 
 @Component
 export struct BalanceViewer {
@@ -16,6 +16,7 @@ export struct BalanceViewer {
   @Link currentBillingInfo: BillingInfo[];
   @Link totalIncome: number;
   @Link totalBalance: number;
+  @Prop currencySymbol: string = '¥';
 
   build() {
     Column() {
@@ -24,12 +25,13 @@ export struct BalanceViewer {
         Column() {
           Row() {
             Text(StringUtils.formatDate(this.selectedDate, 'Y'))
-              .fontSize(13)
-              .fontColor(Color.White)
+              .fontSize(12)
+              .fontColor('#eaf6ff')
               .fontWeight(FontWeight.Medium)
             Text($r("app.string.year"))
               .fontSize(13)
-              .fontColor('#ffffffcc')
+              .fontColor('#eaf6ff')
+              .fontWeight(FontWeight.Medium)
           }
         }.width('20%')
 
@@ -59,7 +61,7 @@ export struct BalanceViewer {
           Button({ type: ButtonType.Normal }) {
             Row() {
               Text(StringUtils.formatDate(this.selectedDate, 'M'))
-                .fontSize(28)
+                .fontSize(32)
                 .fontColor(Color.White)
                 .fontWeight(FontWeight.Bold)
               Text($r("app.string.month"))
@@ -80,17 +82,17 @@ export struct BalanceViewer {
               }
             });
           })
-          .backgroundColor(Color.Transparent)
+          .backgroundColor('#1affffff')
           .width('100%')
-          .borderRadius(8)
+          .borderRadius(14)
         }
         .width('20%')
 
         // 收入金额
         Column() {
-          Text(this.totalIncome.toFixed(2))
+          Text(CurrencyManager.formatWithSymbol(this.totalIncome, this.currencySymbol))
             .fontColor(Color.White)
-            .fontSize(24)
+            .fontSize(22)
             .fontWeight(FontWeight.Bold)
             .textAlign(TextAlign.Start)
             .width('100%')
@@ -99,9 +101,9 @@ export struct BalanceViewer {
 
         // 支出金额
         Column() {
-          Text(this.totalBalance.toFixed(2))
+          Text(CurrencyManager.formatWithSymbol(this.totalBalance, this.currencySymbol))
             .fontColor(Color.White)
-            .fontSize(24)
+            .fontSize(22)
             .fontWeight(FontWeight.Bold)
             .textAlign(TextAlign.Start)
             .width('100%')
@@ -112,7 +114,7 @@ export struct BalanceViewer {
       .padding({ left: 8, right: 8, bottom: 4 })
     }
     .width('100%')
-    .padding({ top: 4, bottom: 8 })
+    .padding({ left: 16, right: 16, top: 8, bottom: 14 })
     .linearGradient({
       angle: 180,
       colors: [
@@ -121,9 +123,9 @@ export struct BalanceViewer {
       ]
     })
     .shadow({
-      radius: 8,
-      color: $r('app.color.main_theme_shadow'),
-      offsetY: 2
+      radius: 16,
+      color: '#26000000',
+      offsetY: 6
     })
   }
 }

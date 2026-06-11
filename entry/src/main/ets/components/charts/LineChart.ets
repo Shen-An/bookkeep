@@ -18,19 +18,19 @@ export struct LineChart {
 
     this.ctx.clearRect(0, 0, width, height);
 
-    const paddingLeft = 40;
-    const paddingRight = 16;
-    const paddingTop = 12;
-    const paddingBottom = 24;
+    const paddingLeft = 44;
+    const paddingRight = 18;
+    const paddingTop = 14;
+    const paddingBottom = 26;
 
     const chartW = Math.max(1, width - paddingLeft - paddingRight);
     const chartH = Math.max(1, height - paddingTop - paddingBottom);
 
     const maxLen = this.series.reduce((m, s) => Math.max(m, s.values.length), 0);
     if (maxLen <= 1) {
-      this.ctx.fillStyle = '#858585';
-      this.ctx.font = '12px sans-serif';
-      this.ctx.fillText('暂无趋势数据', paddingLeft, paddingTop + 16);
+      this.ctx.fillStyle = '#9aa4b2';
+      this.ctx.font = '13px sans-serif';
+      this.ctx.fillText('暂无趋势数据', paddingLeft, paddingTop + 18);
       return;
     }
 
@@ -41,7 +41,7 @@ export struct LineChart {
     }
 
     // axes
-    this.ctx.strokeStyle = '#cfd4d9';
+    this.ctx.strokeStyle = '#d9e2ec';
     this.ctx.lineWidth = 1;
     this.ctx.beginPath();
     this.ctx.moveTo(paddingLeft, paddingTop);
@@ -50,7 +50,7 @@ export struct LineChart {
     this.ctx.stroke();
 
     // y labels (0 and max)
-    this.ctx.fillStyle = '#858585';
+    this.ctx.fillStyle = '#7b8798';
     this.ctx.font = '10px sans-serif';
     this.ctx.fillText(maxValue.toFixed(0), 4, paddingTop + 10);
     this.ctx.fillText('0', 16, paddingTop + chartH + 4);

@@ -8,7 +8,7 @@
 import { BalanceViewer } from '../components/BalanceViewer';
 import { BalanceList } from '../components/BalanceList';
 import { PageEntries } from '../components/pageEntries';
-import { BillingDirection, BillingInfo, BillingInfoUtils, DBManager, Logger } from '@ohos/common';
+import { BillingDirection, BillingInfo, BillingInfoUtils, DBManager, Logger, CurrencyManager } from '@ohos/common';
 import router from '@ohos.router';
 
 let TAG = "INDEX";
@@ -27,6 +27,8 @@ struct Index {
   @State filterCategory: string = '';
   @State showFilterPanel: boolean = false;
   @State availableTypes: string[] = [];
+  @State currencySymbol: string = '¥';
+  @State currencyRate: number = 1.0;
 
   // 日期变化时的回调
   private onDateChange() {
@@ -77,11 +79,19 @@ struct Index {
   }
 
   onPageShow() {
+    this.loadCurrency();
     this.reloadBillingInfo();
   }
 
   aboutToAppear() {
     this.reloadBillingInfo();
+    this.loadCurrency();
+  }
+
+  private loadCurrency() {
+    CurrencyManager.getInstance().init().then(() => {
+      this.currencySymbol = CurrencyManager.getInstance().getSymbol();
+    });
   }
 
   build() {
@@ -110,7 +120,8 @@ struct Index {
         selectedDate: $selectedDate,
         currentBillingInfo: $currentBillingInfo,
         totalIncome: $totalIncome,
-        totalBalance: $totalBalance
+        totalBalance: $totalBalance,
+        currencySymbol: this.currencySymbol
       })
         .margin({ top: 0 })
 
@@ -121,12 +132,12 @@ struct Index {
       // 搜索栏
       Row() {
         TextInput({ placeholder: $r('app.string.search_placeholder'), text: this.searchKeyword })
-          .height(36)
+          .height(40)
           .fontSize(14)
           .layoutWeight(1)
-          .backgroundColor(Color.White)
-          .borderRadius(18)
-          .padding({ left: 12, right: 12 })
+          .backgroundColor('#f6f9fd')
+          .borderRadius(20)
+          .padding({ left: 14, right: 14 })
           .onChange((v: string) => {
             this.searchKeyword = v;
           })
@@ -137,24 +148,25 @@ struct Index {
           Row() {
             Image($r("app.media.ic_public_extract_list_light"))
               .width(16)
-              .height(16)
-              .margin({ right: 4 })
+              .height(18)
+              .margin({ right: 6 })
             Text($r('app.string.search_filter'))
               .fontSize(13)
-              .fontColor(this.showFilterPanel || this.filterDirection >= 0 || this.filterCategory ? '#ffffff' : '#666666')
+              .fontColor(this.showFilterPanel || this.filterDirection >= 0 || this.filterCategory ? '#ffffff' : '#4f5f75')
           }
         }
-        .height(36)
-        .backgroundColor(this.showFilterPanel || this.filterDirection >= 0 || this.filterCategory ? '#4a7dff' : '#f0f0f0')
-        .borderRadius(18)
-        .padding({ left: 12, right: 12 })
+        .height(40)
+        .backgroundColor(this.showFilterPanel || this.filterDirection >= 0 || this.filterCategory ? '#1FA1FF' : '#f2f6fb')
+        .borderRadius(20)
+        .padding({ left: 14, right: 14 })
         .onClick(() => {
           this.showFilterPanel = !this.showFilterPanel;
         })
         .margin({ left: 8 })
       }
-      .padding({ left: 12, right: 12, top: 8, bottom: 4 })
+      .padding({ left: 14, right: 14, top: 8, bottom: 6 })
       .width('100%')
+      .backgroundColor('#00ffffff')
 
       // 筛选面板
       if (this.showFilterPanel) {
@@ -268,7 +280,7 @@ struct Index {
                 .fontColor('#999999')
             }
             .height(28)
-            .backgroundColor('#f5f5f5')
+            .backgroundColor('#eef3f9')
             .borderRadius(14)
             .padding({ left: 16, right: 16 })
             .onClick(() => {
@@ -281,10 +293,11 @@ struct Index {
           .padding({ top: 4 })
         }
         .width('100%')
-        .padding({ left: 12, right: 12, top: 8, bottom: 8 })
-        .backgroundColor('#fafafa')
-        .borderRadius(12)
-        .margin({ left: 12, right: 12 })
+        .padding({ left: 14, right: 14, top: 10, bottom: 10 })
+        .backgroundColor('#fbfdff')
+        .borderRadius(18)
+        .margin({ left: 14, right: 14, top: 2, bottom: 4 })
+        .shadow({ radius: 10, color: '#0f000000', offsetY: 3 })
       }
 
       BalanceList({
@@ -294,7 +307,8 @@ struct Index {
         totalIncome: $totalIncome,
         searchKeyword: this.searchKeyword,
         filterDirection: this.filterDirection,
-        filterCategory: this.filterCategory
+        filterCategory: this.filterCategory,
+        currencySymbol: this.currencySymbol
       })
         .layoutWeight(1)
     }

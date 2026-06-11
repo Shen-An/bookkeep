@@ -51,14 +51,15 @@ struct DataImport {
           // 导入说明卡片
           Column() {
             Text($r("app.string.data_import_guide"))
-              .fontSize(18)
+              .fontSize(17)
               .fontWeight(FontWeight.Bold)
+              .fontColor('#202938')
               .width('100%')
               .textAlign(TextAlign.Start)
 
             Text($r("app.string.data_import_format_desc"))
               .fontSize(14)
-              .fontColor('#666666')
+              .fontColor('#6c778a')
               .width('100%')
               .margin({ top: 8 })
               .lineHeight(22)
@@ -68,10 +69,10 @@ struct DataImport {
               Row() {
                 Text("• ")
                   .fontSize(13)
-                  .fontColor('#999999')
+                  .fontColor('#9aa4b2')
                 Text($r("app.string.data_import_support_csv"))
                   .fontSize(13)
-                  .fontColor('#999999')
+                  .fontColor('#9aa4b2')
               }
               .width('100%')
               .margin({ top: 4 })
@@ -79,10 +80,10 @@ struct DataImport {
               Row() {
                 Text("• ")
                   .fontSize(13)
-                  .fontColor('#999999')
+                  .fontColor('#9aa4b2')
                 Text($r("app.string.data_import_support_xlsx"))
                   .fontSize(13)
-                  .fontColor('#999999')
+                  .fontColor('#9aa4b2')
               }
               .width('100%')
               .margin({ top: 4 })
@@ -90,10 +91,10 @@ struct DataImport {
               Row() {
                 Text("• ")
                   .fontSize(13)
-                  .fontColor('#999999')
+                  .fontColor('#9aa4b2')
                 Text($r("app.string.data_import_support_wechat"))
                   .fontSize(13)
-                  .fontColor('#999999')
+                  .fontColor('#9aa4b2')
               }
               .width('100%')
               .margin({ top: 4 })
@@ -103,15 +104,17 @@ struct DataImport {
           }
           .padding(16)
           .width('100%')
-          .backgroundColor(Color.White)
-          .borderRadius(12)
+          .backgroundColor('#fbfdff')
+          .borderRadius(18)
+          .shadow({ radius: 10, color: '#12000000', offsetY: 4 })
           .margin({ top: 16, left: 16, right: 16 })
 
           // 文件选择区域
           Column() {
             Text($r("app.string.data_import_select_file"))
-              .fontSize(18)
+              .fontSize(17)
               .fontWeight(FontWeight.Bold)
+              .fontColor('#202938')
               .width('100%')
               .textAlign(TextAlign.Start)
 
@@ -127,8 +130,8 @@ struct DataImport {
               }
               .width('100%')
               .padding(12)
-              .backgroundColor('#f5f5f5')
-              .borderRadius(8)
+              .backgroundColor('#f2f6fb')
+              .borderRadius(12)
               .margin({ top: 8 })
             }
 
@@ -148,9 +151,9 @@ struct DataImport {
               .justifyContent(FlexAlign.Center)
             }
             .width('100%')
-            .height(44)
+            .height(46)
             .backgroundColor($r('app.color.main_theme_gradient_start'))
-            .borderRadius(22)
+            .borderRadius(23)
             .margin({ top: 12 })
             .enabled(!this.isImporting)
             .onClick(() => {
@@ -159,8 +162,9 @@ struct DataImport {
           }
           .padding(16)
           .width('100%')
-          .backgroundColor(Color.White)
-          .borderRadius(12)
+          .backgroundColor('#fbfdff')
+          .borderRadius(18)
+          .shadow({ radius: 10, color: '#12000000', offsetY: 4 })
           .margin({ top: 12, left: 16, right: 16 })
 
           // 导入按钮
@@ -194,7 +198,7 @@ struct DataImport {
           if (this.importStatus !== '') {
             Text(this.importStatus)
               .fontSize(14)
-              .fontColor('#666666')
+              .fontColor('#6c778a')
               .textAlign(TextAlign.Center)
               .width('100%')
               .margin({ top: 16, left: 16, right: 16 })
@@ -219,7 +223,7 @@ struct DataImport {
                             .fontColor('#333333')
                           Text(new Date(item.timestamp).toLocaleString())
                             .fontSize(11)
-                            .fontColor('#999999')
+                            .fontColor('#9aa4b2')
                             .margin({ top: 2 })
                         }
                         .alignItems(HorizontalAlign.Start)
@@ -232,7 +236,7 @@ struct DataImport {
                             .fontWeight(FontWeight.Bold)
                           Text(item.direction === 0 ? "收入" : "支出")
                             .fontSize(11)
-                            .fontColor('#999999')
+                            .fontColor('#9aa4b2')
                             .margin({ top: 2 })
                         }
                         .alignItems(HorizontalAlign.End)
@@ -269,8 +273,9 @@ struct DataImport {
               }
               .padding(16)
               .width('100%')
-              .backgroundColor(Color.White)
-              .borderRadius(12)
+              .backgroundColor('#fbfdff')
+              .borderRadius(18)
+              .shadow({ radius: 10, color: '#12000000', offsetY: 4 })
               .margin({ top: 12, left: 16, right: 16 })
             }
         }

@@ -19,19 +19,19 @@ export struct PageEntries {
           Column() {
             Row() {
               Image($r("app.media.ic_public_budget"))
-                .width(28)
-                .height(28)
+                .width(26)
+                .height(26)
             }
-            .width(44)
-            .height(44)
+            .width(46)
+            .height(46)
             .backgroundColor('#f0f7ff')
-            .borderRadius(22)
+            .borderRadius(23)
             .justifyContent(FlexAlign.Center)
 
             Row() {
               Text("年度账单")
-                .fontSize(11)
-                .fontColor('#333333')
+                .fontSize(12)
+                .fontColor('#2f3747')
                 .width('100%')
                 .textAlign(TextAlign.Center)
             }.height(16).width(56)
@@ -49,19 +49,19 @@ export struct PageEntries {
           Column() {
             Row() {
               Image($r("app.media.ic_public_opensource_info"))
-                .width(28)
-                .height(28)
+                .width(26)
+                .height(26)
             }
-            .width(44)
-            .height(44)
+            .width(46)
+            .height(46)
             .backgroundColor('#fff0f0')
-            .borderRadius(22)
+            .borderRadius(23)
             .justifyContent(FlexAlign.Center)
 
             Row() {
               Text("开源信息")
-                .fontSize(11)
-                .fontColor('#333333')
+                .fontSize(12)
+                .fontColor('#2f3747')
                 .width('100%')
                 .textAlign(TextAlign.Center)
             }.height(16).width(56)
@@ -78,19 +78,19 @@ export struct PageEntries {
           Column() {
             Row() {
               Image($r("app.media.ic_public_billing_graphic"))
-                .width(28)
-                .height(28)
+                .width(26)
+                .height(26)
             }
-            .width(44)
-            .height(44)
+            .width(46)
+            .height(46)
             .backgroundColor('#f5f0ff')
-            .borderRadius(22)
+            .borderRadius(23)
             .justifyContent(FlexAlign.Center)
 
             Row() {
               Text("经济图表")
-                .fontSize(11)
-                .fontColor('#333333')
+                .fontSize(12)
+                .fontColor('#2f3747')
                 .width('100%')
                 .textAlign(TextAlign.Center)
             }.height(16).width(56)
@@ -108,19 +108,19 @@ export struct PageEntries {
           Column() {
             Row() {
               Image($r("app.media.ic_public_add_billing"))
-                .width(28)
-                .height(28)
+                .width(26)
+                .height(26)
             }
-            .width(44)
-            .height(44)
+            .width(46)
+            .height(46)
             .backgroundColor('#f0fff4')
-            .borderRadius(22)
+            .borderRadius(23)
             .justifyContent(FlexAlign.Center)
 
             Row() {
               Text("AI记账")
-                .fontSize(11)
-                .fontColor('#333333')
+                .fontSize(12)
+                .fontColor('#2f3747')
                 .width('100%')
                 .textAlign(TextAlign.Center)
             }.height(16).width(56)
@@ -141,19 +141,19 @@ export struct PageEntries {
           Column() {
             Row() {
               Image($r("app.media.icon"))
-                .width(28)
-                .height(28)
+                .width(26)
+                .height(26)
             }
-            .width(44)
-            .height(44)
+            .width(46)
+            .height(46)
             .backgroundColor('#fff0e8')
-            .borderRadius(22)
+            .borderRadius(23)
             .justifyContent(FlexAlign.Center)
 
             Row() {
               Text("手动记账")
-                .fontSize(11)
-                .fontColor('#333333')
+                .fontSize(12)
+                .fontColor('#2f3747')
                 .width('100%')
                 .textAlign(TextAlign.Center)
             }.height(16).width(56)
@@ -170,15 +170,16 @@ export struct PageEntries {
           })
         }).borderRadius(12)
       }
-      .height(80)
+      .height(88)
       .width('100%')
-      .backgroundColor(Color.White)
-      .borderRadius(16)
-      .padding({ top: 8, bottom: 8 })
+      .backgroundColor('#fbfdff')
+      .borderRadius(20)
+      .padding({ top: 10, bottom: 10 })
+      .margin({ bottom: 10 })
       .shadow({
-        radius: 8,
-        color: '#1a000000',
-        offsetY: 2
+        radius: 12,
+        color: '#12000000',
+        offsetY: 4
       })
 
       // 第二行：设置 / 数据导出/导入
@@ -187,19 +188,19 @@ export struct PageEntries {
           Column() {
             Row() {
               Image($r("app.media.ic_public_budget"))
-                .width(28)
-                .height(28)
+                .width(26)
+                .height(26)
             }
-            .width(44)
-            .height(44)
+            .width(46)
+            .height(46)
             .backgroundColor('#f0f0ff')
-            .borderRadius(22)
+            .borderRadius(23)
             .justifyContent(FlexAlign.Center)
 
             Row() {
               Text($r('app.string.settings'))
-                .fontSize(11)
-                .fontColor('#333333')
+                .fontSize(12)
+                .fontColor('#2f3747')
                 .width('100%')
                 .textAlign(TextAlign.Center)
             }.height(16).width(56)
@@ -214,19 +215,19 @@ export struct PageEntries {
           Column() {
             Row() {
               Image($r("app.media.ic_public_export"))
-                .width(28)
-                .height(28)
+                .width(26)
+                .height(26)
             }
-            .width(44)
-            .height(44)
+            .width(46)
+            .height(46)
             .backgroundColor('#fff8e1')
-            .borderRadius(22)
+            .borderRadius(23)
             .justifyContent(FlexAlign.Center)
 
             Row() {
               Text("导出数据")
-                .fontSize(11)
-                .fontColor('#333333')
+                .fontSize(12)
+                .fontColor('#2f3747')
                 .width('100%')
                 .textAlign(TextAlign.Center)
             }.height(16).width(56)
@@ -241,19 +242,19 @@ export struct PageEntries {
           Column() {
             Row() {
               Image($r("app.media.ic_public_import"))
-                .width(28)
-                .height(28)
+                .width(26)
+                .height(26)
             }
-            .width(44)
-            .height(44)
+            .width(46)
+            .height(46)
             .backgroundColor('#e8f5e9')
-            .borderRadius(22)
+            .borderRadius(23)
             .justifyContent(FlexAlign.Center)
 
             Row() {
               Text("导入数据")
-                .fontSize(11)
-                .fontColor('#333333')
+                .fontSize(12)
+                .fontColor('#2f3747')
                 .width('100%')
                 .textAlign(TextAlign.Center)
             }.height(16).width(56)
@@ -264,17 +265,18 @@ export struct PageEntries {
           });
         })
       }
-      .height(80)
+      .height(88)
       .width('100%')
-      .backgroundColor(Color.White)
-      .borderRadius(16)
-      .padding({ top: 8, bottom: 8 })
+      .backgroundColor('#fbfdff')
+      .borderRadius(20)
+      .padding({ top: 10, bottom: 10 })
+      .margin({ bottom: 10 })
       .shadow({
-        radius: 8,
-        color: '#1a000000',
-        offsetY: 2
+        radius: 12,
+        color: '#12000000',
+        offsetY: 4
       })
     }
-    .padding({ left: 12, right: 12, bottom: 8 })
+    .padding({ left: 14, right: 14, top: 10, bottom: 8 })
   }
 }

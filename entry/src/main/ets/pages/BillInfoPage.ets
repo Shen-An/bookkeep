@@ -6,9 +6,13 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 import router from '@ohos.router'
-import { BillingDirection, BillingInfo, BillingInfoUtils, DBManager, Logger, StringUtils } from '@ohos/common';
+import { BillingDirection, BillingInfo, BillingInfoUtils, CurrencyManager, DBManager, Logger, StringUtils } from '@ohos/common';
 
 let TAG = "BillInfoPage"
+
+interface BillInfoPageParams {
+  date?: Date | number | string;
+}
 
 @Entry
 @Component
@@ -18,6 +22,7 @@ struct BillInfoPage {
   @State yearlyLeft: number = 0;
   @State yearlyOutBill: number = 0;
   @State yearlyIncome: number = 0;
+  @State currencySymbol: string = '¥';
 
   clearCache() {
     this.yearlyLeft = 0;
@@ -25,7 +30,23 @@ struct BillInfoPage {
     this.yearlyIncome = 0;
   }
 
+  aboutToAppear() {
+    const params = router.getParams() as BillInfoPageParams;
+    const raw = params?.date;
+    if (raw instanceof Date) {
+      this.activeDate = raw;
+    } else if (typeof raw === 'number') {
+      this.activeDate = new Date(raw);
+    } else if (typeof raw === 'string') {
+      this.activeDate = new Date(raw);
+    }
+    this.onPageShow();
+  }
+
   onPageShow() {
+    CurrencyManager.getInstance().init().then(() => {
+      this.currencySymbol = CurrencyManager.getInstance().getSymbol();
+    });
     DBManager.getInstance().getAllBillingInfo()
       .then(r => {
         this.clearCache();
@@ -63,8 +84,8 @@ struct BillInfoPage {
             .fontColor(Color.White)
             .fontWeight(FontWeight.Bold)
           Text($r("app.string.year"))
-            .fontSize(14)
-            .fontColor('#ffffffcc')
+            .fontSize(13)
+            .fontColor('#eaf6ff')
           Image($r("app.media.ic_public_extract_list_light"))
             .width(10)
             .height(10)
@@ -100,12 +121,12 @@ struct BillInfoPage {
       Row() {
         Column() {
           Text("年结余")
-            .fontSize(14)
-            .fontColor('#ffffffcc')
-            .margin({ bottom: 4 })
+            .fontSize(13)
+            .fontColor('#eaf6ff')
+            .margin({ bottom: 6 })
 
-          Text(`${this.yearlyLeft.toFixed(2)}`)
-            .fontSize(32)
+          Text(CurrencyManager.formatWithSymbol(this.yearlyLeft, this.currencySymbol))
+            .fontSize(34)
             .fontColor(Color.White)
             .fontWeight(FontWeight.Bold)
             .margin({ bottom: 8 })
@@ -115,9 +136,9 @@ struct BillInfoPage {
               Text('年收入')
                 .fontColor('#ffffffb3')
                 .fontSize(13)
-              Text(`${this.yearlyIncome.toFixed(2)}`)
+              Text(CurrencyManager.formatWithSymbol(this.yearlyIncome, this.currencySymbol))
                 .fontColor(Color.White)
-                .fontSize(15)
+                .fontSize(16)
                 .fontWeight(FontWeight.Medium)
                 .margin({ top: 2 })
             }
@@ -127,9 +148,9 @@ struct BillInfoPage {
               Text('年支出')
                 .fontColor('#ffffffb3')
                 .fontSize(13)
-              Text(`${this.yearlyOutBill.toFixed(2)}`)
+              Text(CurrencyManager.formatWithSymbol(this.yearlyOutBill, this.currencySymbol))
                 .fontColor(Color.White)
-                .fontSize(15)
+                .fontSize(16)
                 .fontWeight(FontWeight.Medium)
                 .margin({ top: 2 })
             }
@@ -137,7 +158,7 @@ struct BillInfoPage {
           }
           .width('100%')
         }
-        .padding({ left: 24, right: 24, top: 20, bottom: 20 })
+        .padding({ left: 24, right: 24, top: 22, bottom: 22 })
       }
       .width('100%')
       .margin({ left: 16, right: 16 })
@@ -148,11 +169,11 @@ struct BillInfoPage {
           [$r('app.color.main_theme_gradient_end'), 1]
         ]
       })
-      .borderRadius(16)
+      .borderRadius(20)
       .shadow({
-        radius: 12,
-        color: '#333a9df0',
-        offsetY: 4
+        radius: 16,
+        color: '#263a9df0',
+        offsetY: 6
       })
 
       // 月度明细表
@@ -162,7 +183,7 @@ struct BillInfoPage {
           Row() {
             Text("月份")
               .fontSize(13)
-              .fontColor($r("app.color.text_gray"))
+              .fontColor('#7b8798')
               .fontWeight(FontWeight.Medium)
           }
           .layoutWeight(1)
@@ -170,7 +191,7 @@ struct BillInfoPage {
           Row() {
             Text("月收入")
               .fontSize(13)
-              .fontColor($r("app.color.text_gray"))
+              .fontColor('#7b8798')
               .fontWeight(FontWeight.Medium)
           }
           .layoutWeight(1)
@@ -178,7 +199,7 @@ struct BillInfoPage {
           Row() {
             Text("月支出")
               .fontSize(13)
-              .fontColor($r("app.color.text_gray"))
+              .fontColor('#7b8798')
               .fontWeight(FontWeight.Medium)
           }
           .layoutWeight(1)
@@ -186,7 +207,7 @@ struct BillInfoPage {
           Row() {
             Text("月结余")
               .fontSize(13)
-              .fontColor($r("app.color.text_gray"))
+              .fontColor('#7b8798')
               .fontWeight(FontWeight.Medium)
           }
           .layoutWeight(1)
@@ -205,28 +226,28 @@ struct BillInfoPage {
               Row() {
                 Row() {
                   Text(`${index + 1}月`)
-                    .fontSize(15)
-                    .fontColor('#1a1a1a')
+                    .fontSize(16)
+                    .fontColor('#202938')
                     .fontWeight(FontWeight.Medium)
                 }
                 .layoutWeight(1)
 
                 Row() {
-                  Text(`${BillingInfoUtils.calculateTotalIncome(monthlyInfo).toFixed(2)}`)
+                  Text(CurrencyManager.formatWithSymbol(BillingInfoUtils.calculateTotalIncome(monthlyInfo), this.currencySymbol))
                     .fontSize(14)
                     .fontColor($r('app.color.income_green'))
                 }
                 .layoutWeight(1)
 
                 Row() {
-                  Text(`${BillingInfoUtils.calculateTotalOutBill(monthlyInfo).toFixed(2)}`)
+                  Text(CurrencyManager.formatWithSymbol(BillingInfoUtils.calculateTotalOutBill(monthlyInfo), this.currencySymbol))
                     .fontSize(14)
                     .fontColor($r('app.color.expense_red'))
                 }
                 .layoutWeight(1)
 
                 Row() {
-                  Text(`${BillingInfoUtils.calculateTotalLeft(monthlyInfo).toFixed(2)}`)
+                  Text(CurrencyManager.formatWithSymbol(BillingInfoUtils.calculateTotalLeft(monthlyInfo), this.currencySymbol))
                     .fontSize(14)
                     .fontColor(BillingInfoUtils.calculateTotalLeft(monthlyInfo) >= 0 ? $r('app.color.income_green') : $r('app.color.expense_red'))
                     .fontWeight(FontWeight.Medium)
@@ -234,10 +255,11 @@ struct BillInfoPage {
                 .layoutWeight(1)
               }
               .width('100%')
-              .padding({ left: 12, right: 12, top: 14, bottom: 14 })
+              .padding({ left: 12, right: 12, top: 16, bottom: 16 })
+              .backgroundColor(index % 2 == 0 ? '#fbfdff' : '#ffffff')
               .border({
                 width: { bottom: 0.5 },
-                color: $r('app.color.divider_color')
+                color: '#eef2f7'
               })
             }
           })

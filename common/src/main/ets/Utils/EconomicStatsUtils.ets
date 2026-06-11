@@ -1,4 +1,5 @@
 import { BillingDirection, BillingInfo } from '../DataTypes/BillingInfo';
+import { CurrencyManager } from '../Manager/CurrencyManager';
 
 export interface CategoryRatio {
   name: string;
@@ -178,7 +179,7 @@ export class EconomicStatsUtils {
 
     const top = current.topExpenseCategory;
     const topHint = top
-      ? `支出最高分类为「${top.name}」（¥${top.amount.toFixed(2)}，占比 ${top.percent.toFixed(1)}%）。`
+      ? `支出最高分类为「${top.name}」（${CurrencyManager.getInstance().format(top.amount)}，占比 ${top.percent.toFixed(1)}%）。`
       : '暂无分类支出数据。';
 
     let anomalyHint = '未发现明显异常消费。';
@@ -214,7 +215,7 @@ export class EconomicStatsUtils {
     const anomaly = EconomicStatsUtils.detectAnomaly(current);
 
     const analysisText = [
-      `本月总收入 ¥${current.incomeTotal.toFixed(2)}，总支出 ¥${current.expenseTotal.toFixed(2)}，结余 ¥${current.leftTotal.toFixed(2)}。`,
+      `本月总收入 ${CurrencyManager.getInstance().format(current.incomeTotal)}，总支出 ${CurrencyManager.getInstance().format(current.expenseTotal)}，结余 ${CurrencyManager.getInstance().format(current.leftTotal)}。`,
       incomeChangeText,
       expenseChangeText,
       anomaly

@@ -1,5 +1,5 @@
 import router from '@ohos.router';
-import { CategoryRatio, DBManager, EconomicStatsUtils, MonthlyEconomyReport, MonthlyTrend } from '@ohos/common';
+import { CategoryRatio, DBManager, EconomicStatsUtils, MonthlyEconomyReport, MonthlyTrend, CurrencyManager } from '@ohos/common';
 import { LineChart } from '../components/charts/LineChart';
 import { PieChart } from '../components/charts/PieChart';
 import { LineSeries, PieSlice } from '../components/charts/ChartModels';
@@ -16,6 +16,7 @@ struct EconomicCharts {
   @State trend: MonthlyTrend = EconomicStatsUtils.buildMonthlyTrend([], new Date(), 6);
   @State loading: boolean = true;
   @State chartRefreshToken: number = 0;
+  @State currencySymbol: string = '¥';
 
   private reload(): void {
     this.loading = true;
@@ -50,22 +51,29 @@ struct EconomicCharts {
     this.activeMonth = new Date(baseDate.getTime());
     this.activeMonth.setDate(1);
     this.activeMonth.setHours(0, 0, 0, 0);
-    this.reload();
+    this.loadCurrencyAndReload();
   }
 
   onPageShow() {
-    this.reload();
+    this.loadCurrencyAndReload();
+  }
+
+  private loadCurrencyAndReload(): void {
+    CurrencyManager.getInstance().init().then(() => {
+      this.currencySymbol = CurrencyManager.getInstance().getSymbol();
+      this.reload();
+    });
   }
 
   private buildLineSeries(): LineSeries[] {
     const income: LineSeries = {
       name: '收入',
-      values: this.trend.income,
+      values: this.trend.income.map((v: number) => CurrencyManager.convertWithSymbol(v, this.currencySymbol)),
       color: '#2CC4E1'
     };
     const expense: LineSeries = {
       name: '支出',
-      values: this.trend.expense,
+      values: this.trend.expense.map((v: number) => CurrencyManager.convertWithSymbol(v, this.currencySymbol)),
       color: '#1FA1FF'
     };
     return [income, expense];
@@ -89,7 +97,7 @@ struct EconomicCharts {
       .map((i: CategoryRatio) => {
         const slice: PieSlice = {
           label: i.name,
-          value: i.amount,
+          value: CurrencyManager.convertWithSymbol(i.amount, this.currencySymbol),
           percent: i.percent
         };
         return slice;
@@ -226,9 +234,9 @@ struct EconomicCharts {
             }
             .padding(16)
             .margin({ left: 16, right: 16, top: 16 })
-            .backgroundColor(Color.White)
-            .borderRadius(16)
-            .shadow({ radius: 8, color: '#1a000000', offsetY: 2 })
+            .backgroundColor('#fbfdff')
+            .borderRadius(20)
+            .shadow({ radius: 12, color: '#12000000', offsetY: 4 })
 
             // 2) 支出分类占比饼图
             Column() {
@@ -258,7 +266,7 @@ struct EconomicCharts {
                       .fontSize(13)
                       .fontColor('#333333')
                       .width('35%');
-                    Text(`¥${i.amount.toFixed(2)}`)
+                    Text(`${CurrencyManager.formatWithSymbol(i.amount, this.currencySymbol)}`)
                       .fontSize(13)
                       .fontColor('#1a1a1a')
                       .fontWeight(FontWeight.Medium)
@@ -282,9 +290,9 @@ struct EconomicCharts {
             }
             .padding(16)
             .margin({ left: 16, right: 16, top: 12 })
-            .backgroundColor(Color.White)
-            .borderRadius(16)
-            .shadow({ radius: 8, color: '#1a000000', offsetY: 2 })
+            .backgroundColor('#fbfdff')
+            .borderRadius(20)
+            .shadow({ radius: 12, color: '#12000000', offsetY: 4 })
 
             // 3) 收入分类占比饼图
             Column() {
@@ -314,7 +322,7 @@ struct EconomicCharts {
                       .fontSize(13)
                       .fontColor('#333333')
                       .width('35%');
-                    Text(`¥${i.amount.toFixed(2)}`)
+                    Text(`${CurrencyManager.formatWithSymbol(i.amount, this.currencySymbol)}`)
                       .fontSize(13)
                       .fontColor('#1a1a1a')
                       .fontWeight(FontWeight.Medium)
@@ -338,9 +346,9 @@ struct EconomicCharts {
             }
             .padding(16)
             .margin({ left: 16, right: 16, top: 12 })
-            .backgroundColor(Color.White)
-            .borderRadius(16)
-            .shadow({ radius: 8, color: '#1a000000', offsetY: 2 })
+            .backgroundColor('#fbfdff')
+            .borderRadius(20)
+            .shadow({ radius: 12, color: '#12000000', offsetY: 4 })
 
             // 4) 经济分析文案
             Column() {
@@ -363,9 +371,9 @@ struct EconomicCharts {
             }
             .padding(16)
             .margin({ left: 16, right: 16, top: 12, bottom: 24 })
-            .backgroundColor(Color.White)
-            .borderRadius(16)
-            .shadow({ radius: 8, color: '#1a000000', offsetY: 2 })
+            .backgroundColor('#fbfdff')
+            .borderRadius(20)
+            .shadow({ radius: 12, color: '#12000000', offsetY: 4 })
           }
           .width('100%')
           .padding({ bottom: 16 })
