@@ -1,4 +1,4 @@
-<div align="center">
+﻿<div align="center">
 <h1>风风记账</h1>
 <img src="entry/src/main/resources/base/media/icon.png" width="128" />
 </div>
@@ -564,22 +564,29 @@ oh-bill/
 │   │   │   │   ├── AiBillingSettings.ets# AI 设置页面
 │   │   │   │   ├── AiHttpClient.ets     # HTTP 客户端封装
 │   │   │   │   └── ImageProcessor.ets   # 图像识别处理器
+│   │   │   ├── data/                    # 数据类型与配置
+│   │   │   │   └── balanceTypes.ets    # 收支分类列表（图标+名称）
 │   │   │   ├── components/             # 可复用组件
 │   │   │   │   ├── BalanceList.ets     # 账单列表组件
 │   │   │   │   ├── BalanceViewer.ets   # 月度概览组件
+│   │   │   │   ├── LockScreen.ets      # PIN 解锁界面
+│   │   │   │   ├── OnboardingGuide.ets # 新手引导页
+│   │   │   │   ├── QuickAddFab.ets     # 快捷记账悬浮按钮
 │   │   │   │   ├── pageEntries.ets     # 功能入口组件
 │   │   │   │   └── charts/            # 图表组件
-│   │   │   │       ├── PieChart.ets    # 饼图组件
+│   │   │   │       ├── PieChart.ets    # 饼图组件（带百分比标签）
 │   │   │   │       └── LineChart.ets   # 折线图组件
 │   │   │   ├── utils/                  # 工具类
 │   │   │   │   └── CSVUtils.ets        # CSV/XLSX 导入导出工具
 │   │   │   └── pages/                  # 页面
-│   │   │       ├── Index.ets           # 首页
-│   │   │       ├── addBalance.ets      # 记账页
+│   │   │       ├── Index.ets           # 首页（概览+列表+快捷记账）
+│   │   │       ├── addBalance.ets      # 记账页（AI+手动）
 │   │   │       ├── BillInfoPage.ets    # 年度账单页
+│   │   │       ├── BudgetPage.ets      # 预算管理页
 │   │   │       ├── EconomicCharts.ets  # 经济图表页
 │   │   │       ├── DataImport.ets      # 数据导入页
 │   │   │       ├── DataExport.ets      # 数据导出页
+│   │   │       ├── SettingsPage.ets    # 全局设置页
 │   │   │       └── Copyright.ets       # 开源信息页
 │   │   ├── module.json5                # HAP 模块配置
 │   │   └── resources/                  # 页面资源文件
