@@ -24,7 +24,8 @@ export struct PieChart {
     if (total <= 0 || this.slices.length === 0) {
       this.ctx.fillStyle = '#9aa4b2';
       this.ctx.font = '13px sans-serif';
-      this.ctx.fillText('暂无占比数据', 16, 26);
+      this.ctx.textAlign = 'center';
+      this.ctx.fillText('暂无占比数据', width / 2, height / 2 + 5);
       return;
     }
 
@@ -45,6 +46,22 @@ export struct PieChart {
       this.ctx.arc(cx, cy, radius, startAngle, endAngle);
       this.ctx.closePath();
       this.ctx.fill();
+
+      // 在切片上绘制百分比文字（仅 >= 5% 时显示，避免小切片文字重叠）
+      if (angle >= Math.PI * 2 * 0.05) {
+        const labelAngle = startAngle + angle / 2;
+        const labelRadius = radius * 0.7;
+        const lx = cx + Math.cos(labelAngle) * labelRadius;
+        const ly = cy + Math.sin(labelAngle) * labelRadius;
+        this.ctx.fillStyle = '#ffffff';
+        this.ctx.font = 'bold 20px sans-serif';
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'middle';
+        this.ctx.shadowColor = '#000000';
+        this.ctx.shadowBlur = 3;
+        this.ctx.fillText(`${(v / total * 100).toFixed(1)}%`, lx, ly);
+        this.ctx.shadowBlur = 0;
+      }
 
       startAngle = endAngle;
     });

@@ -38,6 +38,11 @@ struct SettingsPage {
       })
   }
 
+  private resetOnboarding() {
+    SettingManager.getInstance().set('onboarding_completed', false);
+    router.back();
+  }
+
   private handleCurrencyPicker() {
     const currencies: string[] = CurrencyManager.getCurrencies();
     let selectedIdx = 0;

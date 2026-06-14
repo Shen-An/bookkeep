@@ -109,30 +109,39 @@ struct EconomicCharts {
   @Builder
   private CategoryRows(items: CategoryRatio[], accent: ResourceColor) {
     Column() {
-      ForEach(items, (i: CategoryRatio) => {
-        Row() {
-          Column() {
-            Text(i.name)
-              .fontSize(14)
-              .fontColor('#1f2a3d')
-              .fontWeight(FontWeight.Medium)
-            Text(`${i.percent.toFixed(1)}%`)
-              .fontSize(11)
-              .fontColor('#8b96a8')
-              .margin({ top: 3 })
-          }
-          .alignItems(HorizontalAlign.Start)
-          .layoutWeight(1)
+      if (items.length === 0) {
+        Text('暂无数据')
+          .fontSize(13)
+          .fontColor('#9aa4b2')
+          .height(40)
+          .width('100%')
+          .textAlign(TextAlign.Center)
+      } else {
+        ForEach(items, (i: CategoryRatio) => {
+          Row() {
+            Column() {
+              Text(i.name)
+                .fontSize(14)
+                .fontColor('#1f2a3d')
+                .fontWeight(FontWeight.Medium)
+              Text(`${i.percent.toFixed(1)}%`)
+                .fontSize(11)
+                .fontColor('#8b96a8')
+                .margin({ top: 3 })
+            }
+            .alignItems(HorizontalAlign.Start)
+            .layoutWeight(1)
 
-          Text(CurrencyManager.formatWithSymbol(i.amount, this.currencySymbol))
-            .fontSize(14)
-            .fontColor(accent)
-            .fontWeight(FontWeight.Bold)
-        }
-        .width('100%')
-        .padding({ top: 12, bottom: 12 })
-        .border({ width: { bottom: 0.5 }, color: '#eef2f7' })
-      })
+            Text(CurrencyManager.formatWithSymbol(i.amount, this.currencySymbol))
+              .fontSize(14)
+              .fontColor(accent)
+              .fontWeight(FontWeight.Bold)
+          }
+          .width('100%')
+          .padding({ top: 12, bottom: 12 })
+          .border({ width: { bottom: 0.5 }, color: '#eef2f7' })
+        })
+      }
     }
     .width('100%')
   }
@@ -185,7 +194,8 @@ struct EconomicCharts {
         .onClick(() => {
           DatePickerDialog.show({
             start: new Date('2000-01-01'),
-            onAccept: (v) => {
+            selected: this.activeMonth,
+            onAccept: (v: DatePickerResult) => {
               this.activeMonth.setFullYear(v.year, v.month, 1);
               this.activeMonth.setHours(0, 0, 0, 0);
               this.reload();

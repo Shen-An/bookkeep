@@ -1,376 +1,452 @@
-{
-  "string": [
-    {
-      "name": "module_desc",
-      "value": "module description"
-    },
-    {
-      "name": "EntryAbility_desc",
-      "value": "description"
-    },
-    {
-      "name": "EntryAbility_label",
-      "value": "label"
-    },
-    {
-      "name": "app_title",
-      "value": "风风记账"
-    },
-    {
-      "name": "income",
-      "value": "Income"
-    },
-    {
-      "name": "balance",
-      "value": "Balance"
-    },
-    {
-      "name": "year",
-      "value": "Year"
-    },
-    {
-      "name": "month",
-      "value": "Month"
-    },
-    {
-      "name": "no_record",
-      "value": "No Billing Info"
-    },
-    {
-      "name": "cancel",
-      "value": "Cancel"
-    },
-    {
-      "name": "add_balance_remark_placeholder",
-      "value": "Tap to enter remarks"
-    },
-    {
-      "name": "add_balance_done",
-      "value": "Done"
-    },
-    {
-      "name": "ai_billing_placeholder",
-      "value": "One sentence: e.g. lunch 25 / salary 5000"
-    },
-    {
-      "name": "ai_billing_parse",
-      "value": "AI Parse"
-    },
-    {
-      "name": "ai_billing_parsing",
-      "value": "Parsing..."
-    },
-    {
-      "name": "day_of_week_monday",
-      "value": "Monday"
-    },
-    {
-      "name": "day_of_week_tuesday",
-      "value": "TuesDay"
-    },
-    {
-      "name": "day_of_week_wednesday",
-      "value": "Wednesday"
-    },
-    {
-      "name": "day_of_week_thursday",
-      "value": "Thursday"
-    },
-    {
-      "name": "day_of_week_friday",
-      "value": "Friday"
-    },
-    {
-      "name": "day_of_week_saturday",
-      "value": "Saturday"
-    },
-    {
-      "name": "day_of_week_sunday",
-      "value": "Sunday"
-    },
-    {
-      "name": "day",
-      "value": "Day"
-    },
-    {
-      "name": "ai_image_upload",
-      "value": "Upload Image"
-    },
-    {
-      "name": "ai_image_upload_hint",
-      "value": "Select WeChat screenshot to recognize"
-    },
-    {
-      "name": "ai_image_parsing",
-      "value": "Recognizing..."
-    },
-    {
-      "name": "ai_image_recognize",
-      "value": "截图识别"
-    },
-    {
-      "name": "data_export_title",
-      "value": "Export Data"
-    },
-    {
-      "name": "data_export_overview",
-      "value": "Data Overview"
-    },
-    {
-      "name": "data_export_total_records",
-      "value": "Total Records"
-    },
-    {
-      "name": "data_export_format",
-      "value": "Export Format"
-    },
-    {
-      "name": "data_export_csv_desc",
-      "value": "CSV file, compatible with Excel and other tools"
-    },
-    {
-      "name": "data_export_start",
-      "value": "Start Export"
-    },
-    {
-      "name": "data_export_exporting",
-      "value": "Exporting..."
-    },
-    {
-      "name": "data_export_success",
-      "value": "Export successful! File saved to app sandbox:"
-    },
-    {
-      "name": "data_export_failed",
-      "value": "Export failed: "
-    },
-    {
-      "name": "data_import_title",
-      "value": "Import Data"
-    },
-    {
-      "name": "data_import_guide",
-      "value": "Import Guide"
-    },
-    {
-      "name": "data_import_format_desc",
-      "value": "Supports importing bills from CSV or Excel files. Automatically recognizes 风风记账 standard format and WeChat Pay bill format."
-    },
-    {
-      "name": "data_import_support_csv",
-      "value": "Standard CSV bill format (.csv)"
-    },
-    {
-      "name": "data_import_support_xlsx",
-      "value": "Excel bill format (.xlsx)"
-    },
-    {
-      "name": "data_import_support_wechat",
-      "value": "WeChat Pay bill format (auto-detect)"
-    },
-    {
-      "name": "data_import_select_file",
-      "value": "Select File"
-    },
-    {
-      "name": "data_import_choose_file",
-      "value": "Choose File"
-    },
-    {
-      "name": "data_import_rechoose",
-      "value": "Re-select File"
-    },
-    {
-      "name": "data_import_start",
-      "value": "Start Import"
-    },
-    {
-      "name": "data_import_importing",
-      "value": "Importing..."
-    },
-    {
-      "name": "data_import_preview",
-      "value": "Preview (first 10 records)"
-    },
-    {
-      "name": "data_import_save_to_db",
-      "value": "Save to Database"
-    },
-    {
-      "name": "search_placeholder",
-      "value": "Search remark, category..."
-    },
-    {
-      "name": "search_filter",
-      "value": "Filter"
-    },
-    {
-      "name": "filter_all",
-      "value": "All"
-    },
-    {
-      "name": "filter_income",
-      "value": "Income"
-    },
-    {
-      "name": "filter_expense",
-      "value": "Expense"
-    },
-    {
-      "name": "filter_direction",
-      "value": "Direction"
-    },
-    {
-      "name": "filter_category",
-      "value": "Category"
-    },
-    {
-      "name": "filter_reset",
-      "value": "Reset"
-    },
-    {
-      "name": "settings",
-      "value": "Settings"
-    },
-    {
-      "name": "settings_general",
-      "value": "General"
-    },
-    {
-      "name": "settings_ai_config",
-      "value": "AI Config"
-    },
-    {
-      "name": "settings_data_management",
-      "value": "Data Management"
-    },
-    {
-      "name": "settings_about",
-      "value": "About"
-    },
-    {
-      "name": "settings_default_category",
-      "value": "Default Category"
-    },
-    {
-      "name": "settings_currency_unit",
-      "value": "Currency Unit"
-    },
-    {
-      "name": "settings_clear_data",
-      "value": "Clear All Data"
-    },
-    {
-      "name": "settings_clear_confirm",
-      "value": "Are you sure to clear all billing data?"
-    },
-    {
-      "name": "settings_cleared",
-      "value": "All data cleared"
-    },
-    {
-      "name": "settings_version",
-      "value": "Version"
-    },
-    {
-      "name": "settings_privacy_lock",
-      "value": "Privacy Lock"
-    },
-    {
-      "name": "settings_privacy_lock_desc",
-      "value": "Set PIN to protect your billing data"
-    },
-    {
-      "name": "settings_budget",
-      "value": "Budget"
-    },
-    {
-      "name": "settings_budget_desc",
-      "value": "Set monthly spending limits"
-    },
-    {
-      "name": "pin_set_title",
-      "value": "Set PIN Code"
-    },
-    {
-      "name": "pin_change_title",
-      "value": "Change PIN Code"
-    },
-    {
-      "name": "pin_verify_title",
-      "value": "Enter PIN to Unlock"
-    },
-    {
-      "name": "pin_enter",
-      "value": "Enter PIN"
-    },
-    {
-      "name": "pin_confirm",
-      "value": "Confirm PIN"
-    },
-    {
-      "name": "pin_mismatch",
-      "value": "PIN mismatch, please re-enter"
-    },
-    {
-      "name": "pin_wrong",
-      "value": "Wrong PIN"
-    },
-    {
-      "name": "pin_remove",
-      "value": "Remove PIN"
-    },
-    {
-      "name": "budget_title",
-      "value": "Budget Settings"
-    },
-    {
-      "name": "budget_monthly_total",
-      "value": "Monthly Total Budget"
-    },
-    {
-      "name": "budget_category_title",
-      "value": "Category Budgets"
-    },
-    {
-      "name": "budget_summary_today",
-      "value": "Today's Summary"
-    },
-    {
-      "name": "budget_remaining",
-      "value": "Remaining"
-    },
-    {
-      "name": "budget_exceeded",
-      "value": "Budget exceeded!"
-    },
-    {
-      "name": "budget_warning",
-      "value": "Budget warning"
-    },
-    {
-      "name": "spending_today",
-      "value": "Today's Spending"
-    },
-    {
-      "name": "spending_today_income",
-      "value": "Income"
-    },
-    {
-      "name": "spending_today_expense",
-      "value": "Expense"
-    },
-    {
-      "name": "spending_net",
-      "value": "Net"
-    },
-    {
-      "name": "spending_vs_yesterday",
-      "value": "vs Yesterday"
-    },
-    {
-      "name": "spending_vs_daily_avg",
-      "value": "vs Daily Avg"
-    }
-  ]
+﻿{
+    "string":  [
+                   {
+                       "name":  "module_desc",
+                       "value":  "module description"
+                   },
+                   {
+                       "name":  "EntryAbility_desc",
+                       "value":  "description"
+                   },
+                   {
+                       "name":  "EntryAbility_label",
+                       "value":  "label"
+                   },
+                   {
+                       "name":  "app_title",
+                       "value":  "椋庨璁拌处"
+                   },
+                   {
+                       "name":  "income",
+                       "value":  "Income"
+                   },
+                   {
+                       "name":  "balance",
+                       "value":  "Balance"
+                   },
+                   {
+                       "name":  "year",
+                       "value":  "Year"
+                   },
+                   {
+                       "name":  "month",
+                       "value":  "Month"
+                   },
+                   {
+                       "name":  "no_record",
+                       "value":  "No Billing Info"
+                   },
+                   {
+                       "name":  "cancel",
+                       "value":  "Cancel"
+                   },
+                   {
+                       "name":  "add_balance_remark_placeholder",
+                       "value":  "Tap to enter remarks"
+                   },
+                   {
+                       "name":  "add_balance_done",
+                       "value":  "Done"
+                   },
+                   {
+                       "name":  "ai_billing_placeholder",
+                       "value":  "One sentence: e.g. lunch 25 / salary 5000"
+                   },
+                   {
+                       "name":  "ai_billing_parse",
+                       "value":  "AI Parse"
+                   },
+                   {
+                       "name":  "ai_billing_parsing",
+                       "value":  "Parsing..."
+                   },
+                   {
+                       "name":  "day_of_week_monday",
+                       "value":  "Monday"
+                   },
+                   {
+                       "name":  "day_of_week_tuesday",
+                       "value":  "TuesDay"
+                   },
+                   {
+                       "name":  "day_of_week_wednesday",
+                       "value":  "Wednesday"
+                   },
+                   {
+                       "name":  "day_of_week_thursday",
+                       "value":  "Thursday"
+                   },
+                   {
+                       "name":  "day_of_week_friday",
+                       "value":  "Friday"
+                   },
+                   {
+                       "name":  "day_of_week_saturday",
+                       "value":  "Saturday"
+                   },
+                   {
+                       "name":  "day_of_week_sunday",
+                       "value":  "Sunday"
+                   },
+                   {
+                       "name":  "day",
+                       "value":  "Day"
+                   },
+                   {
+                       "name":  "ai_image_upload",
+                       "value":  "Upload Image"
+                   },
+                   {
+                       "name":  "ai_image_upload_hint",
+                       "value":  "Select WeChat screenshot to recognize"
+                   },
+                   {
+                       "name":  "ai_image_parsing",
+                       "value":  "Recognizing..."
+                   },
+                   {
+                       "name":  "ai_image_recognize",
+                       "value":  "鎴浘璇嗗埆"
+                   },
+                   {
+                       "name":  "data_export_title",
+                       "value":  "Export Data"
+                   },
+                   {
+                       "name":  "data_export_overview",
+                       "value":  "Data Overview"
+                   },
+                   {
+                       "name":  "data_export_total_records",
+                       "value":  "Total Records"
+                   },
+                   {
+                       "name":  "data_export_format",
+                       "value":  "Export Format"
+                   },
+                   {
+                       "name":  "data_export_csv_desc",
+                       "value":  "CSV file, compatible with Excel and other tools"
+                   },
+                   {
+                       "name":  "data_export_start",
+                       "value":  "Start Export"
+                   },
+                   {
+                       "name":  "data_export_exporting",
+                       "value":  "Exporting..."
+                   },
+                   {
+                       "name":  "data_export_success",
+                       "value":  "Export successful! File saved to app sandbox:"
+                   },
+                   {
+                       "name":  "data_export_failed",
+                       "value":  "Export failed: "
+                   },
+                   {
+                       "name":  "data_import_title",
+                       "value":  "Import Data"
+                   },
+                   {
+                       "name":  "data_import_guide",
+                       "value":  "Import Guide"
+                   },
+                   {
+                       "name":  "data_import_format_desc",
+                       "value":  "Supports importing bills from CSV or Excel files. Automatically recognizes 椋庨璁拌处 standard format and WeChat Pay bill format."
+                   },
+                   {
+                       "name":  "data_import_support_csv",
+                       "value":  "Standard CSV bill format (.csv)"
+                   },
+                   {
+                       "name":  "data_import_support_xlsx",
+                       "value":  "Excel bill format (.xlsx)"
+                   },
+                   {
+                       "name":  "data_import_support_wechat",
+                       "value":  "WeChat Pay bill format (auto-detect)"
+                   },
+                   {
+                       "name":  "data_import_select_file",
+                       "value":  "Select File"
+                   },
+                   {
+                       "name":  "data_import_choose_file",
+                       "value":  "Choose File"
+                   },
+                   {
+                       "name":  "data_import_rechoose",
+                       "value":  "Re-select File"
+                   },
+                   {
+                       "name":  "data_import_start",
+                       "value":  "Start Import"
+                   },
+                   {
+                       "name":  "data_import_importing",
+                       "value":  "Importing..."
+                   },
+                   {
+                       "name":  "data_import_preview",
+                       "value":  "Preview (first 10 records)"
+                   },
+                   {
+                       "name":  "data_import_save_to_db",
+                       "value":  "Save to Database"
+                   },
+                   {
+                       "name":  "search_placeholder",
+                       "value":  "Search remark, category..."
+                   },
+                   {
+                       "name":  "search_filter",
+                       "value":  "Filter"
+                   },
+                   {
+                       "name":  "filter_all",
+                       "value":  "All"
+                   },
+                   {
+                       "name":  "filter_income",
+                       "value":  "Income"
+                   },
+                   {
+                       "name":  "filter_expense",
+                       "value":  "Expense"
+                   },
+                   {
+                       "name":  "filter_direction",
+                       "value":  "Direction"
+                   },
+                   {
+                       "name":  "filter_category",
+                       "value":  "Category"
+                   },
+                   {
+                       "name":  "filter_reset",
+                       "value":  "Reset"
+                   },
+                   {
+                       "name":  "settings",
+                       "value":  "Settings"
+                   },
+                   {
+                       "name":  "settings_general",
+                       "value":  "General"
+                   },
+                   {
+                       "name":  "settings_ai_config",
+                       "value":  "AI Config"
+                   },
+                   {
+                       "name":  "settings_data_management",
+                       "value":  "Data Management"
+                   },
+                   {
+                       "name":  "settings_about",
+                       "value":  "About"
+                   },
+                   {
+                       "name":  "settings_default_category",
+                       "value":  "Default Category"
+                   },
+                   {
+                       "name":  "settings_currency_unit",
+                       "value":  "Currency Unit"
+                   },
+                   {
+                       "name":  "settings_clear_data",
+                       "value":  "Clear All Data"
+                   },
+                   {
+                       "name":  "settings_clear_confirm",
+                       "value":  "Are you sure to clear all billing data?"
+                   },
+                   {
+                       "name":  "settings_cleared",
+                       "value":  "All data cleared"
+                   },
+                   {
+                       "name":  "settings_version",
+                       "value":  "Version"
+                   },
+                   {
+                       "name":  "settings_privacy_lock",
+                       "value":  "Privacy Lock"
+                   },
+                   {
+                       "name":  "settings_privacy_lock_desc",
+                       "value":  "Set PIN to protect your billing data"
+                   },
+                   {
+                       "name":  "settings_budget",
+                       "value":  "Budget"
+                   },
+                   {
+                       "name":  "settings_budget_desc",
+                       "value":  "Set monthly spending limits"
+                   },
+                   {
+                       "name":  "pin_set_title",
+                       "value":  "Set PIN Code"
+                   },
+                   {
+                       "name":  "pin_change_title",
+                       "value":  "Change PIN Code"
+                   },
+                   {
+                       "name":  "pin_verify_title",
+                       "value":  "Enter PIN to Unlock"
+                   },
+                   {
+                       "name":  "pin_enter",
+                       "value":  "Enter PIN"
+                   },
+                   {
+                       "name":  "pin_confirm",
+                       "value":  "Confirm PIN"
+                   },
+                   {
+                       "name":  "pin_mismatch",
+                       "value":  "PIN mismatch, please re-enter"
+                   },
+                   {
+                       "name":  "pin_wrong",
+                       "value":  "Wrong PIN"
+                   },
+                   {
+                       "name":  "pin_remove",
+                       "value":  "Remove PIN"
+                   },
+                   {
+                       "name":  "budget_title",
+                       "value":  "Budget Settings"
+                   },
+                   {
+                       "name":  "budget_monthly_total",
+                       "value":  "Monthly Total Budget"
+                   },
+                   {
+                       "name":  "budget_category_title",
+                       "value":  "Category Budgets"
+                   },
+                   {
+                       "name":  "budget_summary_today",
+                       "value":  "Today\u0027s Summary"
+                   },
+                   {
+                       "name":  "budget_remaining",
+                       "value":  "Remaining"
+                   },
+                   {
+                       "name":  "budget_exceeded",
+                       "value":  "Budget exceeded!"
+                   },
+                   {
+                       "name":  "budget_warning",
+                       "value":  "Budget warning"
+                   },
+                   {
+                       "name":  "spending_today",
+                       "value":  "Today\u0027s Spending"
+                   },
+                   {
+                       "name":  "spending_today_income",
+                       "value":  "Income"
+                   },
+                   {
+                       "name":  "spending_today_expense",
+                       "value":  "Expense"
+                   },
+                   {
+                       "name":  "spending_net",
+                       "value":  "Net"
+                   },
+                   {
+                       "name":  "spending_vs_yesterday",
+                       "value":  "vs Yesterday"
+                   },
+                   {
+                       "name":  "spending_vs_daily_avg",
+                       "value":  "vs Daily Avg"
+                   },
+                   {
+                       "value":  "Quick Add",
+                       "name":  "quick_add_title"
+                   },
+                   {
+                       "value":  "Expense",
+                       "name":  "quick_add_expense"
+                   },
+                   {
+                       "value":  "Income",
+                       "name":  "quick_add_income"
+                   },
+                   {
+                       "value":  "Amount",
+                       "name":  "quick_add_amount_placeholder"
+                   },
+                   {
+                       "value":  "Save",
+                       "name":  "quick_add_save"
+                   },
+                   {
+                       "value":  "Cancel",
+                       "name":  "quick_add_cancel"
+                   },
+                   {
+                       "value":  "Please enter an amount",
+                       "name":  "quick_add_amount_required"
+                   },
+                   {
+                       "value":  "Saved",
+                       "name":  "quick_add_saved"
+                   },
+                   {
+                       "value":  "Skip",
+                       "name":  "onboarding_skip"
+                   },
+                   {
+                       "value":  "Next",
+                       "name":  "onboarding_next"
+                   },
+                   {
+                       "value":  "Get Started",
+                       "name":  "onboarding_get_started"
+                   },
+                   {
+                       "value":  "Welcome to Oh-Bill",
+                       "name":  "onboarding_welcome_title"
+                   },
+                   {
+                       "value":  "A smart personal billing app with AI-powered one-sentence recording, image recognition, and budget management.",
+                       "name":  "onboarding_welcome_desc"
+                   },
+                   {
+                       "value":  "Quick Add",
+                       "name":  "onboarding_quick_title"
+                   },
+                   {
+                       "value":  "Tap the floating button on the home page to quickly record expenses or income with just a few taps.",
+                       "name":  "onboarding_quick_desc"
+                   },
+                   {
+                       "value":  "AI-Powered",
+                       "name":  "onboarding_ai_title"
+                   },
+                   {
+                       "value":  "Just type a sentence like lunch 25 and the AI will automatically detect the amount, category, and date. You can also use image recognition for receipts.",
+                       "name":  "onboarding_ai_desc"
+                   },
+                   {
+                       "value":  "Budget Management",
+                       "name":  "onboarding_budget_title"
+                   },
+                   {
+                       "value":  "Set monthly and category budgets to track your spending. Get alerts when you are close to exceeding your limits.",
+                       "name":  "onboarding_budget_desc"
+                   }
+               ]
 }

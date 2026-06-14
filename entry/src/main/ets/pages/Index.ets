@@ -9,6 +9,8 @@ import { BalanceViewer } from '../components/BalanceViewer';
 import { BalanceList } from '../components/BalanceList';
 import { PageEntries } from '../components/pageEntries';
 import { LockScreen } from '../components/LockScreen';
+import { QuickAddFab } from '../components/QuickAddFab';
+import { OnboardingGuide } from '../components/OnboardingGuide';
 import { BillingDirection, BillingInfo, BillingInfoUtils, DBManager, Logger, CurrencyManager, SettingManager } from '@ohos/common';
 import router from '@ohos.router';
 import window from '@ohos.window';
@@ -42,6 +44,9 @@ struct Index {
   @State availableTypes: string[] = [];
   @State currencySymbol: string = '¥';
   @State currencyRate: number = 1.0;
+
+  // 新手引导状态
+  @State showOnboarding: boolean = false;
 
   // PIN 锁状态
   @State pinLocked: boolean = false;
@@ -243,8 +248,34 @@ struct Index {
   aboutToAppear() {
     this.reloadBillingInfo();
     this.loadCurrency();
+    this.loadCurrencyAndCheckOnboarding();
     this.checkPinLock();
     this.setupForegroundListener();
+  }
+
+  private loadCurrencyAndCheckOnboarding() {
+    CurrencyManager.getInstance().init().then(() => {
+      this.currencySymbol = CurrencyManager.getInstance().getSymbol();
+      this.checkOnboarding();
+    });
+  }
+
+  private checkOnboarding() {
+    SettingManager.getInstance().get<boolean>('onboarding_completed', false).then((completed: boolean) => {
+      if (!completed) {
+        this.showOnboarding = true;
+      }
+    }).catch(() => {
+      this.showOnboarding = true;
+    });
+  }
+
+  private handleOnboardingComplete() {
+    this.showOnboarding = false;
+  }
+
+  private handleQuickAddAdded() {
+    this.reloadBillingInfo();
   }
 
   private setupForegroundListener() {
@@ -618,6 +649,11 @@ struct Index {
       .width('100%')
       .backgroundColor($r('app.color.page_background'))
 
+      // 快捷记账浮动按钮
+      QuickAddFab({
+        onSaved: () => { this.reloadBillingInfo(); }
+      })
+
       // PIN 锁覆盖层
       if (this.pinLocked) {
         LockScreen({
@@ -629,6 +665,13 @@ struct Index {
             this.pinSetupMode = false;
             this.sessionVerified = true;
           }
+        })
+      }
+
+      // 新手引导覆盖层
+      if (this.showOnboarding) {
+        OnboardingGuide({
+          showGuide: $showOnboarding
         })
       }
     }
