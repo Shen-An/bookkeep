@@ -6,35 +6,31 @@
     },
     {
       "name": "main_theme_blue",
-      "value": "#FF1FA1FF"
+      "value": "#FF3B82F6"
     },
     {
       "name": "main_theme_dark",
-      "value": "#FF0D6EFD"
+      "value": "#FF2563EB"
     },
     {
       "name": "main_theme_gradient_start",
-      "value": "#FF1FA1FF"
+      "value": "#FF3B82F6"
     },
     {
       "name": "main_theme_gradient_end",
-      "value": "#FF0D6EFD"
+      "value": "#FF2563EB"
     },
     {
-      "name": "text_gray",
-      "value": "#4A4A4A"
+      "name": "text_primary",
+      "value": "#FF0F172A"
     },
     {
-      "name": "main_theme_shadow",
-      "value": "#FF95A4AB"
+      "name": "text_secondary",
+      "value": "#FF475569"
     },
     {
-      "name": "text_white",
-      "value": "#FF2ED573"
-    },
-    {
-      "name": "active",
-      "value": "#2CC4E1FF"
+      "name": "text_tertiary",
+      "value": "#FF94A3B8"
     },
     {
       "name": "card_background",
@@ -42,19 +38,31 @@
     },
     {
       "name": "page_background",
-      "value": "#F5F7FA"
+      "value": "#FFF8FAFC"
     },
     {
       "name": "expense_red",
-      "value": "#FFFF4757"
+      "value": "#FFEF4444"
     },
     {
       "name": "income_green",
-      "value": "#FF2ED573"
+      "value": "#FF22C55E"
+    },
+    {
+      "name": "warning_amber",
+      "value": "#FFF59E0B"
     },
     {
       "name": "divider_color",
-      "value": "#FFF0F0F0"
+      "value": "#FFF1F5F9"
+    },
+    {
+      "name": "dark_page_bg",
+      "value": "#FF0F172A"
+    },
+    {
+      "name": "dark_card_bg",
+      "value": "#FF1E293B"
     }
   ]
 }

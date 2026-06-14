@@ -98,7 +98,7 @@ struct BillInfoPage {
                 .fontWeight(FontWeight.Bold)
               Text('你的全年财务概览')
                 .fontSize(12)
-                .fontColor('#d8efff')
+                .fontColor('#BFDBFE')
                 .margin({ top: 3 })
             }
             .alignItems(HorizontalAlign.Start)
@@ -109,7 +109,7 @@ struct BillInfoPage {
               Row() {
                 Text(this.yearText())
                   .fontSize(14)
-                  .fontColor('#126dff')
+                  .fontColor('#3B82F6')
                   .fontWeight(FontWeight.Bold)
                 Image($r("app.media.ic_public_extract_list_dark"))
                   .width(10)
@@ -141,8 +141,7 @@ struct BillInfoPage {
           .linearGradient({
             angle: 145,
             colors: [
-              ['#FF2CC4E1', 0],
-              [$r('app.color.main_theme_gradient_start'), 0.5],
+              [$r('app.color.main_theme_gradient_start'), 0],
               [$r('app.color.main_theme_gradient_end'), 1]
             ]
           })
@@ -152,7 +151,7 @@ struct BillInfoPage {
               Column() {
                 Text('年结余')
                   .fontSize(13)
-                  .fontColor('#d7edff')
+                  .fontColor('#BFDBFE')
                 Text(CurrencyManager.formatWithSymbol(this.yearlyLeft, this.currencySymbol))
                   .fontSize(36)
                   .fontColor(Color.White)
@@ -165,7 +164,7 @@ struct BillInfoPage {
                   Column() {
                     Text('全年收入')
                       .fontSize(12)
-                      .fontColor('#6a7c94')
+                      .fontColor($r('app.color.text_secondary'))
                     Text(CurrencyManager.formatWithSymbol(this.yearlyIncome, this.currencySymbol))
                       .fontSize(18)
                       .fontColor($r('app.color.income_green'))
@@ -175,14 +174,14 @@ struct BillInfoPage {
                   .alignItems(HorizontalAlign.Start)
                   .layoutWeight(1)
                   .padding(14)
-                  .backgroundColor('#f6fffb')
+                  .backgroundColor('#F0FDF4')
                   .borderRadius(18)
                   .margin({ right: 8 })
 
                   Column() {
                     Text('全年支出')
                       .fontSize(12)
-                      .fontColor('#6a7c94')
+                      .fontColor($r('app.color.text_secondary'))
                     Text(CurrencyManager.formatWithSymbol(this.yearlyOutBill, this.currencySymbol))
                       .fontSize(18)
                       .fontColor($r('app.color.expense_red'))
@@ -192,7 +191,7 @@ struct BillInfoPage {
                   .alignItems(HorizontalAlign.Start)
                   .layoutWeight(1)
                   .padding(14)
-                  .backgroundColor('#fff8f8')
+                  .backgroundColor('#FEF2F2')
                   .borderRadius(18)
                   .margin({ left: 8 })
                 }
@@ -214,12 +213,12 @@ struct BillInfoPage {
               Row() {
                 Text('月度表现')
                   .fontSize(20)
-                  .fontColor('#1f2a3d')
+                  .fontColor($r('app.color.text_primary'))
                   .fontWeight(FontWeight.Bold)
                 Blank()
                 Text('12个月')
                   .fontSize(12)
-                  .fontColor('#8b96a8')
+                  .fontColor($r('app.color.text_tertiary'))
               }
               .width('100%')
               .margin({ top: 24, bottom: 12 })
@@ -230,23 +229,23 @@ struct BillInfoPage {
                     Column() {
                       Text(`${index + 1}`)
                         .fontSize(24)
-                        .fontColor('#126dff')
+                        .fontColor('#3B82F6')
                         .fontWeight(FontWeight.Bold)
                       Text('月')
                         .fontSize(11)
-                        .fontColor('#8b96a8')
+                        .fontColor($r('app.color.text_tertiary'))
                     }
                     .alignItems(HorizontalAlign.Center)
                     .width(54)
                     .height(58)
-                    .backgroundColor('#eef6ff')
+                    .backgroundColor('#EFF6FF')
                     .borderRadius(18)
                     .margin({ right: 14 })
 
                     Column() {
                       Text(this.monthLeft(monthlyInfo) >= 0 ? '本月结余为正' : '本月支出较高')
                         .fontSize(15)
-                        .fontColor('#1f2a3d')
+                        .fontColor($r('app.color.text_primary'))
                         .fontWeight(FontWeight.Bold)
                       Row() {
                         Text(`收 ${CurrencyManager.formatWithSymbol(BillingInfoUtils.calculateTotalIncome(monthlyInfo),
@@ -281,7 +280,7 @@ struct BillInfoPage {
                   .backgroundColor(Color.White)
                   .borderRadius(22)
                   .margin({ bottom: 10 })
-                  .shadow({ radius: 12, color: '#10000000', offsetY: 5 })
+                  .shadow({ radius: 12, color: '#12000000', offsetY: 4 })
                 })
               }
               .width('100%')
@@ -294,17 +293,17 @@ struct BillInfoPage {
               bottom: 28
             })
             .width('100%')
-            .backgroundColor('#f3f7fb')
+            .backgroundColor($r('app.color.page_background'))
           }
           .width('100%')
-          .backgroundColor('#f3f7fb')
+          .backgroundColor($r('app.color.page_background'))
         }
         .width('100%')
-        .backgroundColor('#f3f7fb')
+        .backgroundColor($r('app.color.page_background'))
       }
       .height('100%')
       .width('100%')
-      .backgroundColor('#f3f7fb')
+      .backgroundColor($r('app.color.page_background'))
     }
   }
 }

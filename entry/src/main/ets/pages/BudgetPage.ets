@@ -160,7 +160,7 @@ struct BudgetPage {
               .fontWeight(FontWeight.Bold)
             Text('设定月度支出限额')
               .fontSize(12)
-              .fontColor('#d8efff')
+              .fontColor('#BFDBFE')
               .margin({ top: 3 })
           }
           .alignItems(HorizontalAlign.Start)
@@ -172,8 +172,7 @@ struct BudgetPage {
         .linearGradient({
           angle: 145,
           colors: [
-            ['#FF2CC4E1', 0],
-            [$r('app.color.main_theme_gradient_start'), 0.5],
+            [$r('app.color.main_theme_gradient_start'), 0],
             [$r('app.color.main_theme_gradient_end'), 1]
           ]
         })
@@ -184,12 +183,12 @@ struct BudgetPage {
               Row() {
                 Text('月度总预算')
                   .fontSize(16)
-                  .fontColor('#1f2a3d')
+                  .fontColor($r('app.color.text_primary'))
                   .fontWeight(FontWeight.Bold)
                 Blank()
                 Text(`¥${this.monthlyTotal.toFixed(0)}`)
                   .fontSize(24)
-                  .fontColor('#126dff')
+                  .fontColor('#3B82F6')
                   .fontWeight(FontWeight.Bold)
               }
               .width('100%')
@@ -200,7 +199,7 @@ struct BudgetPage {
                     Row()
                       .width(`${this.getBudgetProgress()}%`)
                       .height(10)
-                      .backgroundColor(this.currentMonthExpense > this.monthlyTotal ? '#ff4757' : '#1FA1FF')
+                      .backgroundColor(this.currentMonthExpense > this.monthlyTotal ? '#EF4444' : '#3B82F6')
                       .borderRadius(5)
                   }
                   .width('100%')
@@ -214,17 +213,17 @@ struct BudgetPage {
                 Row() {
                   Text(`已支出 ¥${this.currentMonthExpense.toFixed(2)}`)
                     .fontSize(12)
-                    .fontColor('#666666')
+                    .fontColor($r('app.color.text_secondary'))
                   Blank()
                   if (this.currentMonthExpense > this.monthlyTotal) {
                     Text(`超支 ¥${(this.currentMonthExpense - this.monthlyTotal).toFixed(2)}`)
                       .fontSize(12)
-                      .fontColor('#ff4757')
+                      .fontColor($r('app.color.expense_red'))
                       .fontWeight(FontWeight.Bold)
                   } else {
                     Text(`剩余 ¥${this.getRemaining(this.monthlyTotal, this.currentMonthExpense).toFixed(2)}`)
                       .fontSize(12)
-                      .fontColor('#2ed573')
+                      .fontColor($r('app.color.income_green'))
                   }
                 }
                 .width('100%')
@@ -235,10 +234,10 @@ struct BudgetPage {
                 Button({ type: ButtonType.Normal }) {
                   Text(this.monthlyTotal > 0 ? '修改预算' : '设置预算')
                     .fontSize(13)
-                    .fontColor('#1FA1FF')
+                    .fontColor('#3B82F6')
                 }
                 .height(32)
-                .backgroundColor('#eef6ff')
+                .backgroundColor('#EFF6FF')
                 .borderRadius(16)
                 .padding({ left: 16, right: 16 })
                 .margin({ right: 8 })
@@ -259,10 +258,10 @@ struct BudgetPage {
                   Button({ type: ButtonType.Normal }) {
                     Text('清除')
                       .fontSize(13)
-                      .fontColor('#ff4757')
+                      .fontColor($r('app.color.expense_red'))
                   }
                   .height(32)
-                  .backgroundColor('#fff4f5')
+                  .backgroundColor('#FEF2F2')
                   .borderRadius(16)
                   .padding({ left: 16, right: 16 })
                   .onClick(() => {
@@ -285,16 +284,16 @@ struct BudgetPage {
               Row() {
                 Text('分类预算')
                   .fontSize(16)
-                  .fontColor('#1f2a3d')
+                  .fontColor($r('app.color.text_primary'))
                   .fontWeight(FontWeight.Bold)
                 Blank()
                 Button({ type: ButtonType.Normal }) {
                   Text('+ 添加')
                     .fontSize(13)
-                    .fontColor('#1FA1FF')
+                    .fontColor('#3B82F6')
                 }
                 .height(32)
-                .backgroundColor('#eef6ff')
+                .backgroundColor('#EFF6FF')
                 .borderRadius(16)
                 .padding({ left: 14, right: 14 })
                 .onClick(() => {
@@ -309,7 +308,7 @@ struct BudgetPage {
                 Column() {
                   Text('暂无分类预算')
                     .fontSize(13)
-                    .fontColor('#999999')
+                    .fontColor($r('app.color.text_tertiary'))
                     .margin({ top: 10, bottom: 10 })
                 }
                 .width('100%')
@@ -320,12 +319,12 @@ struct BudgetPage {
                   Row() {
                     Text(cat.name)
                       .fontSize(14)
-                      .fontColor('#1f2a3d')
+                      .fontColor($r('app.color.text_primary'))
                       .fontWeight(FontWeight.Medium)
                     Blank()
                     Text(`¥${cat.limit.toFixed(0)}`)
                       .fontSize(14)
-                      .fontColor('#126dff')
+                      .fontColor('#3B82F6')
                       .fontWeight(FontWeight.Bold)
                   }
                   .width('100%')
@@ -335,8 +334,8 @@ struct BudgetPage {
                       Row()
                         .width(`${this.getProgressPercent(cat.limit, cat.spent)}%`)
                         .height(8)
-                        .backgroundColor(this.getProgressPercent(cat.limit, cat.spent) >= 100 ? '#ff4757' :
-                          this.getProgressPercent(cat.limit, cat.spent) >= 80 ? '#ffa502' : '#2ed573')
+                        .backgroundColor(this.getProgressPercent(cat.limit, cat.spent) >= 100 ? '#EF4444' :
+                          this.getProgressPercent(cat.limit, cat.spent) >= 80 ? '#F59E0B' : '#22C55E')
                         .borderRadius(4)
                     }
                     .width('100%')
@@ -350,17 +349,17 @@ struct BudgetPage {
                   Row() {
                     Text(`已支出 ¥${cat.spent.toFixed(2)}`)
                       .fontSize(11)
-                      .fontColor('#999999')
+                      .fontColor($r('app.color.text_tertiary'))
                     Blank()
                     if (cat.spent > cat.limit) {
                       Text('超支!')
                         .fontSize(11)
-                        .fontColor('#ff4757')
+                        .fontColor($r('app.color.expense_red'))
                         .fontWeight(FontWeight.Bold)
                     } else {
                       Text(`剩余 ¥${this.getRemaining(cat.limit, cat.spent).toFixed(2)}`)
                         .fontSize(11)
-                        .fontColor('#2ed573')
+                        .fontColor($r('app.color.income_green'))
                     }
                   }
                   .width('100%')
@@ -369,10 +368,10 @@ struct BudgetPage {
                   Button({ type: ButtonType.Normal }) {
                     Text('删除')
                       .fontSize(11)
-                      .fontColor('#ff4757')
+                      .fontColor($r('app.color.expense_red'))
                   }
                   .height(24)
-                  .backgroundColor('#fff4f5')
+                  .backgroundColor('#FEF2F2')
                   .borderRadius(12)
                   .padding({ left: 10, right: 10 })
                   .margin({ top: 6 })
@@ -389,7 +388,7 @@ struct BudgetPage {
                 }
                 .width('100%')
                 .padding(14)
-                .backgroundColor('#f8faff')
+                .backgroundColor('#FAFAFA')
                 .borderRadius(18)
                 .margin({ top: 10 })
               })
@@ -409,14 +408,14 @@ struct BudgetPage {
       }
       .height('100%')
       .width('100%')
-      .backgroundColor('#f3f7fb')
+      .backgroundColor($r('app.color.page_background'))
 
       if (this.showAddCategory) {
         Column() {
           Column() {
             Text('添加分类预算')
               .fontSize(18)
-              .fontColor('#1f2a3d')
+              .fontColor($r('app.color.text_primary'))
               .fontWeight(FontWeight.Bold)
 
             TextInput({ placeholder: '分类名称 (如 餐饮)', text: this.editCategoryName })
@@ -441,7 +440,7 @@ struct BudgetPage {
               Button({ type: ButtonType.Normal }) {
                 Text('取消')
                   .fontSize(14)
-                  .fontColor('#666666')
+                  .fontColor($r('app.color.text_secondary'))
               }
               .height(40)
               .layoutWeight(1)
@@ -459,7 +458,7 @@ struct BudgetPage {
               }
               .height(40)
               .layoutWeight(1)
-              .backgroundColor('#1FA1FF')
+              .backgroundColor('#3B82F6')
               .borderRadius(20)
               .margin({ left: 8 })
               .onClick(() => {

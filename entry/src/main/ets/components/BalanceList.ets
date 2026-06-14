@@ -90,21 +90,21 @@ export struct BalanceList {
         Column() {
           Text('账单明细')
             .fontSize(20)
-            .fontColor('#1f2a3d')
+            .fontColor($r('app.color.text_primary'))
             .fontWeight(FontWeight.Bold)
           Text(`${StringUtils.formatDate(this.selectedDate, 'M月')} · 按日期分组`)
             .fontSize(12)
-            .fontColor('#8b96a8')
+            .fontColor($r('app.color.text_tertiary'))
             .margin({ top: 3 })
         }
         .alignItems(HorizontalAlign.Start)
         Blank()
         Text(`${this.getFilteredData().length} 笔`)
           .fontSize(13)
-          .fontColor('#126dff')
+          .fontColor('#3B82F6')
           .fontWeight(FontWeight.Medium)
           .padding({ left: 12, right: 12, top: 6, bottom: 6 })
-          .backgroundColor('#eef6ff')
+          .backgroundColor('#EFF6FF')
           .borderRadius(16)
       }
       .width('100%')
@@ -117,12 +117,12 @@ export struct BalanceList {
             .height(72)
             .opacity(0.18)
           Text($r("app.string.no_record"))
-            .fontColor('#5f6c80')
+            .fontColor($r('app.color.text_secondary'))
             .fontSize(18)
             .fontWeight(FontWeight.Bold)
             .margin({ top: 18 })
           Text('今天还没有记录，去添加第一笔吧')
-            .fontColor('#a4adba')
+            .fontColor($r('app.color.text_tertiary'))
             .fontSize(13)
             .margin({ top: 8 })
         }
@@ -131,7 +131,7 @@ export struct BalanceList {
         .height(280)
         .width('100%')
         .backgroundColor('#ffffff')
-        .borderRadius(28)
+        .borderRadius(20)
         .margin({ left: 16, right: 16, top: 8, bottom: 20 })
       } else {
         Column() {
@@ -141,16 +141,16 @@ export struct BalanceList {
                   Row() {
                     Text(`${day + 1}`)
                       .fontSize(22)
-                      .fontColor('#1f2a3d')
+                      .fontColor($r('app.color.text_primary'))
                       .fontWeight(FontWeight.Bold)
                     Text(StringUtils.formatDate(this.selectedDate, 'M月'))
                       .fontSize(12)
-                      .fontColor('#8b96a8')
+                      .fontColor($r('app.color.text_tertiary'))
                       .margin({ left: 6, top: 6 })
                     Blank()
                     Text(`共 ${balances.length} 笔`)
                       .fontSize(12)
-                      .fontColor('#8b96a8')
+                      .fontColor($r('app.color.text_tertiary'))
                   }
                   .width('100%')
                   .padding({ left: 4, right: 4, bottom: 10 })
@@ -165,26 +165,26 @@ export struct BalanceList {
                           .height(46)
                           .borderRadius(16)
                           .padding(11)
-                          .backgroundColor(balance.direction == BillingDirection.IN ? '#eafff4' : '#fff0f1')
+                          .backgroundColor(balance.direction == BillingDirection.IN ? '#F0FDF4' : '#FEF2F2')
                           .margin({ right: 12 })
 
                         Column() {
                           Text(balance.remark && balance.remark.length > 0 ? balance.remark : balance.type.name)
                             .fontSize(16)
-                            .fontColor('#1f2a3d')
+                            .fontColor($r('app.color.text_primary'))
                             .fontWeight(FontWeight.Bold)
                             .maxLines(1)
                             .textOverflow({ overflow: TextOverflow.Ellipsis })
                           Row() {
                             Text(balance.type.name)
                               .fontSize(11)
-                              .fontColor('#7b8798')
+                              .fontColor($r('app.color.text_tertiary'))
                             Text(' · ')
                               .fontSize(11)
-                              .fontColor('#b7c0ce')
+                              .fontColor($r('app.color.divider_color'))
                             Text(StringUtils.formatDate(balance.timestamp, 'h:m:s'))
                               .fontSize(11)
-                              .fontColor('#7b8798')
+                              .fontColor($r('app.color.text_tertiary'))
                           }
                           .margin({ top: 5 })
                         }
@@ -196,11 +196,11 @@ export struct BalanceList {
                       Column() {
                         Text(`${balance.direction == BillingDirection.IN ? '+' : '-'}${CurrencyManager.formatWithSymbol(balance.amount, this.currencySymbol)}`)
                           .fontSize(17)
-                          .fontColor(balance.direction == BillingDirection.IN ? '#21c36f' : '#ff4d5d')
+                          .fontColor(balance.direction == BillingDirection.IN ? '#22C55E' : '#EF4444')
                           .fontWeight(FontWeight.Bold)
                         Text(balance.direction == BillingDirection.IN ? '收入' : '支出')
                           .fontSize(11)
-                          .fontColor('#a4adba')
+                          .fontColor($r('app.color.text_tertiary'))
                           .margin({ top: 4 })
                       }
                       .alignItems(HorizontalAlign.End)
@@ -208,9 +208,9 @@ export struct BalanceList {
                     .width('100%')
                     .padding({ left: 14, right: 14, top: 14, bottom: 14 })
                     .backgroundColor(Color.White)
-                    .borderRadius(22)
+                    .borderRadius(16)
                     .margin({ bottom: 10 })
-                    .shadow({ radius: 14, color: '#12000000', offsetY: 6 })
+                    .shadow({ radius: 12, color: '#12000000', offsetY: 4 })
                     .onClick(() => {
                       if (typeof balance.id !== 'number') {
                         return;

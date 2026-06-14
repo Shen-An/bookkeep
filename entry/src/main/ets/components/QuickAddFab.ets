@@ -108,7 +108,7 @@ export struct QuickAddFab {
           // 标题
           Text('快速记账')
             .fontSize(18)
-            .fontColor('#1a1a2e')
+            .fontColor($r('app.color.text_primary'))
             .fontWeight(FontWeight.Bold)
             .margin({ top: 6, bottom: 18 })
 
@@ -118,17 +118,17 @@ export struct QuickAddFab {
             Row() {
               Text('↓')
                 .fontSize(14)
-                .fontColor(this.selectDir === 0 ? Color.White : '#ff4d5d')
+                .fontColor(this.selectDir === 0 ? Color.White : '#EF4444')
                 .fontWeight(FontWeight.Bold)
                 .margin({ right: 6 })
               Text('支出')
                 .fontSize(14)
-                .fontColor(this.selectDir === 0 ? Color.White : '#ff4d5d')
+                .fontColor(this.selectDir === 0 ? Color.White : '#EF4444')
                 .fontWeight(FontWeight.Bold)
             }
             .height(40)
             .padding({ left: 20, right: 20 })
-            .backgroundColor(this.selectDir === 0 ? '#ff4d5d' : '#fff0f1')
+            .backgroundColor(this.selectDir === 0 ? '#EF4444' : '#fff0f1')
             .borderRadius(20)
             .onClick(() => {
               this.selectDir = 0;
@@ -141,17 +141,17 @@ export struct QuickAddFab {
             Row() {
               Text('↑')
                 .fontSize(14)
-                .fontColor(this.selectDir === 1 ? Color.White : '#2bc46f')
+                .fontColor(this.selectDir === 1 ? Color.White : '#22C55E')
                 .fontWeight(FontWeight.Bold)
                 .margin({ right: 6 })
               Text('收入')
                 .fontSize(14)
-                .fontColor(this.selectDir === 1 ? Color.White : '#2bc46f')
+                .fontColor(this.selectDir === 1 ? Color.White : '#22C55E')
                 .fontWeight(FontWeight.Bold)
             }
             .height(40)
             .padding({ left: 20, right: 20 })
-            .backgroundColor(this.selectDir === 1 ? '#2bc46f' : '#f0fff5')
+            .backgroundColor(this.selectDir === 1 ? '#22C55E' : '#f0fff5')
             .borderRadius(20)
             .onClick(() => {
               this.selectDir = 1;
@@ -166,13 +166,13 @@ export struct QuickAddFab {
           Row() {
             Text(CurrencyManager.getInstance().getSymbol().toString())
               .fontSize(26)
-              .fontColor('#1a1a2e')
+              .fontColor($r('app.color.text_primary'))
               .fontWeight(FontWeight.Bold)
               .margin({ right: 8 })
             TextInput({ text: this.amountInput, placeholder: '输入金额' })
               .fontSize(26)
               .fontWeight(FontWeight.Bold)
-              .fontColor('#1a1a2e')
+              .fontColor($r('app.color.text_primary'))
               .height(48)
               .type(InputType.Number)
               .placeholderColor('#c0c8d4')
@@ -191,7 +191,7 @@ export struct QuickAddFab {
           Row() {
             Text('选择分类')
               .fontSize(14)
-              .fontColor('#8b96a8')
+              .fontColor($r('app.color.text_tertiary'))
               .fontWeight(FontWeight.Medium)
           }
           .width('100%')
@@ -207,17 +207,17 @@ export struct QuickAddFab {
                     .margin({ bottom: 6 })
                   Text(item.title)
                     .fontSize(12)
-                    .fontColor(this.selectedIdx === idx ? '#1FA1FF' : '#4a4a5a')
+                    .fontColor(this.selectedIdx === idx ? '#3B82F6' : '#475569')
                     .fontWeight(this.selectedIdx === idx ? FontWeight.Bold : FontWeight.Normal)
                 }
                 .width('100%')
                 .aspectRatio(1)
                 .justifyContent(FlexAlign.Center)
                 .alignItems(HorizontalAlign.Center)
-                .backgroundColor(this.selectedIdx === idx ? '#eef6ff' : '#f8f9fb')
+                .backgroundColor(this.selectedIdx === idx ? '#EFF6FF' : '#f8f9fb')
                 .border({
                   width: this.selectedIdx === idx ? 1.5 : 1,
-                  color: this.selectedIdx === idx ? '#1FA1FF' : '#eef0f4'
+                  color: this.selectedIdx === idx ? '#3B82F6' : '#eef0f4'
                 })
                 .borderRadius(16)
                 .onClick(() => {
@@ -249,7 +249,7 @@ export struct QuickAddFab {
           }
           .width('100%')
           .height(52)
-          .backgroundColor(this.amountInput.length > 0 && this.selectedIdx >= 0 ? '#1FA1FF' : '#b0c8e0')
+          .backgroundColor(this.amountInput.length > 0 && this.selectedIdx >= 0 ? '#3B82F6' : '#94A3B8')
           .borderRadius(16)
           .enabled(!this.isSaving && this.amountInput.length > 0 && this.selectedIdx >= 0)
           .onClick(() => {
@@ -274,9 +274,9 @@ export struct QuickAddFab {
       .height(56)
       .justifyContent(FlexAlign.Center)
       .alignItems(VerticalAlign.Center)
-      .backgroundColor('#1FA1FF')
+      .backgroundColor('#3B82F6')
       .borderRadius(28)
-      .shadow({ radius: 12, color: '#331FA1FF', offsetY: 4 })
+      .shadow({ radius: 12, color: '#333B82F6', offsetY: 4 })
       .margin({ bottom: 24, right: 24 })
       .onClick(() => {
         this.showPanel = !this.showPanel;

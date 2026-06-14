@@ -64,7 +64,7 @@ struct Copyright {
 
             Text('风风记账(易记账)开源记账应用')
               .fontSize(12)
-              .fontColor($r('app.color.text_gray'))
+              .fontColor($r('app.color.text_tertiary'))
               .margin({ top: 4 })
           }
           .layoutWeight(1)
@@ -89,7 +89,7 @@ struct Copyright {
 
             Text('风风记账')
               .fontSize(12)
-              .fontColor($r('app.color.text_gray'))
+              .fontColor($r('app.color.text_tertiary'))
               .margin({ top: 4 })
           }
           .layoutWeight(1)
@@ -182,17 +182,17 @@ struct Copyright {
         // 版权信息
         Text('基于 Mulan PSL v2 开源协议')
           .fontSize(12)
-          .fontColor($r('app.color.text_gray'))
+          .fontColor($r('app.color.text_tertiary'))
           .margin({ top: 32 })
 
         Text('Copyright © 2023 Ericple')
           .fontSize(12)
-          .fontColor($r('app.color.text_gray'))
+          .fontColor($r('app.color.text_tertiary'))
           .margin({ top: 8 })
 
         Text('Copyright © 2025 兑泽含光')
           .fontSize(12)
-          .fontColor($r('app.color.text_gray'))
+          .fontColor($r('app.color.text_tertiary'))
           .margin({ top: 4 })
       }
       .width('100%')

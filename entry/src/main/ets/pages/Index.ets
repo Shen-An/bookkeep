@@ -66,9 +66,9 @@ struct Index {
   @State avgDiffPercent: number = 0;
   @State diffSign: string = '';
   @State avgDiffSign: string = '';
-  @State diffColor: string = '#999999';
-  @State avgDiffColor: string = '#999999';
-  @State netColor: string = '#2ed573';
+  @State diffColor: string = '#94A3B8';
+  @State avgDiffColor: string = '#94A3B8';
+  @State netColor: string = '#22C55E';
 
   // 预算状态
   @State budgetTotal: number = 0;
@@ -172,28 +172,28 @@ struct Index {
 
     // 预计算对比值（避免在 build() 中使用 const）
     this.todayNet = this.todayIncome - this.todayExpense;
-    this.netColor = this.todayNet >= 0 ? '#2ed573' : '#ff4757';
+    this.netColor = this.todayNet >= 0 ? '#22C55E' : '#EF4444';
 
     if (this.yesterdayExpense > 0) {
       const diff = this.todayExpense - this.yesterdayExpense;
       this.diffPercent = diff / this.yesterdayExpense * 100;
       this.diffSign = diff > 0 ? '+' : '';
-      this.diffColor = diff > 0 ? '#ff4757' : '#2ed573';
+      this.diffColor = diff > 0 ? '#EF4444' : '#22C55E';
     } else {
       this.diffPercent = 0;
       this.diffSign = '';
-      this.diffColor = '#999999';
+      this.diffColor = '#94A3B8';
     }
 
     if (this.dailyAvgExpense > 0) {
       const avgDiff = this.todayExpense - this.dailyAvgExpense;
       this.avgDiffPercent = avgDiff / this.dailyAvgExpense * 100;
       this.avgDiffSign = avgDiff > 0 ? '+' : '';
-      this.avgDiffColor = avgDiff > 0 ? '#ff4757' : '#2ed573';
+      this.avgDiffColor = avgDiff > 0 ? '#EF4444' : '#22C55E';
     } else {
       this.avgDiffPercent = 0;
       this.avgDiffSign = '';
-      this.avgDiffColor = '#999999';
+      this.avgDiffColor = '#94A3B8';
     }
   }
 
@@ -341,18 +341,18 @@ struct Index {
                 Row() {
                   Text('今日消费')
                     .fontSize(15)
-                    .fontColor('#1f2a3d')
+                    .fontColor($r('app.color.text_primary'))
                     .fontWeight(FontWeight.Bold)
 
                   Row() {
                     Circle()
                       .width(6)
                       .height(6)
-                      .fill('#2ed573')
+                      .fill('#22C55E')
                       .margin({ right: 4 })
                     Text(`${this.todayIncome > 0 ? '+' : ''}${CurrencyManager.formatWithSymbol(this.todayIncome, this.currencySymbol)}`)
                       .fontSize(12)
-                      .fontColor('#2ed573')
+                      .fontColor($r('app.color.income_green'))
                   }
                   .margin({ left: 12, right: 10 })
 
@@ -360,11 +360,11 @@ struct Index {
                     Circle()
                       .width(6)
                       .height(6)
-                      .fill('#ff4757')
+                      .fill('#EF4444')
                       .margin({ right: 4 })
                     Text(`-${CurrencyManager.formatWithSymbol(this.todayExpense, this.currencySymbol)}`)
                       .fontSize(12)
-                      .fontColor('#ff4757')
+                      .fontColor($r('app.color.expense_red'))
                   }
                   .margin({ right: 10 })
 
@@ -372,7 +372,7 @@ struct Index {
 
                   Text(`${this.todayCount} 笔`)
                     .fontSize(11)
-                    .fontColor('#999999')
+                    .fontColor($r('app.color.text_tertiary'))
                 }
                 .width('100%')
 
@@ -382,7 +382,7 @@ struct Index {
                     Row() {
                       Text('较昨日')
                         .fontSize(11)
-                        .fontColor('#999999')
+                        .fontColor($r('app.color.text_tertiary'))
                       Text(`${this.diffSign}${this.diffPercent.toFixed(1)}%`)
                         .fontSize(11)
                         .fontColor(this.diffColor)
@@ -392,14 +392,14 @@ struct Index {
 
                     Text(' · ')
                       .fontSize(11)
-                      .fontColor('#dddddd')
+                      .fontColor($r('app.color.divider_color'))
                       .margin({ left: 4, right: 4 })
                   }
 
                   Row() {
                     Text('较日均')
                       .fontSize(11)
-                      .fontColor('#999999')
+                      .fontColor($r('app.color.text_tertiary'))
                     if (this.dailyAvgExpense > 0) {
                       Text(`${this.avgDiffSign}${this.avgDiffPercent.toFixed(1)}%`)
                         .fontSize(11)
@@ -428,8 +428,8 @@ struct Index {
                       Row()
                         .width(`${Math.min(100, this.budgetUsed / this.budgetTotal * 100)}%`)
                         .height(6)
-                        .backgroundColor(this.budgetExceeded ? '#ff4757' :
-                          this.budgetUsed / this.budgetTotal >= 0.8 ? '#ffa502' : '#1FA1FF')
+                        .backgroundColor(this.budgetExceeded ? '#EF4444' :
+                          this.budgetUsed / this.budgetTotal >= 0.8 ? '#F59E0B' : '#3B82F6')
                         .borderRadius(3)
                     }
                     .width('100%')
@@ -442,7 +442,7 @@ struct Index {
                     Text(this.budgetExceeded ? '预算超支！' :
                       `预算 ${(this.budgetUsed / this.budgetTotal * 100).toFixed(0)}%`)
                       .fontSize(11)
-                      .fontColor(this.budgetExceeded ? '#ff4757' : '#999999')
+                      .fontColor(this.budgetExceeded ? '#EF4444' : '#94A3B8')
                   }
                   .width('100%')
                   .margin({ top: 6 })
@@ -453,7 +453,7 @@ struct Index {
               .backgroundColor(Color.White)
               .borderRadius(20)
               .margin({ left: 14, right: 14, top: 6, bottom: 4 })
-              .shadow({ radius: 12, color: '#0f000000', offsetY: 4 })
+              .shadow({ radius: 12, color: '#12000000', offsetY: 4 })
             }
 
             // 搜索栏
@@ -468,7 +468,7 @@ struct Index {
                 .onChange((v: string) => {
                   this.searchKeyword = v;
                 })
-                .placeholderColor('#999999')
+                .placeholderColor('#94A3B8')
                 .placeholderFont({ size: 14 })
 
               Button({ type: ButtonType.Normal }) {
@@ -479,11 +479,11 @@ struct Index {
                     .margin({ right: 6 })
                   Text($r('app.string.search_filter'))
                     .fontSize(13)
-                    .fontColor(this.showFilterPanel || this.filterDirection >= 0 || this.filterCategory ? '#ffffff' : '#4f5f75')
+                    .fontColor(this.showFilterPanel || this.filterDirection >= 0 || this.filterCategory ? '#ffffff' : '#475569')
                 }
               }
               .height(40)
-              .backgroundColor(this.showFilterPanel || this.filterDirection >= 0 || this.filterCategory ? '#1FA1FF' : '#f2f6fb')
+              .backgroundColor(this.showFilterPanel || this.filterDirection >= 0 || this.filterCategory ? '#3B82F6' : '#f2f6fb')
               .borderRadius(20)
               .padding({ left: 14, right: 14 })
               .onClick(() => {
@@ -502,16 +502,16 @@ struct Index {
                 Row() {
                   Text($r('app.string.filter_direction'))
                     .fontSize(13)
-                    .fontColor('#666666')
+                    .fontColor($r('app.color.text_secondary'))
                     .margin({ right: 12 })
                   Flex({ justifyContent: FlexAlign.Start, alignItems: ItemAlign.Center }) {
                     Button({ type: ButtonType.Normal }) {
                       Text($r('app.string.filter_all'))
                         .fontSize(12)
-                        .fontColor(this.filterDirection == -1 ? '#ffffff' : '#666666')
+                        .fontColor(this.filterDirection == -1 ? '#ffffff' : '#475569')
                     }
                     .height(28)
-                    .backgroundColor(this.filterDirection == -1 ? '#4a7dff' : '#f5f5f5')
+                    .backgroundColor(this.filterDirection == -1 ? '#3B82F6' : '#f5f5f5')
                     .borderRadius(14)
                     .padding({ left: 12, right: 12 })
                     .margin({ right: 8 })
@@ -522,10 +522,10 @@ struct Index {
                     Button({ type: ButtonType.Normal }) {
                       Text($r('app.string.filter_income'))
                         .fontSize(12)
-                        .fontColor(this.filterDirection == 0 ? '#ffffff' : '#4CAF50')
+                        .fontColor(this.filterDirection == 0 ? '#ffffff' : '#22C55E')
                     }
                     .height(28)
-                    .backgroundColor(this.filterDirection == 0 ? '#4CAF50' : '#e8f5e9')
+                    .backgroundColor(this.filterDirection == 0 ? '#22C55E' : '#e8f5e9')
                     .borderRadius(14)
                     .padding({ left: 12, right: 12 })
                     .margin({ right: 8 })
@@ -536,10 +536,10 @@ struct Index {
                     Button({ type: ButtonType.Normal }) {
                       Text($r('app.string.filter_expense'))
                         .fontSize(12)
-                        .fontColor(this.filterDirection == 1 ? '#ffffff' : '#ff5722')
+                        .fontColor(this.filterDirection == 1 ? '#ffffff' : '#EF4444')
                     }
                     .height(28)
-                    .backgroundColor(this.filterDirection == 1 ? '#ff5722' : '#fbe9e7')
+                    .backgroundColor(this.filterDirection == 1 ? '#EF4444' : '#fbe9e7')
                     .borderRadius(14)
                     .padding({ left: 12, right: 12 })
                     .onClick(() => {
@@ -556,17 +556,17 @@ struct Index {
                   Row() {
                     Text($r('app.string.filter_category'))
                       .fontSize(13)
-                      .fontColor('#666666')
+                      .fontColor($r('app.color.text_secondary'))
                       .margin({ right: 12 })
                     Scroll() {
                       Row() {
                         Button({ type: ButtonType.Normal }) {
                           Text($r('app.string.filter_all'))
                             .fontSize(12)
-                            .fontColor(this.filterCategory == '' ? '#ffffff' : '#666666')
+                            .fontColor(this.filterCategory == '' ? '#ffffff' : '#475569')
                         }
                         .height(28)
-                        .backgroundColor(this.filterCategory == '' ? '#4a7dff' : '#f5f5f5')
+                        .backgroundColor(this.filterCategory == '' ? '#3B82F6' : '#f5f5f5')
                         .borderRadius(14)
                         .padding({ left: 12, right: 12 })
                         .margin({ right: 6 })
@@ -578,10 +578,10 @@ struct Index {
                           Button({ type: ButtonType.Normal }) {
                             Text(typeName)
                               .fontSize(12)
-                              .fontColor(this.filterCategory == typeName ? '#ffffff' : '#666666')
+                              .fontColor(this.filterCategory == typeName ? '#ffffff' : '#475569')
                           }
                           .height(28)
-                          .backgroundColor(this.filterCategory == typeName ? '#4a7dff' : '#f5f5f5')
+                          .backgroundColor(this.filterCategory == typeName ? '#3B82F6' : '#f5f5f5')
                           .borderRadius(14)
                           .padding({ left: 12, right: 12 })
                           .margin({ right: 6 })
@@ -604,7 +604,7 @@ struct Index {
                   Button({ type: ButtonType.Normal }) {
                     Text($r('app.string.filter_reset'))
                       .fontSize(12)
-                      .fontColor('#999999')
+                      .fontColor('#94A3B8')
                   }
                   .height(28)
                   .backgroundColor('#eef3f9')

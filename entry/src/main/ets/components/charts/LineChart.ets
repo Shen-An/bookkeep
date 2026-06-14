@@ -1,5 +1,10 @@
 import { LineSeries } from './ChartModels';
 
+interface ChartPoint {
+  x: number;
+  y: number;
+}
+
 @Component
 export struct LineChart {
   @Prop series: LineSeries[] = [];
@@ -8,9 +13,6 @@ export struct LineChart {
   private settings: RenderingContextSettings = new RenderingContextSettings(true);
   private ctx: CanvasRenderingContext2D = new CanvasRenderingContext2D(this.settings);
 
-  private lastWidth: number = 0;
-  private lastHeight: number = 0;
-
   private draw(width: number, height: number): void {
     if (width <= 0 || height <= 0) {
       return;
@@ -18,19 +20,20 @@ export struct LineChart {
 
     this.ctx.clearRect(0, 0, width, height);
 
-    const paddingLeft = 44;
+    const paddingLeft = 48;
     const paddingRight = 18;
-    const paddingTop = 14;
-    const paddingBottom = 26;
+    const paddingTop = 18;
+    const paddingBottom = 28;
 
     const chartW = Math.max(1, width - paddingLeft - paddingRight);
     const chartH = Math.max(1, height - paddingTop - paddingBottom);
 
     const maxLen = this.series.reduce((m, s) => Math.max(m, s.values.length), 0);
     if (maxLen <= 1) {
-      this.ctx.fillStyle = '#9aa4b2';
+      this.ctx.fillStyle = '#94A3B8';
       this.ctx.font = '13px sans-serif';
-      this.ctx.fillText('暂无趋势数据', paddingLeft, paddingTop + 18);
+      this.ctx.textAlign = 'center';
+      this.ctx.fillText('暂无趋势数据', width / 2, paddingTop + 18);
       return;
     }
 
@@ -40,49 +43,69 @@ export struct LineChart {
       maxValue = 1;
     }
 
-    // axes
-    this.ctx.strokeStyle = '#d9e2ec';
+    // horizontal grid lines
+    const gridCount = 4;
+    this.ctx.strokeStyle = '#F1F5F9';
     this.ctx.lineWidth = 1;
-    this.ctx.beginPath();
-    this.ctx.moveTo(paddingLeft, paddingTop);
-    this.ctx.lineTo(paddingLeft, paddingTop + chartH);
-    this.ctx.lineTo(paddingLeft + chartW, paddingTop + chartH);
-    this.ctx.stroke();
+    for (let g = 0; g <= gridCount; g++) {
+      const gy = paddingTop + chartH * (1 - g / gridCount);
+      this.ctx.beginPath();
+      this.ctx.moveTo(paddingLeft, gy);
+      this.ctx.lineTo(paddingLeft + chartW, gy);
+      this.ctx.stroke();
 
-    // y labels (0 and max)
-    this.ctx.fillStyle = '#7b8798';
-    this.ctx.font = '10px sans-serif';
-    this.ctx.fillText(maxValue.toFixed(0), 4, paddingTop + 10);
-    this.ctx.fillText('0', 16, paddingTop + chartH + 4);
+      // Y labels
+      this.ctx.fillStyle = '#94A3B8';
+      this.ctx.font = '10px sans-serif';
+      this.ctx.textAlign = 'right';
+      this.ctx.fillText((maxValue * g / gridCount).toFixed(0), paddingLeft - 6, gy + 3);
+    }
 
-    const dx = chartW / (maxLen - 1);
+    const dx = chartW / Math.max(1, maxLen - 1);
 
     this.series.forEach((s, idx) => {
-      const color = s.color ?? (idx === 0 ? '#1FA1FF' : '#2CC4E1');
+      const color = s.color ?? (idx === 0 ? '#3B82F6' : '#22C55E');
       this.ctx.strokeStyle = color;
-      this.ctx.lineWidth = 2;
-      this.ctx.beginPath();
+      this.ctx.lineWidth = 2.5;
+      this.ctx.lineJoin = 'round';
+      this.ctx.lineCap = 'round';
+
+      // build point array
+      let pts: ChartPoint[] = [];
       for (let i = 0; i < maxLen; i++) {
         const v = s.values[i] ?? 0;
-        const x = paddingLeft + dx * i;
-        const y = paddingTop + chartH * (1 - v / maxValue);
-        if (i === 0) {
-          this.ctx.moveTo(x, y);
-        } else {
-          this.ctx.lineTo(x, y);
-        }
+        pts.push({
+          x: paddingLeft + dx * i,
+          y: paddingTop + chartH * (1 - v / maxValue)
+        });
+      }
+
+      // draw smooth bezier curve
+      this.ctx.beginPath();
+      this.ctx.moveTo(pts[0].x, pts[0].y);
+      for (let i = 0; i < pts.length - 1; i++) {
+        const p0 = pts[i];
+        const p1 = pts[i + 1];
+        const cp1x = p0.x + (p1.x - p0.x) / 2;
+        const cp1y = p0.y;
+        const cp2x = p0.x + (p1.x - p0.x) / 2;
+        const cp2y = p1.y;
+        this.ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p1.x, p1.y);
       }
       this.ctx.stroke();
 
-      // points
+      // scatter dots (at each point)
       this.ctx.fillStyle = color;
-      for (let i = 0; i < maxLen; i += Math.max(1, Math.floor(maxLen / 6))) {
-        const v = s.values[i] ?? 0;
-        const x = paddingLeft + dx * i;
-        const y = paddingTop + chartH * (1 - v / maxValue);
+      for (let i = 0; i < pts.length; i++) {
         this.ctx.beginPath();
-        this.ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+        this.ctx.arc(pts[i].x, pts[i].y, 3.5, 0, Math.PI * 2);
         this.ctx.fill();
+        // white border dot
+        this.ctx.strokeStyle = '#ffffff';
+        this.ctx.lineWidth = 1.5;
+        this.ctx.beginPath();
+        this.ctx.arc(pts[i].x, pts[i].y, 3.5, 0, Math.PI * 2);
+        this.ctx.stroke();
       }
     });
   }
@@ -93,18 +116,14 @@ export struct LineChart {
         .width('100%')
         .height(this.chartHeight)
         .onReady(() => {
-          // 初次渲染时，用一个保守尺寸绘制，实际尺寸变化后会在 onAreaChange 里重绘。
-          this.lastWidth = 360;
-          this.lastHeight = this.chartHeight;
-          this.draw(this.lastWidth, this.lastHeight);
+          this.draw(360, this.chartHeight);
         })
         .onAreaChange((_oldValue: Area, newValue: Area) => {
-          // Area 的 width/height 在不同 SDK 上类型可能不同，这里做最简单的 number 处理。
           const w: number = Number(newValue.width);
           const h: number = Number(newValue.height);
-          this.lastWidth = w;
-          this.lastHeight = h;
-          this.draw(this.lastWidth, this.lastHeight);
+          if (w > 0 && h > 0) {
+            this.draw(w, h);
+          }
         })
     }
   }

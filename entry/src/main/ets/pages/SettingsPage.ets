@@ -181,8 +181,7 @@ struct SettingsPage {
       .linearGradient({
         angle: 145,
         colors: [
-          ['#FF2CC4E1', 0],
-          [$r('app.color.main_theme_gradient_start'), 0.5],
+          [$r('app.color.main_theme_gradient_start'), 0],
           [$r('app.color.main_theme_gradient_end'), 1]
         ]
       })
@@ -193,7 +192,7 @@ struct SettingsPage {
             Column() {
               Text('账本数据')
                 .fontSize(13)
-                .fontColor('#d7edff')
+                .fontColor('#BFDBFE')
               Text(`${this.billingCount}`)
                 .fontSize(38)
                 .fontColor(Color.White)
@@ -201,7 +200,7 @@ struct SettingsPage {
                 .margin({ top: 6 })
               Text('条记录正在被管理')
                 .fontSize(12)
-                .fontColor('#d7edff')
+                .fontColor('#BFDBFE')
                 .margin({ top: 4 })
             }
             .alignItems(HorizontalAlign.Start)
@@ -210,10 +209,10 @@ struct SettingsPage {
             Column() {
               Text('当前货币')
                 .fontSize(12)
-                .fontColor('#6a7c94')
+                .fontColor('#94A3B8')
               Text(this.currencyUnit)
                 .fontSize(30)
-                .fontColor('#126dff')
+                .fontColor('#3B82F6')
                 .fontWeight(FontWeight.Bold)
                 .margin({ top: 5 })
             }
@@ -239,7 +238,7 @@ struct SettingsPage {
           Column() {
             Text('常用设置')
               .fontSize(20)
-              .fontColor('#1f2a3d')
+              .fontColor($r('app.color.text_primary'))
               .fontWeight(FontWeight.Bold)
               .width('100%')
 
@@ -247,23 +246,23 @@ struct SettingsPage {
               Column() {
                 Text('货币单位')
                   .fontSize(16)
-                  .fontColor('#1f2a3d')
+                  .fontColor($r('app.color.text_primary'))
                   .fontWeight(FontWeight.Bold)
                 Text('切换全局金额展示符号')
                   .fontSize(12)
-                  .fontColor('#8b96a8')
+                  .fontColor($r('app.color.text_tertiary'))
                   .margin({ top: 5 })
               }
               .alignItems(HorizontalAlign.Start)
               .layoutWeight(1)
               Text(this.currencyUnit)
                 .fontSize(22)
-                .fontColor('#126dff')
+                .fontColor('#3B82F6')
                 .fontWeight(FontWeight.Bold)
                 .margin({ right: 12 })
               Text('›')
                 .fontSize(22)
-                .fontColor('#b7c0ce')
+                .fontColor($r('app.color.text_tertiary'))
             }
             .width('100%')
             .padding(18)
@@ -276,11 +275,11 @@ struct SettingsPage {
               Column() {
                 Text('AI 配置')
                   .fontSize(16)
-                  .fontColor('#1f2a3d')
+                  .fontColor($r('app.color.text_primary'))
                   .fontWeight(FontWeight.Bold)
                 Text('配置智能记账能力')
                   .fontSize(12)
-                  .fontColor('#8b96a8')
+                  .fontColor($r('app.color.text_tertiary'))
                   .margin({ top: 5 })
               }
               .alignItems(HorizontalAlign.Start)
@@ -290,7 +289,7 @@ struct SettingsPage {
                 .height(26)
               Text('›')
                 .fontSize(22)
-                .fontColor('#b7c0ce')
+                .fontColor($r('app.color.text_tertiary'))
                 .margin({ left: 10 })
             }
             .width('100%')
@@ -306,11 +305,11 @@ struct SettingsPage {
               Column() {
                 Text('预算管理')
                   .fontSize(16)
-                  .fontColor('#1f2a3d')
+                  .fontColor($r('app.color.text_primary'))
                   .fontWeight(FontWeight.Bold)
                 Text('设置月度支出限额')
                   .fontSize(12)
-                  .fontColor('#8b96a8')
+                  .fontColor($r('app.color.text_tertiary'))
                   .margin({ top: 5 })
               }
               .alignItems(HorizontalAlign.Start)
@@ -321,7 +320,7 @@ struct SettingsPage {
                 .fillColor('#ffa502')
               Text('›')
                 .fontSize(22)
-                .fontColor('#b7c0ce')
+                .fontColor($r('app.color.text_tertiary'))
                 .margin({ left: 10 })
             }
             .width('100%')
@@ -337,18 +336,18 @@ struct SettingsPage {
               Column() {
                 Text('隐私锁')
                   .fontSize(16)
-                  .fontColor('#1f2a3d')
+                  .fontColor($r('app.color.text_primary'))
                   .fontWeight(FontWeight.Bold)
                 Text('设置 PIN 码保护账单数据')
                   .fontSize(12)
-                  .fontColor('#8b96a8')
+                  .fontColor($r('app.color.text_tertiary'))
                   .margin({ top: 5 })
               }
               .alignItems(HorizontalAlign.Start)
               .layoutWeight(1)
               Text('›')
                 .fontSize(22)
-                .fontColor('#b7c0ce')
+                .fontColor($r('app.color.text_tertiary'))
                 .margin({ left: 10 })
             }
             .width('100%')
@@ -370,7 +369,7 @@ struct SettingsPage {
           Column() {
             Text('数据管理')
               .fontSize(20)
-              .fontColor('#1f2a3d')
+              .fontColor($r('app.color.text_primary'))
               .fontWeight(FontWeight.Bold)
               .width('100%')
 
@@ -378,11 +377,11 @@ struct SettingsPage {
               Column() {
                 Text($r('app.string.settings_clear_data'))
                   .fontSize(16)
-                  .fontColor('#ff4757')
+                  .fontColor($r('app.color.expense_red'))
                   .fontWeight(FontWeight.Bold)
                 Text(`当前 ${this.billingCount} 条记录，清除后不可恢复`)
                   .fontSize(12)
-                  .fontColor('#8b96a8')
+                  .fontColor($r('app.color.text_tertiary'))
                   .margin({ top: 5 })
               }
               .alignItems(HorizontalAlign.Start)
@@ -393,7 +392,7 @@ struct SettingsPage {
             }
             .width('100%')
             .padding(18)
-            .backgroundColor('#fff4f5')
+            .backgroundColor('#FEF2F2')
             .borderRadius(22)
             .margin({ top: 14 })
             .onClick(() => this.handleClearData())
@@ -408,7 +407,7 @@ struct SettingsPage {
           Column() {
             Text('关于应用')
               .fontSize(20)
-              .fontColor('#1f2a3d')
+              .fontColor($r('app.color.text_primary'))
               .fontWeight(FontWeight.Bold)
               .width('100%')
 
@@ -419,12 +418,12 @@ struct SettingsPage {
                 .margin({ right: 12 })
               Text($r('app.string.settings_about'))
                 .fontSize(16)
-                .fontColor('#1f2a3d')
+                .fontColor($r('app.color.text_primary'))
                 .fontWeight(FontWeight.Bold)
               Blank()
               Text('›')
                 .fontSize(22)
-                .fontColor('#b7c0ce')
+                .fontColor($r('app.color.text_tertiary'))
             }
             .width('100%')
             .padding({ top: 18, bottom: 18 })
@@ -432,7 +431,7 @@ struct SettingsPage {
               router.pushUrl({ url: 'pages/Copyright' })
             })
 
-            Divider().color('#eef2f7')
+            Divider().color($r('app.color.divider_color'))
 
             Row() {
               Image($r("app.media.icon"))
@@ -442,12 +441,12 @@ struct SettingsPage {
                 .margin({ right: 12 })
               Text($r('app.string.settings_version'))
                 .fontSize(16)
-                .fontColor('#1f2a3d')
+                .fontColor($r('app.color.text_primary'))
                 .fontWeight(FontWeight.Bold)
               Blank()
               Text('v1.0.0')
                 .fontSize(14)
-                .fontColor('#8b96a8')
+                .fontColor($r('app.color.text_tertiary'))
             }
             .width('100%')
             .padding({ top: 18, bottom: 18 })
@@ -467,6 +466,6 @@ struct SettingsPage {
     }
     .height('100%')
     .width('100%')
-    .backgroundColor('#f3f7fb')
+    .backgroundColor($r('app.color.page_background'))
   }
 }

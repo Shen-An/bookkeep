@@ -512,8 +512,8 @@ struct AddBalance {
                 .borderRadius(12)
               .backgroundColor(Color.White)
                 .padding({ left: 12 })
-                .fontColor('#333333')
-                .placeholderColor($r('app.color.text_gray'))
+                .fontColor($r('app.color.text_primary'))
+                .placeholderColor($r('app.color.text_tertiary'))
                 .onChange((v: string) => {
                   this.aiInputText = v;
                 })
@@ -586,7 +586,7 @@ struct AddBalance {
                 .borderRadius(12)
                 .backgroundColor(Color.White)
                 .padding({ left: 12 })
-                .placeholderColor($r('app.color.text_gray'))
+                .placeholderColor($r('app.color.text_tertiary'))
 
               Button({ type: ButtonType.Normal }) {
                 Text(this.imageParsing ? $r('app.string.ai_image_parsing') : $r('app.string.ai_image_recognize'))
@@ -639,7 +639,7 @@ struct AddBalance {
                   Row() {
                     Text(item.title)
                       .fontSize(12)
-                      .fontColor(this.selectedTypeName == item.title ? $r('app.color.main_theme_blue') : '#666666')
+                      .fontColor(this.selectedTypeName == item.title ? $r('app.color.main_theme_blue') : $r('app.color.text_secondary'))
                       .fontWeight(this.selectedTypeName == item.title ? FontWeight.Medium : FontWeight.Normal)
                   }
                 }
@@ -666,7 +666,7 @@ struct AddBalance {
             .width('100%')
             .padding({ left: 16, right: 16 })
             .fontSize(32)
-            .fontColor('#1a1a1a')
+            .fontColor($r('app.color.text_primary'))
             .fontWeight(FontWeight.Bold)
         }
         .height(48)
@@ -682,8 +682,8 @@ struct AddBalance {
           .margin({ left: 12, right: 12, top: 8, bottom: 4 })
           .backgroundColor('#f0f0f0')
           .padding({ left: 12 })
-          .placeholderColor($r('app.color.text_gray'))
-          .fontColor('#333333')
+          .placeholderColor($r('app.color.text_tertiary'))
+          .fontColor($r('app.color.text_primary'))
           .height(40)
           .onChange(value => {
             this.remark = value;
@@ -700,7 +700,7 @@ struct AddBalance {
           Text(`${this.activeYear} / ${(this.activeMonth).toString()
             .padStart(2, '0')} / ${this.activeDay.toString().padStart(2, '0')}`)
             .fontSize(15)
-            .fontColor('#666666')
+            .fontColor($r('app.color.text_secondary'))
             .margin({ bottom: 8 })
             .onClick(() => {
             DatePickerDialog.show({
@@ -734,7 +734,7 @@ struct AddBalance {
                 } else {
                   Text(unit.content)
                     .fontSize(22)
-                    .fontColor(unit.foreColor ?? "#1a1a1a")
+                    .fontColor(unit.foreColor ?? $r('app.color.text_primary'))
                     .fontWeight(FontWeight.Medium)
                 }
               }
@@ -755,7 +755,7 @@ struct AddBalance {
                 bottom: 0,
                 left: 0
               },
-              color: '#fff0f0f0'
+              color: '#FFF1F5F9'
             })
           })
         }

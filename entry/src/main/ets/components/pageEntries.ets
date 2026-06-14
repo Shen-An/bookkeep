@@ -17,11 +17,11 @@ export struct PageEntries {
         Text('快速开始')
           .fontSize(18)
           .fontWeight(FontWeight.Bold)
-          .fontColor('#1f2a3d')
+          .fontColor($r('app.color.text_primary'))
         Blank()
         Text('记一笔更轻松')
           .fontSize(12)
-          .fontColor('#8b96a8')
+          .fontColor($r('app.color.text_tertiary'))
       }
       .width('100%')
       .margin({ bottom: 12 })
@@ -58,9 +58,9 @@ export struct PageEntries {
         .layoutWeight(1)
         .height(120)
         .padding(18)
-        .backgroundColor('#1FA1FF')
+        .backgroundColor('#3B82F6')
         .borderRadius(24)
-        .shadow({ radius: 18, color: '#331FA1FF', offsetY: 8 })
+        .shadow({ radius: 18, color: '#333B82F6', offsetY: 8 })
         .onClick(() => {
           router.pushUrl({
             url: "pages/addBalance",
@@ -82,20 +82,20 @@ export struct PageEntries {
               Blank()
               Text('+')
                 .fontSize(20)
-                .fontColor('#202938')
+                .fontColor($r('app.color.text_primary'))
                 .fontWeight(FontWeight.Bold)
             }
             .width('100%')
 
             Text('手动记账')
               .fontSize(18)
-              .fontColor('#202938')
+              .fontColor($r('app.color.text_primary'))
               .fontWeight(FontWeight.Bold)
               .width('100%')
               .margin({ top: 18 })
             Text('快速录入金额分类')
               .fontSize(12)
-              .fontColor('#718096')
+              .fontColor($r('app.color.text_secondary'))
               .width('100%')
               .margin({ top: 4 })
           }
@@ -130,7 +130,7 @@ export struct PageEntries {
               .height(24)
             Text('年度账单')
               .fontSize(12)
-              .fontColor('#253044')
+              .fontColor($r('app.color.text_primary'))
               .fontWeight(FontWeight.Medium)
               .margin({ top: 8 })
           }
@@ -150,7 +150,7 @@ export struct PageEntries {
               .height(24)
             Text('经济图表')
               .fontSize(12)
-              .fontColor('#253044')
+              .fontColor($r('app.color.text_primary'))
               .fontWeight(FontWeight.Medium)
               .margin({ top: 8 })
           }
@@ -171,7 +171,7 @@ export struct PageEntries {
               .height(24)
             Text($r('app.string.settings'))
               .fontSize(12)
-              .fontColor('#253044')
+              .fontColor($r('app.color.text_primary'))
               .fontWeight(FontWeight.Medium)
               .margin({ top: 8 })
           }
@@ -197,7 +197,7 @@ export struct PageEntries {
               .margin({ right: 8 })
             Text('导入')
               .fontSize(13)
-              .fontColor('#344256')
+              .fontColor($r('app.color.text_secondary'))
               .fontWeight(FontWeight.Medium)
           }
           .justifyContent(FlexAlign.Center)
@@ -218,7 +218,7 @@ export struct PageEntries {
               .margin({ right: 8 })
             Text('导出')
               .fontSize(13)
-              .fontColor('#344256')
+              .fontColor($r('app.color.text_secondary'))
               .fontWeight(FontWeight.Medium)
           }
           .justifyContent(FlexAlign.Center)
@@ -240,7 +240,7 @@ export struct PageEntries {
               .margin({ right: 8 })
             Text('关于')
               .fontSize(13)
-              .fontColor('#344256')
+              .fontColor($r('app.color.text_secondary'))
               .fontWeight(FontWeight.Medium)
           }
           .justifyContent(FlexAlign.Center)
@@ -262,6 +262,6 @@ export struct PageEntries {
     .backgroundColor(Color.White)
     .borderRadius(28)
     .margin({ left: 14, right: 14, top: -10, bottom: 10 })
-    .shadow({ radius: 18, color: '#16000000', offsetY: 8 })
+    .shadow({ radius: 16, color: '#16000000', offsetY: 6 })
   }
 }

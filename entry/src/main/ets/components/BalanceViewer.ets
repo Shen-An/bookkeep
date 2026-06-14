@@ -131,12 +131,11 @@ export struct BalanceViewer {
     .linearGradient({
       angle: 145,
       colors: [
-        ['#FF2CC4E1', 0],
-        [$r('app.color.main_theme_gradient_start'), 0.48],
+        [$r('app.color.main_theme_gradient_start'), 0],
         [$r('app.color.main_theme_gradient_end'), 1]
       ]
     })
-    .borderRadius({ bottomLeft: 30, bottomRight: 30 })
+    .borderRadius({ bottomLeft: 28, bottomRight: 28 })
     .shadow({ radius: 22, color: '#330D6EFD', offsetY: 8 })
   }
 }

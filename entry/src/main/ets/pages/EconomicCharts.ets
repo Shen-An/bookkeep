@@ -69,12 +69,12 @@ struct EconomicCharts {
     const income: LineSeries = {
       name: '收入',
       values: this.trend.income.map((v: number) => CurrencyManager.convertWithSymbol(v, this.currencySymbol)),
-      color: '#2CC4E1'
+      color: '#3B82F6'
     };
     const expense: LineSeries = {
       name: '支出',
       values: this.trend.expense.map((v: number) => CurrencyManager.convertWithSymbol(v, this.currencySymbol)),
-      color: '#1FA1FF'
+      color: '#2563EB'
     };
     return [income, expense];
   }
@@ -112,7 +112,7 @@ struct EconomicCharts {
       if (items.length === 0) {
         Text('暂无数据')
           .fontSize(13)
-          .fontColor('#9aa4b2')
+          .fontColor($r('app.color.text_tertiary'))
           .height(40)
           .width('100%')
           .textAlign(TextAlign.Center)
@@ -122,11 +122,11 @@ struct EconomicCharts {
             Column() {
               Text(i.name)
                 .fontSize(14)
-                .fontColor('#1f2a3d')
+                .fontColor($r('app.color.text_primary'))
                 .fontWeight(FontWeight.Medium)
               Text(`${i.percent.toFixed(1)}%`)
                 .fontSize(11)
-                .fontColor('#8b96a8')
+                .fontColor($r('app.color.text_tertiary'))
                 .margin({ top: 3 })
             }
             .alignItems(HorizontalAlign.Start)
@@ -139,7 +139,7 @@ struct EconomicCharts {
           }
           .width('100%')
           .padding({ top: 12, bottom: 12 })
-          .border({ width: { bottom: 0.5 }, color: '#eef2f7' })
+          .border({ width: { bottom: 0.5 }, color: $r('app.color.divider_color') })
         })
       }
     }
@@ -168,7 +168,7 @@ struct EconomicCharts {
             .fontWeight(FontWeight.Bold)
           Text('趋势、结构与风险一屏掌握')
             .fontSize(12)
-            .fontColor('#d8efff')
+            .fontColor('#BFDBFE')
             .margin({ top: 3 })
         }
         .alignItems(HorizontalAlign.Start)
@@ -179,7 +179,7 @@ struct EconomicCharts {
           Row() {
             Text(this.monthTitle())
               .fontSize(13)
-              .fontColor('#126dff')
+              .fontColor('#3B82F6')
               .fontWeight(FontWeight.Bold)
             Image($r('app.media.ic_public_extract_list_dark'))
               .width(10)
@@ -208,8 +208,7 @@ struct EconomicCharts {
       .linearGradient({
         angle: 145,
         colors: [
-          ['#FF2CC4E1', 0],
-          [$r('app.color.main_theme_gradient_start'), 0.5],
+          [$r('app.color.main_theme_gradient_start'), 0],
           [$r('app.color.main_theme_gradient_end'), 1]
         ]
       })
@@ -222,7 +221,7 @@ struct EconomicCharts {
             .color($r('app.color.main_theme_blue'))
           Text('正在生成分析...')
             .fontSize(14)
-            .fontColor('#8b96a8')
+            .fontColor($r('app.color.text_tertiary'))
             .margin({ top: 14 })
         }
         .width('100%')
@@ -234,7 +233,7 @@ struct EconomicCharts {
             Column() {
               Text('本月净结余')
                 .fontSize(13)
-                .fontColor('#d7edff')
+                .fontColor('#BFDBFE')
               Text(CurrencyManager.formatWithSymbol(this.report.current.leftTotal, this.currencySymbol))
                 .fontSize(34)
                 .fontColor(Color.White)
@@ -245,7 +244,7 @@ struct EconomicCharts {
                 Column() {
                   Text('收入')
                     .fontSize(12)
-                    .fontColor('#6a7c94')
+                    .fontColor($r('app.color.text_secondary'))
                   Text(CurrencyManager.formatWithSymbol(this.report.current.incomeTotal, this.currencySymbol))
                     .fontSize(17)
                     .fontColor($r('app.color.income_green'))
@@ -255,14 +254,14 @@ struct EconomicCharts {
                 .alignItems(HorizontalAlign.Start)
                 .layoutWeight(1)
                 .padding(14)
-                .backgroundColor('#f6fffb')
+                .backgroundColor('#F0FDF4')
                 .borderRadius(18)
                 .margin({ right: 8 })
 
                 Column() {
                   Text('支出')
                     .fontSize(12)
-                    .fontColor('#6a7c94')
+                    .fontColor($r('app.color.text_secondary'))
                   Text(CurrencyManager.formatWithSymbol(this.report.current.expenseTotal, this.currencySymbol))
                     .fontSize(17)
                     .fontColor($r('app.color.expense_red'))
@@ -272,7 +271,7 @@ struct EconomicCharts {
                 .alignItems(HorizontalAlign.Start)
                 .layoutWeight(1)
                 .padding(14)
-                .backgroundColor('#fff8f8')
+                .backgroundColor('#FEF2F2')
                 .borderRadius(18)
                 .margin({ left: 8 })
               }
@@ -295,12 +294,12 @@ struct EconomicCharts {
               Row() {
                 Text('半年趋势')
                   .fontSize(20)
-                  .fontColor('#1f2a3d')
+                  .fontColor($r('app.color.text_primary'))
                   .fontWeight(FontWeight.Bold)
                 Blank()
                 Text(this.trendRangeText())
                   .fontSize(12)
-                  .fontColor('#8b96a8')
+                  .fontColor($r('app.color.text_tertiary'))
               }
               .width('100%')
 
@@ -311,10 +310,10 @@ struct EconomicCharts {
               Row() {
                 Text('● 收入')
                   .fontSize(12)
-                  .fontColor('#2CC4E1')
+                  .fontColor('#3B82F6')
                 Text('● 支出')
                   .fontSize(12)
-                  .fontColor('#1FA1FF')
+                  .fontColor('#2563EB')
                   .margin({ left: 18 })
               }
               .width('100%')
@@ -326,13 +325,13 @@ struct EconomicCharts {
             .backgroundColor(Color.White)
             .borderRadius(28)
             .margin({ top: 18 })
-            .shadow({ radius: 16, color: '#12000000', offsetY: 7 })
+            .shadow({ radius: 12, color: '#12000000', offsetY: 4 })
 
             Row() {
               Column() {
                 Text('支出结构')
                   .fontSize(18)
-                  .fontColor('#1f2a3d')
+                  .fontColor($r('app.color.text_primary'))
                   .fontWeight(FontWeight.Bold)
                 ForEach([this.chartRefreshToken], (_t: number) => {
                   PieChart({ slices: this.toPieSlices(this.report.current.expenseCategories), chartHeight: 180 })
@@ -343,12 +342,12 @@ struct EconomicCharts {
               .padding(16)
               .backgroundColor(Color.White)
               .borderRadius(26)
-              .shadow({ radius: 14, color: '#10000000', offsetY: 6 })
+              .shadow({ radius: 12, color: '#12000000', offsetY: 4 })
 
               Column() {
                 Text('收入结构')
                   .fontSize(18)
-                  .fontColor('#1f2a3d')
+                  .fontColor($r('app.color.text_primary'))
                   .fontWeight(FontWeight.Bold)
                 ForEach([this.chartRefreshToken], (_t: number) => {
                   PieChart({ slices: this.toPieSlices(this.report.current.incomeCategories), chartHeight: 180 })
@@ -360,7 +359,7 @@ struct EconomicCharts {
               .backgroundColor(Color.White)
               .borderRadius(26)
               .margin({ left: 12 })
-              .shadow({ radius: 14, color: '#10000000', offsetY: 6 })
+              .shadow({ radius: 12, color: '#12000000', offsetY: 4 })
             }
             .width('100%')
             .margin({ top: 18 })
@@ -368,13 +367,13 @@ struct EconomicCharts {
             Column() {
               Text('智能解读')
                 .fontSize(20)
-                .fontColor('#1f2a3d')
+                .fontColor($r('app.color.text_primary'))
                 .fontWeight(FontWeight.Bold)
                 .width('100%')
               Text(this.report.analysisText)
                 .fontSize(14)
                 .lineHeight(24)
-                .fontColor('#5f6c80')
+                .fontColor($r('app.color.text_secondary'))
                 .margin({ top: 12 })
             }
             .width('100%')
@@ -382,7 +381,7 @@ struct EconomicCharts {
             .backgroundColor(Color.White)
             .borderRadius(28)
             .margin({ top: 18, bottom: 28 })
-            .shadow({ radius: 16, color: '#12000000', offsetY: 7 })
+            .shadow({ radius: 12, color: '#12000000', offsetY: 4 })
           }
           .width('100%')
           .padding({ left: 16, right: 16, top: 16 })
@@ -392,6 +391,6 @@ struct EconomicCharts {
     }
     .width('100%')
     .height('100%')
-    .backgroundColor('#f3f7fb')
+    .backgroundColor($r('app.color.page_background'))
   }
 }
