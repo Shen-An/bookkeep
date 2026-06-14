@@ -339,44 +339,67 @@ struct Index {
             if (this.todayCount > 0 || this.todayExpense > 0) {
               Column() {
                 Row() {
-                  Text('今日消费')
-                    .fontSize(15)
-                    .fontColor($r('app.color.text_primary'))
-                    .fontWeight(FontWeight.Bold)
+                  // Left accent bar
+                  Row()
+                    .width(3)
+                    .height(36)
+                    .backgroundColor(this.todayNet >= 0 ? '#22C55E' : '#EF4444')
+                    .borderRadius(2)
+                    .margin({ right: 12 })
 
-                  Row() {
-                    Circle()
-                      .width(6)
-                      .height(6)
-                      .fill('#22C55E')
-                      .margin({ right: 4 })
-                    Text(`${this.todayIncome > 0 ? '+' : ''}${CurrencyManager.formatWithSymbol(this.todayIncome, this.currencySymbol)}`)
-                      .fontSize(12)
-                      .fontColor($r('app.color.income_green'))
+                  Column() {
+                    Text('今日消费')
+                      .fontSize(15)
+                      .fontColor($r('app.color.text_primary'))
+                      .fontWeight(FontWeight.Bold)
+                    Text(`${this.todayCount} 笔记录`)
+                      .fontSize(11)
+                      .fontColor($r('app.color.text_tertiary'))
+                      .margin({ top: 2 })
                   }
-                  .margin({ left: 12, right: 10 })
-
-                  Row() {
-                    Circle()
-                      .width(6)
-                      .height(6)
-                      .fill('#EF4444')
-                      .margin({ right: 4 })
-                    Text(`-${CurrencyManager.formatWithSymbol(this.todayExpense, this.currencySymbol)}`)
-                      .fontSize(12)
-                      .fontColor($r('app.color.expense_red'))
-                  }
-                  .margin({ right: 10 })
+                  .alignItems(HorizontalAlign.Start)
 
                   Blank()
 
-                  Text(`${this.todayCount} 笔`)
-                    .fontSize(11)
-                    .fontColor($r('app.color.text_tertiary'))
+                  Column() {
+                    Text(`-${CurrencyManager.formatWithSymbol(this.todayExpense, this.currencySymbol)}`)
+                      .fontSize(18)
+                      .fontColor($r('app.color.expense_red'))
+                      .fontWeight(FontWeight.Bold)
+                      .textAlign(TextAlign.End)
+                    Text('支出')
+                      .fontSize(10)
+                      .fontColor($r('app.color.text_tertiary'))
+                      .margin({ top: 1 })
+                      .textAlign(TextAlign.End)
+                  }
+                  .alignItems(HorizontalAlign.End)
+                  .margin({ right: 16 })
+
+                  Column() {
+                    Text(`+${CurrencyManager.formatWithSymbol(this.todayIncome, this.currencySymbol)}`)
+                      .fontSize(18)
+                      .fontColor($r('app.color.income_green'))
+                      .fontWeight(FontWeight.Bold)
+                      .textAlign(TextAlign.End)
+                    Text('收入')
+                      .fontSize(10)
+                      .fontColor($r('app.color.text_tertiary'))
+                      .margin({ top: 1 })
+                      .textAlign(TextAlign.End)
+                  }
+                  .alignItems(HorizontalAlign.End)
                 }
                 .width('100%')
 
-                // 与昨日比较
+                // 分隔线
+                Row()
+                  .width('100%')
+                  .height(1)
+                  .backgroundColor($r('app.color.divider_color'))
+                  .margin({ top: 12, bottom: 10 })
+
+                // 对比行
                 Row() {
                   if (this.yesterdayExpense > 0) {
                     Row() {
@@ -384,45 +407,54 @@ struct Index {
                         .fontSize(11)
                         .fontColor($r('app.color.text_tertiary'))
                       Text(`${this.diffSign}${this.diffPercent.toFixed(1)}%`)
-                        .fontSize(11)
+                        .fontSize(12)
                         .fontColor(this.diffColor)
                         .fontWeight(FontWeight.Bold)
                         .margin({ left: 4 })
                     }
-
-                    Text(' · ')
-                      .fontSize(11)
-                      .fontColor($r('app.color.divider_color'))
-                      .margin({ left: 4, right: 4 })
+                    .padding({ right: 12 })
                   }
 
-                  Row() {
-                    Text('较日均')
-                      .fontSize(11)
-                      .fontColor($r('app.color.text_tertiary'))
-                    if (this.dailyAvgExpense > 0) {
-                      Text(`${this.avgDiffSign}${this.avgDiffPercent.toFixed(1)}%`)
+                  if (this.dailyAvgExpense > 0) {
+                    Row() {
+                      Text('较日均')
                         .fontSize(11)
+                        .fontColor($r('app.color.text_tertiary'))
+                      Text(`${this.avgDiffSign}${this.avgDiffPercent.toFixed(1)}%`)
+                        .fontSize(12)
                         .fontColor(this.avgDiffColor)
                         .fontWeight(FontWeight.Bold)
                         .margin({ left: 4 })
                     }
+                    .padding({ right: 12 })
                   }
 
                   Blank()
 
                   if (this.todayExpense > 0) {
-                    Text(`结余 ${CurrencyManager.formatWithSymbol(this.todayNet, this.currencySymbol)}`)
-                      .fontSize(11)
-                      .fontColor(this.netColor)
-                      .fontWeight(FontWeight.Medium)
+                    Row() {
+                      Circle()
+                        .width(6)
+                        .height(6)
+                        .fill(this.netColor)
+                        .margin({ right: 6 })
+                      Text(`结余 ${CurrencyManager.formatWithSymbol(this.todayNet, this.currencySymbol)}`)
+                        .fontSize(12)
+                        .fontColor(this.netColor)
+                        .fontWeight(FontWeight.Medium)
+                    }
                   }
                 }
                 .width('100%')
-                .margin({ top: 4 })
 
                 // 预算进度
                 if (this.budgetTotal > 0) {
+                  Row()
+                    .width('100%')
+                    .height(1)
+                    .backgroundColor($r('app.color.divider_color'))
+                    .margin({ top: 10, bottom: 10 })
+
                   Row() {
                     Row() {
                       Row()
@@ -443,13 +475,13 @@ struct Index {
                       `预算 ${(this.budgetUsed / this.budgetTotal * 100).toFixed(0)}%`)
                       .fontSize(11)
                       .fontColor(this.budgetExceeded ? '#EF4444' : '#94A3B8')
+                      .fontWeight(this.budgetExceeded ? FontWeight.Bold : FontWeight.Normal)
                   }
                   .width('100%')
-                  .margin({ top: 6 })
                 }
               }
               .width('100%')
-              .padding({ left: 18, right: 18, top: 12, bottom: 12 })
+              .padding(16)
               .backgroundColor(Color.White)
               .borderRadius(20)
               .margin({ left: 14, right: 14, top: 6, bottom: 4 })

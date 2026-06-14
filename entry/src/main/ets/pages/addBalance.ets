@@ -500,33 +500,90 @@ struct AddBalance {
           ]
         })
 
-        // AI one-sentence billing - only show in AI mode
+        // AI 智能记账 - 卡片式设计
         if (this.entryMode === 'ai') {
-          Column({ space: 10 }) {
-            Row({ space: 8 }) {
+          Column() {
+            // Section header
+            Row() {
+              Image($r("app.media.ic_public_billing_graphic"))
+                .width(20)
+                .height(20)
+                .margin({ right: 8 })
+              Text('AI 智能记账')
+                .fontSize(16)
+                .fontColor($r('app.color.text_primary'))
+                .fontWeight(FontWeight.Bold)
+              Blank()
+              Row() {
+                Text('AI')
+                  .fontSize(10)
+                  .fontColor(Color.White)
+                  .fontWeight(FontWeight.Bold)
+              }
+              .padding({ left: 8, right: 8, top: 3, bottom: 3 })
+              .backgroundColor($r('app.color.main_theme_blue'))
+              .borderRadius(6)
+            }
+            .width('100%')
+            .margin({ bottom: 14 })
+
+            // 文字识别 row
+            Row() {
+              Row() {
+                Image($r("app.media.ic_public_extract_list_dark"))
+                  .width(16)
+                  .height(16)
+              }
+              .width(32)
+              .height(32)
+              .backgroundColor('#F1F5F9')
+              .borderRadius(10)
+              .justifyContent(FlexAlign.Center)
+              .margin({ right: 10 })
+
               TextInput({
                 text: this.aiInputText,
                 placeholder: $r('app.string.ai_billing_placeholder')
               })
                 .layoutWeight(1)
+                .height(40)
                 .borderRadius(12)
-              .backgroundColor(Color.White)
-                .padding({ left: 12 })
+                .backgroundColor('#F8FAFC')
+                .padding({ left: 14, right: 14 })
                 .fontColor($r('app.color.text_primary'))
                 .placeholderColor($r('app.color.text_tertiary'))
+                .fontSize(14)
                 .onChange((v: string) => {
                   this.aiInputText = v;
                 })
 
               Button({ type: ButtonType.Normal }) {
-                Text(this.aiParsing ? $r('app.string.ai_billing_parsing') : $r('app.string.ai_billing_parse'))
-                  .fontSize(14)
-                  .fontColor($r('app.color.main_theme_blue'))
-                  .fontWeight(FontWeight.Medium)
+                Row() {
+                  if (this.aiParsing) {
+                    LoadingProgress()
+                      .width(14)
+                      .height(14)
+                      .color(Color.White)
+                  }
+                  Text(this.aiParsing ? '解析中' : '解析')
+                    .fontSize(13)
+                    .fontColor(Color.White)
+                    .fontWeight(FontWeight.Medium)
+                }
+                .justifyContent(FlexAlign.Center)
               }
-              .backgroundColor(Color.White)
+              .height(40)
+              .padding({ left: 16, right: 16 })
+              .linearGradient({
+                angle: 135,
+                colors: [
+                  [$r('app.color.main_theme_gradient_start'), 0],
+                  [$r('app.color.main_theme_gradient_end'), 1]
+                ]
+              })
               .borderRadius(12)
               .enabled(!this.aiParsing)
+              .margin({ left: 8 })
               .onClick(async () => {
                 if (this.aiParsing) {
                   return;
@@ -577,33 +634,79 @@ struct AddBalance {
                 }
               })
             }
+            .width('100%')
 
-            Row({ space: 8 }) {
+            // 分隔线
+            Row()
+              .width('100%')
+              .height(1)
+              .backgroundColor($r('app.color.divider_color'))
+              .margin({ top: 12, bottom: 12 })
+
+            // 图片识别 row
+            Row() {
+              Row() {
+                Image($r("app.media.ic_public_budget"))
+                  .width(16)
+                  .height(16)
+              }
+              .width(32)
+              .height(32)
+              .backgroundColor('#F1F5F9')
+              .borderRadius(10)
+              .justifyContent(FlexAlign.Center)
+              .margin({ right: 10 })
+
               TextInput({
                 placeholder: $r('app.string.ai_image_upload_hint')
               })
                 .layoutWeight(1)
+                .height(40)
                 .borderRadius(12)
-                .backgroundColor(Color.White)
-                .padding({ left: 12 })
+                .backgroundColor('#F8FAFC')
+                .padding({ left: 14, right: 14 })
                 .placeholderColor($r('app.color.text_tertiary'))
+                .fontSize(14)
 
               Button({ type: ButtonType.Normal }) {
-                Text(this.imageParsing ? $r('app.string.ai_image_parsing') : $r('app.string.ai_image_recognize'))
-                  .fontSize(14)
-                  .fontColor($r('app.color.main_theme_blue'))
-                  .fontWeight(FontWeight.Medium)
+                Row() {
+                  if (this.imageParsing) {
+                    LoadingProgress()
+                      .width(14)
+                      .height(14)
+                      .color(Color.White)
+                  }
+                  Text(this.imageParsing ? '识别中' : '识别')
+                    .fontSize(13)
+                    .fontColor(Color.White)
+                    .fontWeight(FontWeight.Medium)
+                }
+                .justifyContent(FlexAlign.Center)
               }
-              .backgroundColor(Color.White)
+              .height(40)
+              .padding({ left: 16, right: 16 })
+              .linearGradient({
+                angle: 135,
+                colors: [
+                  [$r('app.color.main_theme_gradient_start'), 0],
+                  [$r('app.color.main_theme_gradient_end'), 1]
+                ]
+              })
               .borderRadius(12)
               .enabled(!this.imageParsing)
+              .margin({ left: 8 })
               .onClick(() => {
                 this.selectImageFromGallery();
               })
             }
+            .width('100%')
           }
-          .padding({ left: 16, right: 16, top: 12, bottom: 12 })
-          .backgroundColor($r('app.color.main_theme_gradient_start'))
+          .width('100%')
+          .padding(16)
+          .backgroundColor(Color.White)
+          .borderRadius(20)
+          .margin({ left: 16, right: 16, top: 16 })
+          .shadow({ radius: 12, color: '#12000000', offsetY: 4 })
         }
 
         // 分类选择网格
